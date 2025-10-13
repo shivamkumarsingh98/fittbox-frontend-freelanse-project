@@ -24,3 +24,329 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Animated Footer styles */
+.footer-animated {
+  background: linear-gradient(90deg, #1e293b 0%, #475569 100%);
+  animation: fadeInFooter 1.2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 -4px 24px rgba(30,41,59,0.12);
+}
+@keyframes fadeInFooter {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.footer-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  padding-bottom: 2px;
+  transition: color 0.18s;
+}
+.footer-link:hover {
+  color: #b6d82a;
+}
+.footer-underline {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg,#b6d82a 0%,#fff 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  border-radius: 2px;
+}
+.footer-link:hover .footer-underline {
+  transform: scaleX(1);
+}
+
+/* Menu section two styles */
+.menu-section {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  padding: 2.5rem 1rem;
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+.menu-section-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+  letter-spacing: -0.02em;
+}
+
+/* Desktop hero image overlap fix */
+.menu-section {
+  position: relative;
+  z-index: 1;
+}
+.hero-right {
+  position: relative;
+  z-index: 3;
+}
+.circle-large {
+  position: absolute;
+  right: -80px;
+  top: -40px;
+  z-index: 3;
+}
+.circle-small {
+  position: absolute;
+  right: 60px;
+  top: -100px;
+  z-index: 4;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem 2rem;
+  justify-items: center;
+}
+.menu-card {
+  background: transparent;
+  border-radius: 24px;
+  text-align: center;
+  padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+  box-shadow: none;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.menu-card-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 4px solid #b6d82a;
+  box-shadow: 0 4px 18px rgba(182, 216, 42, 0.12);
+  background: #fff;
+}
+.menu-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.menu-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+.menu-card-desc {
+  font-size: 0.98rem;
+  color: #222;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 1.2rem;
+  }
+  .menu-section {
+    padding: 1.5rem 0.5rem;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem 0;
+  }
+  .menu-section {
+    padding: 1rem 0.2rem;
+    border-radius: 12px;
+  }
+  .menu-card-img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0.7rem;
+    border-width: 2px;
+  }
+  .menu-card-title {
+    font-size: 1rem;
+  }
+  .menu-card-desc {
+    font-size: 0.92rem;
+  }
+}
+
+/* Improved Menu page image design */
+.hero-right-imgs {
+  position: relative;
+  width: 520px;
+  min-width: 320px;
+  height: 440px;
+}
+.menu-img-small {
+  position: absolute;
+  top: -30px;
+  right: 30px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 5px solid #b6d82a;
+  box-shadow: 0 8px 24px rgba(182, 216, 42, 0.18);
+  background: #fff;
+  z-index: 2;
+  overflow: hidden;
+}
+.menu-img-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.menu-img-large {
+  position: absolute;
+  bottom: -40px;
+  right: -60px;
+  width: 370px;
+  height: 370px;
+  border-radius: 50%;
+  border: 7px solid #111;
+  background: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  overflow: hidden;
+}
+.menu-img-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+@media (max-width: 900px) {
+  .hero-right-imgs {
+    width: 100%;
+    min-width: auto;
+    height: 220px;
+  }
+  .menu-img-small {
+    width: 80px;
+    height: 80px;
+    top: -18px;
+    right: 12px;
+    border-width: 3px;
+  }
+  .menu-img-large {
+    width: 160px;
+    height: 160px;
+    bottom: -18px;
+    right: -18px;
+    border-width: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-right-imgs {
+    height: 120px;
+  }
+  .menu-img-small {
+    display: none;
+  }
+  .menu-img-large {
+    width: 100px;
+    height: 100px;
+    bottom: -8px;
+    right: -8px;
+  }
+}
+
+/* Menu page component styles (kept in globals as requested) */
+.bg-menu-hero {
+  background: #e9f2ef;
+}
+.menu-hero {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  position: relative;
+}
+.menu-hero {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  position: relative;
+}
+
+/* Allocate a fixed area on the right for the images so we can position them separately */
+.hero-right {
+  width: 540px;
+  min-width: 320px;
+  position: relative;
+}
+
+.circle-large {
+  width: 420px;
+  height: 420px;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 8px solid #051018;
+  box-shadow: 0 20px 40px rgba(5, 16, 24, 0.08);
+  position: absolute;
+  /* push the big circle a bit to the right, partly off-canvas */
+  right: -40px;
+  top: 20px;
+}
+
+.circle-small {
+  width: 140px;
+  height: 140px;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 6px solid #c6e02f;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+  position: absolute;
+  /* place the small circle separately from the large one */
+  right: 140px;
+  top: -40px;
+}
+
+/* Responsive sizing */
+@media (max-width: 900px) {
+  .menu-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  /* On tablet and smaller screens we stop absolute positioning and let the images stack nicely */
+  .hero-right {
+    width: 100%;
+    min-width: auto;
+  }
+  .circle-large {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    border-width: 6px;
+    right: auto;
+    top: auto;
+  }
+  .circle-small {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    border-width: 4px;
+    right: auto;
+    top: auto;
+    margin-top: -40px;
+    margin-left: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .circle-large {
+    width: 160px;
+    height: 160px;
+  }
+  .circle-small {
+    display: none;
+  }
+}
