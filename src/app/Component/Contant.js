@@ -16,11 +16,11 @@ function Contant() {
       </div>
 
       {/* Food Categories Section */}
-      <div className="relative max-w-6xl mx-auto px-4">
+      <div className="relative max-w-5xl mx-auto px-4">
         {/* Black Background Section */}
         <div className="relative mt-[-40px] px-6 py-12 md:px-12 md:py-16 overflow-hidden">
           {/* Tilted black background */}
-          <div className="absolute inset-0 bg-black rounded-[2rem] transform -skew-y-3 origin-top-left"></div>
+          <div className="absolute inset-0 bg-black rounded-[2rem] transform -skew-y-4 origin-top-right"></div>
 
           {/* Food Category Cards */}
           <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-14 justify-items-center">
@@ -37,7 +37,7 @@ function Contant() {
                   <img
                     src={item.src}
                     alt={item.label}
-                    className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-300"
+                    className="w-full hover:animate-spin h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
 
@@ -157,7 +157,7 @@ function Contant() {
                   you need to shed those unwanted pounds.
                 </p>
 
-                <button className="w-full bg-green-500 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-green-600 hover:scale-105 transition-all duration-300 shadow-md">
+                <button className="w-full bg-green-500 animate-bounce text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-green-600 hover:scale-105 transition-all duration-300 shadow-md">
                   GET STARTED
                 </button>
               </div>

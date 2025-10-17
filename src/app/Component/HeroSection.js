@@ -21,7 +21,7 @@ function HeroSection() {
       {/* Text Content */}
       <div className="absolute top-[20%] sm:top-[25%] left-[5%] sm:left-[8%] text-white z-20 max-w-[90%] sm:max-w-[80%] md:max-w-[70%]">
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold drop-shadow-lg leading-tight mb-4">
-          FittBox Dite Food
+          FittBox Diet Food
         </h1>
         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 drop-shadow-md leading-relaxed">
           Fresh, healthy, and delicious meals delivered to your doorstep

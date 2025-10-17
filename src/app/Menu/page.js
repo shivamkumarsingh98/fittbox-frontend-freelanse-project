@@ -1,96 +1,105 @@
 import Image from "next/image";
 import Link from "next/link";
+import { TrialMenu, MonthlyMenu } from "../Data"; // adjust path if needed
 
 function Page() {
   return (
-    <main className="bg-menu-hero min-h-[60vh] flex items-center">
-      <div className="w-full max-w-[1200px] mx-auto px-4 py-10">
-        <section className="menu-hero flex gap-8 items-center relative">
+    <main className="bg-[#f7f8fa] flex items-center">
+      <div className="w-full max-w-7xl mx-auto px-4 py-10">
+        {/* Hero Section */}
+        <section className="menu-hero flex flex-col md:flex-row gap-8 items-center relative border-b pb-10">
           <div className="hero-left flex-1 max-w-[60%]">
-            <h1 className="text-[4rem] leading-none text-[#07101a] font-extrabold mb-5">
+            <h1 className="text-[3.5rem] leading-none text-[#07101a] font-extrabold mb-5">
               Our Menu
             </h1>
             <p className="text-[#0b1720] opacity-75 max-w-[48ch] mb-6">
-              Fresh, zesty, and bursting with crunch—our sprout salad is a
-              flavor explosion in every bite!
+              Fresh, zesty, and bursting with crunch—our meals are crafted to
+              keep you energized and healthy every day!
             </p>
             <Link
               href="/menu/list"
-              className="inline-block border-2 border-[#07101a] rounded-md text-[#07101a] font-bold tracking-widest px-4 py-2"
+              className="inline-block border-2 border-[#07101a] rounded-md text-[#07101a] font-bold tracking-widest px-4 py-2 hover:bg-[#07101a] hover:text-white transition"
             >
               VIEW MENU
             </Link>
           </div>
 
-          <div
-            className="hero-right flex-1 flex items-center justify-end relative"
-            aria-hidden
-          >
-            <div className="circle-large relative rounded-full overflow-hidden">
+          <div className="hero-right flex-1 flex items-center justify-end relative">
+            <div className="relative w-[300px] h-[300px] rounded-full overflow-hidden shadow-lg">
               <Image
                 src="/hero3.jpg"
-                alt="bowl"
+                alt="Healthy bowl"
                 fill
-                sizes="(max-width: 900px) 220px, 420px"
-                className="object-cover"
-              />
-            </div>
-
-            <div className="circle-small absolute -top-8 right-[120px] rounded-full overflow-hidden">
-              <Image
-                src="/hero2.jpg"
-                alt="small bowl"
-                fill
-                sizes="(max-width: 900px) 90px, 140px"
                 className="object-cover"
               />
             </div>
           </div>
         </section>
-        {/* section two: menu grid */}
+
+        {/* Trial Menu Section */}
         <section className="menu-section mt-20">
-          <h2 className="menu-section-title">Salads & Bowls</h2>
-          <div className="menu-grid">
-            {/* Static meal data */}
-            {[
-              {
-                title: "Greek Salad",
-                desc: "Apple, capsicum, cucumber, cherry tomato, pickled onion, feta cheese, lettuce, black olives/jalapeno, tangy Greek dressing.",
-                img: "/hero3.jpg",
-              },
-              {
-                title: "Falafel Salad",
-                desc: "Crispy falafel, bell peppers, onions, lettuce, tomato, tangy yogurt dressing.",
-                img: "/hero2.jpg",
-              },
-              {
-                title: "Mexican Salad",
-                desc: "Kidney beans, carrots, cherry tomato, bell pepper, corn, nachos, lettuce, creamy basil dressing.",
-                img: "/hero4.jpg",
-              },
-              {
-                title: "High Protein Bowl",
-                desc: "Grilled chicken, quinoa, chickpeas, spinach, tomato, egg, spicy vinaigrette.",
-                img: "/hero5.jpg",
-              },
-              {
-                title: "Veg Protein Bowl",
-                desc: "Paneer, kidney beans, broccoli, carrot, lettuce, brown rice, mint yogurt dressing.",
-                img: "/hero6.jpg",
-              },
-              {
-                title: "Non-Veg Bowl",
-                desc: "Chicken tikka, brown rice, lettuce, tomato, onion, spicy mayo dressing.",
-                img: "/hero7.jpg",
-              },
-            ].map((meal, i) => (
-              <div className="menu-card" key={i}>
-                <div className="menu-card-img">
-                  <img src={meal.img} alt={meal.title} />
+          <h2 className="text-3xl font-bold mb-8 text-[#07101a]">Trial Menu</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {TrialMenu.map((meal, i) => (
+              <div
+                key={i}
+                className="menu-card border rounded-2xl  bg-white overflow-hidden shadow-md hover:shadow-xl transition flex flex-col"
+              >
+                <div className="relative w-60 h-60">
+                  <Image
+                    src={meal.img}
+                    alt={meal.name}
+                    fill
+                    className="object-cover rounded-full  "
+                  />
                 </div>
-                <div className="menu-card-content">
-                  <h3 className="menu-card-title">{meal.title}</h3>
-                  <p className="menu-card-desc">{meal.desc}</p>
+                <div className="p-6 border flex flex-col flex-grow">
+                  <h3 className="text-xl font-semibold text-[#07101a] mb-3">
+                    {meal.name}
+                  </h3>
+                  <p className="text-gray-700 mb-4">
+                    <strong>Veg:</strong> ₹{meal.veg} &nbsp;|&nbsp;{" "}
+                    <strong>Non-Veg:</strong> ₹{meal.nonveg}
+                  </p>
+                  <button className="mt-auto bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition">
+                    Subscribe
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Monthly Menu Section */}
+        <section className="menu-section mt-20">
+          <h2 className="text-3xl font-bold mb-8 text-[#07101a]">
+            Monthly Menu
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {MonthlyMenu.map((meal, i) => (
+              <div
+                key={i}
+                className="menu-card border rounded-2xl bg-white overflow-hidden shadow-md hover:shadow-xl transition flex flex-col"
+              >
+                <div className="relative w-full h-48">
+                  <Image
+                    src={meal.img}
+                    alt={meal.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-6 flex flex-col flex-grow">
+                  <h3 className="text-xl font-semibold text-[#07101a] mb-3">
+                    {meal.name}
+                  </h3>
+                  <p className="text-gray-700 mb-4">
+                    <strong>Veg:</strong> ₹{meal.veg} &nbsp;|&nbsp;{" "}
+                    <strong>Non-Veg:</strong> ₹{meal.nonveg}
+                  </p>
+                  <button className="mt-auto bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition">
+                    Subscribe
+                  </button>
                 </div>
               </div>
             ))}
