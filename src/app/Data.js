@@ -57,3 +57,41 @@ export const MonthlyMenu = [
     img: "/hero2.jpg",
   },
 ];
+
+export const testimonials = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    image: "/hero6.jpg",
+    rating: "⭐⭐⭐⭐⭐",
+    text: "Amazing fresh salads! The quality is outstanding and delivery is always on time.",
+  },
+  {
+    id: 2,
+    name: "Mike Chen",
+    image: "/hero7.jpg",
+    rating: "⭐⭐⭐⭐⭐",
+    text: "Perfect for my fitness goals. High protein bowls are exactly what I needed!",
+  },
+  {
+    id: 3,
+    name: "Emma Davis",
+    image: "/hero8.jpg",
+    rating: "⭐⭐⭐⭐⭐",
+    text: "Love the variety! Acai bowls and smoothies are my daily breakfast now.",
+  },
+  {
+    id: 4,
+    name: "David Brown",
+    image: "/hero9.jpg",
+    rating: "⭐⭐⭐⭐⭐",
+    text: "Quick delivery and healthy options. Totally changed my lunch routine!",
+  },
+  {
+    id: 5,
+    name: "Olivia White",
+    image: "/hero10.jpg",
+    rating: "⭐⭐⭐⭐⭐",
+    text: "Fresh, healthy, and delicious! Highly recommend for busy professionals.",
+  },
+];

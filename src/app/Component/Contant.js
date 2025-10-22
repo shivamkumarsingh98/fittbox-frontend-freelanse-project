@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { testimonials } from "../Data";
 
 function Contant() {
   return (
@@ -257,7 +258,7 @@ function Contant() {
       </div>
 
       {/* Features Section */}
-      <div className="py-16 md:py-20 px-4 bg-gray-50">
+      {/* <div className="py-16 md:py-20 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-black mb-12">
             Why Choose Fitbos?
@@ -295,78 +296,52 @@ function Contant() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Testimonials Section */}
-      <div className="py-16 md:py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-black mb-12">
-            What Our Customers Say
+      <section className="py-16 md:py-20 px-4 bg-gray-50 overflow-hidden">
+        <div className="max-w-6xl mx-auto text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-black">
+            Testimonials
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-lg border">
-              <div className="flex items-center mb-4">
-                <Image
-                  src="/hero6.jpg"
-                  alt="Customer"
-                  width={50}
-                  height={50}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div className="ml-3">
-                  <h4 className="font-semibold">Sarah Johnson</h4>
-                  <p className="text-gray-500 text-sm">⭐⭐⭐⭐⭐</p>
+        </div>
+
+        {/* Infinite Scroll Container */}
+        <div className="relative w-full overflow-hidden">
+          <div id="scroll-track" className="inline-flex hover:pause-animation">
+            {[...testimonials, ...testimonials].map((item, index) => (
+              <div
+                key={index}
+                className="bg-white border border-gray-300 shadow-md rounded-xl p-6 mx-3 w-80 h-44 flex-shrink-0 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center mb-4">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      width={50}
+                      height={50}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div className="ml-3 text-left">
+                      <h4 className="font-semibold text-gray-900">
+                        {item.name}
+                      </h4>
+                      <p className="text-yellow-500 text-sm">{item.rating}</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-4">
+                    "{item.text}"
+                  </p>
                 </div>
               </div>
-              <p className="text-gray-600">
-                "Amazing fresh salads! The quality is outstanding and delivery
-                is always on time."
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-lg border">
-              <div className="flex items-center mb-4">
-                <Image
-                  src="/hero7.jpg"
-                  alt="Customer"
-                  width={50}
-                  height={50}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div className="ml-3">
-                  <h4 className="font-semibold">Mike Chen</h4>
-                  <p className="text-gray-500 text-sm">⭐⭐⭐⭐⭐</p>
-                </div>
-              </div>
-              <p className="text-gray-600">
-                "Perfect for my fitness goals. High protein bowls are exactly
-                what I needed!"
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-lg border">
-              <div className="flex items-center mb-4">
-                <Image
-                  src="/hero8.jpg"
-                  alt="Customer"
-                  width={50}
-                  height={50}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div className="ml-3">
-                  <h4 className="font-semibold">Emma Davis</h4>
-                  <p className="text-gray-500 text-sm">⭐⭐⭐⭐⭐</p>
-                </div>
-              </div>
-              <p className="text-gray-600">
-                "Love the variety! Acai bowls and smoothies are my daily
-                breakfast now."
-              </p>
-            </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* CTA Section */}
-      <div className="py-16 md:py-20 px-4 bg-black text-white">
+      {/* <div className="py-16 md:py-20 px-4 bg-black text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Start Your Healthy Journey?
@@ -384,7 +359,7 @@ function Contant() {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

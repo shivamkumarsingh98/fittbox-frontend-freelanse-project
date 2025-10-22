@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { FiUser } from "react-icons/fi";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useModal } from "./ModalContext";
@@ -54,13 +55,6 @@ export default function Navbar() {
           <div className="flex justify-end gap-2">
             <button
               type="button"
-              className="px-4 py-2 rounded bg-gray-100"
-              onClick={() => modal.closeModal()}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
               className="px-4 py-2 rounded bg-green-500 text-white"
               onClick={() => modal.closeModal()}
             >
@@ -78,11 +72,15 @@ export default function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2"
+          className="flex items-center gap-1"
           onClick={() => setMobileOpen(false)}
         >
-          <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-pink-600 shadow-md"></span>
-          <span className="text-xl font-bold text-gray-900">FittBox</span>
+          <img
+            src="/logo.png"
+            alt="FittBox Logo"
+            className="w-40 h-40 mb-3 rounded-md object-cover"
+          />
+          {/* <p className="text-xl font-bold text-gray-900">FittBox</p> */}
         </Link>
 
         {/* Hamburger */}
@@ -119,7 +117,7 @@ export default function Navbar() {
           <li>
             <Link
               href="/"
-              className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block"
+              className="px-3 py-2 rounded-lg text-gray-800 font-bold hover:bg-gray-100 w-full block"
               onClick={() => setMobileOpen(false)}
             >
               Home
@@ -128,7 +126,7 @@ export default function Navbar() {
           <li>
             <Link
               href="/Menu"
-              className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block"
+              className="px-3 py-2 rounded-lg text-gray-800 font-bold hover:bg-gray-100 w-full block"
               onClick={() => setMobileOpen(false)}
             >
               Menu
@@ -156,13 +154,16 @@ export default function Navbar() {
           {/* Desktop: 'Me' dropdown only on md+ */}
           <li className="relative w-full md:w-auto hidden md:block" ref={meRef}>
             <button
-              className="flex items-center justify-between md:justify-start w-full md:w-auto px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100"
+              className="flex items-center gap-2 justify-between md:justify-start w-full md:w-auto px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100"
+              aria-label="Account"
               onClick={() => setMeOpen(!meOpen)}
             >
-              Me
+              {/* Profile icon (desktop) */}
+              <FiUser className="w-5 h-5 " aria-hidden="true" />
+              <span className="sr-only">Account</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`w-4 h-4 ml-1 transition-transform ${
+                className={`w-4 h-4 ml-1 transition-transform animate-bounce ${
                   meOpen ? "rotate-180" : ""
                 }`}
                 fill="none"
@@ -180,10 +181,10 @@ export default function Navbar() {
 
             {/* Dropdown menu (desktop only) */}
             {meOpen && (
-              <ul className="absolute right-0 top-13 bg-white border border-gray-100 rounded-lg shadow-lg w-40 py-2 animate-fade-in">
+              <ul className="absolute right-0 top-13 bg-white border border-gray-500  shadow-lg w-100 py-5 animate-fade-in">
                 <li>
                   <button
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                    className="w-full text-center block px-4 py-2 text-gray-800 hover:bg-gray-50"
                     onClick={() => {
                       setMeOpen(false);
                       setMobileOpen(false);
@@ -195,7 +196,7 @@ export default function Navbar() {
                 </li>
                 <li>
                   <button
-                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                    className="w-full text-center block px-4 py-2 text-gray-800 hover:bg-gray-50"
                     onClick={() => {
                       setMeOpen(false);
                       setMobileOpen(false);
