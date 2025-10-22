@@ -28,12 +28,18 @@ body {
 /* Animated Footer styles */
 .footer-animated {
   background: linear-gradient(90deg, #1e293b 0%, #475569 100%);
-  animation: fadeInFooter 1.2s cubic-bezier(.4,0,.2,1);
-  box-shadow: 0 -4px 24px rgba(30,41,59,0.12);
+  animation: fadeInFooter 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -4px 24px rgba(30, 41, 59, 0.12);
 }
 @keyframes fadeInFooter {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .footer-link {
   color: #fff;
@@ -47,11 +53,13 @@ body {
 }
 .footer-underline {
   position: absolute;
-  left: 0; bottom: 0;
-  width: 100%; height: 2px;
-  background: linear-gradient(90deg,#b6d82a 0%,#fff 100%);
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #b6d82a 0%, #fff 100%);
   transform: scaleX(0);
-  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 2px;
 }
 .footer-link:hover .footer-underline {

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useModal } from "./ModalContext";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -31,6 +32,45 @@ export default function Navbar() {
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "auto";
   }, [mobileOpen]);
+
+  const modal = useModal();
+
+  function openAuth(type) {
+    modal.openModal(
+      <div>
+        <h2 className="text-xl font-semibold mb-3">
+          {type === "register" ? "Register" : "Login"}
+        </h2>
+        <form className="space-y-3">
+          <input
+            className="w-full border px-3 py-2 rounded"
+            placeholder="Email"
+          />
+          <input
+            className="w-full border px-3 py-2 rounded"
+            placeholder="Password"
+            type="password"
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              className="px-4 py-2 rounded bg-gray-100"
+              onClick={() => modal.closeModal()}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="px-4 py-2 rounded bg-green-500 text-white"
+              onClick={() => modal.closeModal()}
+            >
+              {type === "register" ? "Create account" : "Sign in"}
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
@@ -96,7 +136,7 @@ export default function Navbar() {
           </li>
           <li>
             <Link
-              href="/nutrition"
+              href="/Nutrition"
               className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block"
               onClick={() => setMobileOpen(false)}
             >
@@ -105,7 +145,7 @@ export default function Navbar() {
           </li>
           <li>
             <Link
-              href="/contact"
+              href="/Contact"
               className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block"
               onClick={() => setMobileOpen(false)}
             >
@@ -113,8 +153,8 @@ export default function Navbar() {
             </Link>
           </li>
 
-          {/* Me dropdown */}
-          <li className="relative w-full md:w-auto" ref={meRef}>
+          {/* Desktop: 'Me' dropdown only on md+ */}
+          <li className="relative w-full md:w-auto hidden md:block" ref={meRef}>
             <button
               className="flex items-center justify-between md:justify-start w-full md:w-auto px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100"
               onClick={() => setMeOpen(!meOpen)}
@@ -138,23 +178,80 @@ export default function Navbar() {
               </svg>
             </button>
 
-            {/* Dropdown menu */}
+            {/* Dropdown menu (desktop only) */}
             {meOpen && (
-              <ul className="absolute md:right-0 top-10 bg-white border border-gray-100 rounded-lg shadow-lg w-40 py-2 animate-fade-in">
+              <ul className="absolute right-0 top-13 bg-white border border-gray-100 rounded-lg shadow-lg w-40 py-2 animate-fade-in">
+                <li>
+                  <button
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                    onClick={() => {
+                      setMeOpen(false);
+                      setMobileOpen(false);
+                      openAuth("register");
+                    }}
+                  >
+                    Register
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                    onClick={() => {
+                      setMeOpen(false);
+                      setMobileOpen(false);
+                      openAuth("login");
+                    }}
+                  >
+                    Login
+                  </button>
+                </li>
                 <li>
                   <Link
-                    href="/login"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                    href="/Menu"
+                    className="block px-4 py-2 border text-center rounded-3xl bg-red-400 text-white hover:bg-green-400"
                     onClick={() => {
                       setMeOpen(false);
                       setMobileOpen(false);
                     }}
                   >
-                    Login
+                    Subscribe
                   </Link>
                 </li>
               </ul>
             )}
+          </li>
+
+          {/* Mobile-only: replace dropdown with plain links inside mobile menu */}
+          <li className="md:hidden">
+            <button
+              className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block text-left"
+              onClick={() => {
+                setMobileOpen(false);
+                openAuth("register");
+              }}
+            >
+              Register
+            </button>
+          </li>
+          <li className="md:hidden">
+            <button
+              className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block text-left"
+              onClick={() => {
+                setMobileOpen(false);
+                openAuth("login");
+              }}
+            >
+              Login
+            </button>
+          </li>
+          <li className="md:hidden">
+            <Link
+              href="/Menu"
+              className="px-3 py-2 border rounded-3xl bg-red-400 text-white w-full block text-center hover:bg-green-400"
+              onClick={() => setMobileOpen(false)}
+            >
+              Subscribe
+            </Link>
           </li>
         </ul>
 

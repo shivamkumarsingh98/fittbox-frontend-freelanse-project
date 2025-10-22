@@ -39,21 +39,21 @@ function Page() {
         {/* Trial Menu Section */}
         <section className="menu-section mt-20">
           <h2 className="text-3xl font-bold mb-8 text-[#07101a]">Trial Menu</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
             {TrialMenu.map((meal, i) => (
               <div
                 key={i}
-                className="menu-card border rounded-2xl  bg-white overflow-hidden shadow-md hover:shadow-xl transition flex flex-col"
+                className="w-full max-w-[420px] menu-card border rounded-2xl bg-white overflow-hidden shadow-md hover:shadow-xl transition flex flex-col"
               >
-                <div className="relative w-60 h-60">
+                <div className="w-full h-52 relative">
                   <Image
                     src={meal.img}
                     alt={meal.name}
                     fill
-                    className="object-cover rounded-full  "
+                    className="object-cover"
                   />
                 </div>
-                <div className="p-6 border flex flex-col flex-grow">
+                <div className="p-6 flex flex-col flex-grow">
                   <h3 className="text-xl font-semibold text-[#07101a] mb-3">
                     {meal.name}
                   </h3>
@@ -61,7 +61,7 @@ function Page() {
                     <strong>Veg:</strong> ₹{meal.veg} &nbsp;|&nbsp;{" "}
                     <strong>Non-Veg:</strong> ₹{meal.nonveg}
                   </p>
-                  <button className="mt-auto bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition">
+                  <button className="mt-auto bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition w-full sm:w-auto">
                     Subscribe
                   </button>
                 </div>
@@ -75,11 +75,11 @@ function Page() {
           <h2 className="text-3xl font-bold mb-8 text-[#07101a]">
             Monthly Menu
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
             {MonthlyMenu.map((meal, i) => (
               <div
                 key={i}
-                className="menu-card border rounded-2xl bg-white overflow-hidden shadow-md hover:shadow-xl transition flex flex-col"
+                className="w-full max-w-[420px] menu-card border rounded-2xl bg-white overflow-hidden shadow-md hover:shadow-xl transition flex flex-col"
               >
                 <div className="relative w-full h-48">
                   <Image
@@ -97,7 +97,7 @@ function Page() {
                     <strong>Veg:</strong> ₹{meal.veg} &nbsp;|&nbsp;{" "}
                     <strong>Non-Veg:</strong> ₹{meal.nonveg}
                   </p>
-                  <button className="mt-auto bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition">
+                  <button className="mt-auto bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition w-full sm:w-auto">
                     Subscribe
                   </button>
                 </div>
