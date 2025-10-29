@@ -3,6 +3,7 @@ import "./globals.css";
 import Navebar from "./Component/Navebar";
 import Footer from "./Component/Footer";
 import ModalProvider from "./Component/ModalContext";
+import { Providers } from "./Component/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,11 +26,13 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ModalProvider>
-          <Navebar />
-          {children}
-          <Footer />
-        </ModalProvider>
+        <Providers>
+          <ModalProvider>
+            <Navebar />
+            {children}
+            <Footer />
+          </ModalProvider>
+        </Providers>
       </body>
     </html>
   );

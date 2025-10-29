@@ -42,15 +42,14 @@ export default function ModalProvider({ children }) {
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
-            className="fixed inset-0 bg-black/50"
-            onClick={closeModal}
+            className="fixed inset-0 bg-black/50 pointer-events-none"
             aria-hidden="true"
           />
 
           <div
             role="dialog"
             aria-modal="true"
-            className="relative bg-white rounded-lg shadow-lg max-w-lg w-[92%] p-6 z-10"
+            className="relative border bg-white rounded-lg shadow-lg max-w-md w-[92%] p-4 z-10"
           >
             <button
               aria-label="Close modal"

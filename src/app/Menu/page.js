@@ -1,8 +1,25 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { TrialMenu, MonthlyMenu } from "../Data"; // adjust path if needed
+import { TrialMenu, MonthlyMenu } from "../Data";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/slices/cartSlice";
 
 function Page() {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = (meal, type) => {
+    const price = type === "veg" ? meal.veg : meal.nonveg;
+    dispatch(
+      addToCart({
+        id: `${meal.name}-${type}`,
+        name: `${meal.name} (${type})`,
+        price: price,
+        image: meal.img,
+      })
+    );
+  };
   return (
     <main className="bg-[#f7f8fa] flex items-center">
       <div className="w-full max-w-7xl mx-auto px-4 py-10">
@@ -61,9 +78,20 @@ function Page() {
                     <strong>Veg:</strong> ₹{meal.veg} &nbsp;|&nbsp;{" "}
                     <strong>Non-Veg:</strong> ₹{meal.nonveg}
                   </p>
-                  <button className="mt-auto bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition w-full sm:w-auto">
-                    Subscribe
-                  </button>
+                  <div className="mt-auto flex gap-2">
+                    <button
+                      onClick={() => handleAddToCart(meal, "veg")}
+                      className="flex-1 bg-green-600 text-white py-2 px-2 rounded-md font-semibold hover:bg-green-700 transition"
+                    >
+                      Add Veg
+                    </button>
+                    <button
+                      onClick={() => handleAddToCart(meal, "nonveg")}
+                      className="flex-1 bg-[#07101a] text-white py-1 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition"
+                    >
+                      Add Non-Veg
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -97,9 +125,20 @@ function Page() {
                     <strong>Veg:</strong> ₹{meal.veg} &nbsp;|&nbsp;{" "}
                     <strong>Non-Veg:</strong> ₹{meal.nonveg}
                   </p>
-                  <button className="mt-auto bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition w-full sm:w-auto">
-                    Subscribe
-                  </button>
+                  <div className="mt-auto flex gap-2">
+                    <button
+                      onClick={() => handleAddToCart(meal, "veg")}
+                      className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-green-700 transition"
+                    >
+                      Add Veg
+                    </button>
+                    <button
+                      onClick={() => handleAddToCart(meal, "nonveg")}
+                      className="flex-1 bg-[#07101a] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#0c1b2a] transition"
+                    >
+                      Add Non-Veg
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
