@@ -1,9 +1,11 @@
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navebar from "./Component/Navebar";
 import Footer from "./Component/Footer";
 import ModalProvider from "./Component/ModalContext";
 import { Providers } from "./Component/Providers";
+import { usePathname } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,12 +17,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+const metadata = {
   title: "FittBox",
   description: "Diet food delivery website",
+  Image: "/logo.png",
 };
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
+  const isDashboard = pathname?.toLowerCase().startsWith("/dashboard");
   return (
     <html lang="en">
       <body
@@ -28,9 +33,9 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <ModalProvider>
-            <Navebar />
+            {!isDashboard && <Navebar />}
             {children}
-            <Footer />
+            {!isDashboard && <Footer />}
           </ModalProvider>
         </Providers>
       </body>

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createMessage } from "../api/admin";
 
 // Contact page with advanced UI
 // - Comprehensive contact form with validation
@@ -20,6 +21,8 @@ const Page = () => {
   });
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
   const [faqOpen, setFaqOpen] = useState({});
 
   // Web images from search
@@ -45,9 +48,23 @@ const Page = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
+    setServerError("");
+    if (!validateForm()) return;
+
+    try {
+      setLoading(true);
+      // send data to API
+      const payload = {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        message: form.message,
+        inquiry: form.inquiry,
+      };
+      await createMessage(payload);
+
       setSubmitted(true);
       setForm({
         name: "",
@@ -57,6 +74,13 @@ const Page = () => {
         inquiry: "general",
       });
       setTimeout(() => setSubmitted(false), 3000);
+    } catch (err) {
+      console.error("[Contact page] createMessage error:", err);
+      setServerError(
+        err?.message || "Failed to send message. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -271,6 +295,16 @@ const Page = () => {
                   Thank you! Your message has been sent.
                 </motion.div>
               )}
+              {serverError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="mb-6 p-4 bg-red-100 text-red-700 rounded-xl"
+                >
+                  {serverError}
+                </motion.div>
+              )}
             </AnimatePresence>
             <form
               onSubmit={handleSubmit}
@@ -348,19 +382,22 @@ const Page = () => {
               </div>
               <div className="md:col-span-2">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: loading ? 1 : 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   type="submit"
-                  className="px-8 py-3 rounded-full bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold shadow-lg w-full md:w-auto"
+                  disabled={loading}
+                  className={`px-8 py-3 rounded-full bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold shadow-lg w-full md:w-auto ${
+                    loading ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
                 >
-                  Send Message
+                  {loading ? "Sending..." : "Send Message"}
                 </motion.button>
               </div>
             </form>
           </div>
         </div>
 
-        <aside>
+        {/* <aside>
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -409,7 +446,7 @@ const Page = () => {
               Secure payments · Instant scheduling · Certified professionals
             </p>
           </motion.div>
-        </aside>
+        </aside> */}
       </motion.section>
 
       {/* Map Section */}

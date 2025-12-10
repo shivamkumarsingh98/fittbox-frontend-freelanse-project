@@ -1,8 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { IoChevronDownOutline } from "react-icons/io5";
+import {
+  getNutrition,
+  createNutritionOrder,
+  verifyNutritionPayment,
+  checkNutritionStatus,
+} from "../api/admin";
+import Script from "next/script";
 const Page = () => {
+  const router = useRouter();
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
   const [calories, setCalories] = useState(null);
   const [plan, setPlan] = useState(null);
   const [aiEnabled, setAiEnabled] = useState(true);
@@ -17,6 +29,108 @@ const Page = () => {
     goal: "maintenance",
     dietary: "omnivore",
   });
+
+  const [nutritionData, setNutritionData] = useState(null);
+  const [nutritionVisible, setNutritionVisible] = useState(false);
+
+  const fetchNutritionData = async () => {
+    try {
+      const data = await getNutrition();
+      console.log("Fetched nutrition data:", data);
+      setNutritionData(data);
+    } catch (error) {
+      console.error("Error fetching nutrition data:", error);
+    }
+  };
+  React.useEffect(() => {
+    fetchNutritionData();
+  }, []);
+
+  // 🔥 PAGE REFRESH पर payment-status check
+  React.useEffect(() => {
+    if (!user) return;
+
+    const fetchPaymentStatus = async () => {
+      try {
+        const res = await checkNutritionStatus(user.id || user._id);
+        console.log("Payment status:", res);
+
+        if (res.paid) {
+          setNutritionVisible(true);
+
+          // Update name & number from backend (safe way)
+          setNutritionData((prev) => ({
+            ...prev,
+            data: {
+              ...prev?.data,
+              providerName: res?.data?.name,
+              providerContact: res?.data?.number,
+            },
+          }));
+        }
+      } catch (err) {
+        console.error("Status error:", err);
+      }
+    };
+
+    fetchPaymentStatus();
+  }, [user]);
+
+  const handleNutritionPayment = async () => {
+    // Check if user is logged in
+    if (!isAuthenticated || !user) {
+      alert("Please login/register first to book a nutrition session!");
+
+      return;
+    }
+
+    try {
+      if (!window.Razorpay) {
+        alert("Payment system not loaded. Try again!");
+        return;
+      }
+
+      const order = await createNutritionOrder();
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+        amount: order.amount,
+        order_id: order.id,
+        name: "Nutrition Session",
+        handler: async function (response) {
+          try {
+            const verify = await verifyNutritionPayment({
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
+              signature: response.razorpay_signature,
+              purchaserName: user.name || user.username || "User", // user name from auth
+              purchaserNumber:
+                user.phone || user.phoneNumber || user.mobileNumber || "", // mobile number from auth
+              userId: user.id || user._id || "", // logged in user id from auth
+              amount: order.amount,
+            });
+            console.log("Payment verification result:", verify);
+
+            if (verify.success) {
+              alert("Payment Verified!");
+              setNutritionVisible(true);
+            } else {
+              alert("Payment Verification Failed!");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Verification Error");
+          }
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error("Payment error:", err);
+      alert("Payment failed");
+    }
+  };
 
   const heroImage =
     "https://media.istockphoto.com/id/1457433817/photo/group-of-healthy-food-for-flexitarian-diet.jpg?s=612x612&w=0&k=20&c=v48RE0ZNWpMZOlSp13KdF1yFDmidorO2pZTu2Idmd3M=";
@@ -410,14 +524,14 @@ const Page = () => {
             <div className="mt-8">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-2xl font-bold text-gray-800">
-                  AI Meal Plan Generator
+                  AI Calculator
                 </h3>
-                <button
+                {/* <button
                   onClick={generateAiPlan}
                   className="px-6 py-2 rounded-full bg-indigo-600 text-white font-semibold shadow-lg hover:scale-105 transition"
                 >
                   Generate 5-Day Plan
-                </button>
+                </button> */}
               </div>
               {!plan && (
                 <p className="text-gray-500">
@@ -481,6 +595,10 @@ const Page = () => {
         </div>
 
         <aside className="space-y-8">
+          <Script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            strategy="afterInteractive"
+          />
           <div className="bg-gradient-to-tr from-purple-700 to-pink-600 text-white rounded-3xl shadow-2xl p-8 sticky top-20">
             <div className="flex items-center gap-4 mb-6">
               <svg
@@ -510,11 +628,31 @@ const Page = () => {
               </div>
             </div>
             <div className="text-center mb-4">
-              <div className="text-4xl font-extrabold">₹299</div>
+              <div className="text-4xl font-extrabold">
+                ₹{nutritionData?.data.nutritionPrice || "—"}
+              </div>
+              {/* <div className="text-4xl font-extrabold">₹299</div> */}
               <div className="text-sm opacity-90">/ 20-min session</div>
+              {nutritionVisible && nutritionData && (
+                <div className="mt-6 p-4 bg-gradient-to-tr from-purple-700 to-pink-600 text-white rounded-xl shadow">
+                  <h3 className="text-lg font-bold">Nutritionist Details</h3>
+                  <p>Name: {nutritionData.data.providerName}</p>
+                  <p>Contact: {nutritionData.data.providerContact}</p>
+                </div>
+              )}
             </div>
-            <button className="w-full py-3 rounded-full bg-white text-purple-700 font-bold shadow-lg hover:scale-105 transition">
-              Book Now
+            <button
+              onClick={handleNutritionPayment}
+              disabled={nutritionVisible} // agar payment ho gaya to disable
+              className={`w-full py-3 rounded-full font-bold shadow-lg hover:scale-105 transition
+    ${
+      nutritionVisible
+        ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+        : "bg-white text-purple-700"
+    }
+  `}
+            >
+              {nutritionVisible ? "Already Booked" : "Book Now"}
             </button>
             <p className="text-sm opacity-90 text-center mt-4">
               Secure payments · Instant scheduling · Certified pros
@@ -567,7 +705,7 @@ const Page = () => {
                     faqOpen[idx] ? "rotate-180" : ""
                   }`}
                 >
-                  ▼
+                  <IoChevronDownOutline className="text-red-500 text-2xl" />
                 </span>
               </button>
               {faqOpen[idx] && (

@@ -1,28 +1,35 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FiUser, FiShoppingCart } from "react-icons/fi";
+import { FiUser, FiShoppingCart, FiLogOut } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { usePathname } from "next/navigation";
 import { useModal } from "./ModalContext";
+import { registerUser, loginUser } from "../api/auth";
+import { setAuth, logout } from "../store/authSlice";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [meOpen, setMeOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState("");
   const meRef = useRef(null);
   const pathname = usePathname();
   const cartItems = useSelector((state) => state.cart.totalQuantity);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  // helper to determine active link (case-insensitive)
+  // helper to determine active link (handles nested routes)
   const isActive = (href) => {
     if (!pathname) return false;
-    try {
-      return pathname.toLowerCase() === href.toLowerCase();
-    } catch (e) {
-      return false;
-    }
+    const p = pathname.toLowerCase();
+    const h = href.toLowerCase();
+    if (h === "/") return p === "/";
+    return p.startsWith(h);
   };
 
   // close 'Me' when clicking outside
@@ -49,57 +56,109 @@ export default function Navbar() {
 
   const modal = useModal();
 
-  function openAuth(type) {
-    modal.openModal(
-      <div className="w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900">
-          {type === "register" ? "Create an account" : "Welcome back"}
-        </h2>
+  function AuthForm({ mode }) {
+    const [localLoading, setLocalLoading] = useState(false);
+    const [localError, setLocalError] = useState("");
 
-        {type === "register" ? (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              // TODO: wire registration API
-              modal.closeModal();
-            }}
-            className="space-y-3"
-          >
+    const [reg, setReg] = useState({
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+    });
+    const [login, setLogin] = useState({ email: "", password: "" });
+
+    const submitRegister = async (ev) => {
+      ev.preventDefault();
+      setLocalError("");
+      setLocalLoading(true);
+      try {
+        const response = await registerUser({
+          name: reg.name,
+          email: reg.email,
+          phone: reg.phone,
+          password: reg.password,
+        });
+        dispatch(setAuth({ user: response.user, token: response.token }));
+        const msg = response?.message;
+        if (msg) toast.success(msg);
+        modal.closeModal();
+      } catch (err) {
+        const msg = err?.message || "";
+        setLocalError(msg);
+        toast.error(msg);
+      } finally {
+        setLocalLoading(false);
+      }
+    };
+
+    const submitLogin = async (ev) => {
+      ev.preventDefault();
+      setLocalError("");
+      setLocalLoading(true);
+      try {
+        const response = await loginUser({
+          email: login.email,
+          password: login.password,
+        });
+        dispatch(setAuth({ user: response.user, token: response.token }));
+        const msg = response?.message;
+        if (msg) toast.success(msg);
+        modal.closeModal();
+      } catch (err) {
+        const msg = err?.message || "";
+        setLocalError(msg);
+        toast.error(msg);
+      } finally {
+        setLocalLoading(false);
+      }
+    };
+
+    return (
+      <div className="w-full max-w-md">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-900">
+          {mode === "register" ? "Create an account" : "Welcome back"}
+        </h2>
+        {localError && (
+          <div className="mb-3 text-sm text-red-600">{localError}</div>
+        )}
+        {mode === "register" ? (
+          <form onSubmit={submitRegister} className="space-y-3">
             <div>
               <label className="text-sm font-medium text-gray-700">Name</label>
               <input
                 required
                 name="name"
-                className="w-full border-none bg-gray-200 px-3 py-2 rounded mt-1"
+                value={reg.name}
+                onChange={(e) => setReg({ ...reg, name: e.target.value })}
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
                 placeholder="Your name"
               />
             </div>
-
             <div>
-              <label className="text-sm font-medium text-gray-700">
-                Mobile number
-              </label>
+              <label className="text-sm font-medium text-gray-700">Email</label>
               <input
                 required
-                name="mobile"
+                name="email"
+                type="email"
+                value={reg.email}
+                onChange={(e) => setReg({ ...reg, email: e.target.value })}
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700">Phone</label>
+              <input
+                required
+                name="phone"
                 type="tel"
-                className="w-full border-none bg-gray-200 px-3 py-2 rounded mt-1"
+                value={reg.phone}
+                onChange={(e) => setReg({ ...reg, phone: e.target.value })}
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
                 placeholder="+91 98765 43210"
               />
             </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">
-                Location
-              </label>
-              <input
-                required
-                name="location"
-                className="w-full border-none bg-gray-200 px-3 py-2 rounded mt-1"
-                placeholder="City, State"
-              />
-            </div>
-
             <div>
               <label className="text-sm font-medium text-gray-700">
                 Password
@@ -108,26 +167,26 @@ export default function Navbar() {
                 required
                 name="password"
                 type="password"
-                className="w-full border-none bg-gray-200 px-3 py-2 rounded mt-1"
+                value={reg.password}
+                onChange={(e) => setReg({ ...reg, password: e.target.value })}
+                className="w-full border border-gray-300 px-3 py-2 rounded mt-1"
                 placeholder="Create a password"
               />
             </div>
-
             <div className="flex items-center justify-end gap-2 ">
               <button
                 type="submit"
-                className="px-7 py-3 bg-red-400 text-white rounded text-sm font-medium hover:bg-green-700"
+                disabled={localLoading}
+                className="px-7 py-3 bg-blue-500 text-white rounded text-sm font-medium hover:bg-green-700 disabled:opacity-60"
               >
-                Sign up
+                {localLoading ? "Signing up..." : "Sign up"}
               </button>
             </div>
-
             <div className="flex items-center gap-3 my-2">
               <span className="flex-1 h-px bg-gray-200"></span>
               <span className="text-sm text-gray-500">or</span>
               <span className="flex-1 h-px bg-gray-200"></span>
             </div>
-
             <button
               type="button"
               onClick={() => {
@@ -137,37 +196,29 @@ export default function Navbar() {
               className="w-full flex items-center justify-center gap-2 py-2 rounded bg-white hover:bg-gray-50"
             >
               <FcGoogle className="w-5 h-5" />
-              <span className="text-sm"></span>
+              <span className="text-sm">Continue with Google</span>
             </button>
           </form>
         ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              // TODO: wire login API
-              modal.closeModal();
-            }}
-            className="space-y-3"
-          >
+          <form onSubmit={submitLogin} className="space-y-3">
             <div>
-              <label className="text-sm font-medium text-gray-700">
-                Mobile number
-              </label>
+              <label className="text-sm font-medium text-gray-700">Email</label>
               <input
                 required
-                name="mobile"
-                type="tel"
-                className="w-full border-none bg-gray-200 px-3 py-2 rounded mt-1"
-                placeholder="+91 98765 43200"
+                name="email"
+                type="email"
+                value={login.email}
+                onChange={(e) => setLogin({ ...login, email: e.target.value })}
+                className="w-full border px-3 py-2 rounded mt-1"
+                placeholder="you@example.com"
               />
             </div>
-
             <div>
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-gray-700">
                   Password
                 </label>
-                <a href="#" className="text-sm text-red-400 hover:underline">
+                <a href="#" className="text-sm text-blue-600 hover:underline">
                   Forgot password?
                 </a>
               </div>
@@ -175,26 +226,28 @@ export default function Navbar() {
                 required
                 name="password"
                 type="password"
-                className="w-full border-none bg-gray-200  px-3 py-2 rounded mt-1"
+                value={login.password}
+                onChange={(e) =>
+                  setLogin({ ...login, password: e.target.value })
+                }
+                className="w-full border px-3 py-2 rounded mt-1"
                 placeholder="Your password"
               />
             </div>
-
             <div className="flex items-center justify-between gap-2">
               <button
                 type="submit"
-                className="px-4 py-2 bg-red-400 text-white rounded text-sm font-medium hover:bg-green-700"
+                disabled={localLoading}
+                className="px-4 py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 disabled:opacity-60"
               >
-                Sign in
+                {localLoading ? "Signing in..." : "Sign in"}
               </button>
             </div>
-
             <div className="flex items-center gap-3 my-2">
               <span className="flex-1 h-px bg-gray-200"></span>
               <span className="text-sm text-gray-500">or</span>
               <span className="flex-1 h-px bg-gray-200"></span>
             </div>
-
             <button
               type="button"
               onClick={() => {
@@ -204,6 +257,7 @@ export default function Navbar() {
               className="w-full flex items-center justify-center gap-2 py-2 rounded bg-white hover:bg-gray-50"
             >
               <FcGoogle className="w-5 h-5" />
+              <span className="text-sm">Continue with Google</span>
             </button>
           </form>
         )}
@@ -211,8 +265,21 @@ export default function Navbar() {
     );
   }
 
+  function openAuth(type) {
+    modal.openModal(<AuthForm mode={type} />);
+  }
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+      <Toaster position="top-right" reverseOrder={false} />
       <nav className="max-w-6xl mx-auto flex items-center justify-between h-16 px-4">
         {/* Logo */}
         <Link
@@ -268,6 +335,8 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* desktop cart will be rendered inside the nav links (see below) */}
+
         {/* Links */}
         <ul
           className={`${
@@ -304,7 +373,7 @@ export default function Navbar() {
               }`}
               onClick={() => setMobileOpen(false)}
             >
-              Meal Plans
+              Menu
             </Link>
             <span
               className={`block h-0.5 bg-red-500 mt-1 transition-all ${
@@ -348,6 +417,34 @@ export default function Navbar() {
               }`}
             />
           </li>
+
+          {/* Desktop cart placed to the right of Contact (visible md+) */}
+          <li className="hidden md:block">
+            <Link
+              href="/cart"
+              className={`px-3 py-2 rounded-lg hover:bg-gray-100 block relative ${
+                isActive("/cart")
+                  ? "text-red-500 font-bold"
+                  : "text-gray-800 font-semibold"
+              }`}
+              onClick={() => setMobileOpen(false)}
+              aria-label="Cart"
+            >
+              <FiShoppingCart className="w-5 h-5" />
+              {cartItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartItems}
+                </span>
+              )}
+            </Link>
+            <span
+              className={`block h-0.5 bg-red-500 mt-1 transition-all ${
+                isActive("/cart") ? "w-full" : "w-0"
+              }`}
+            />
+          </li>
+
+          {/* Desktop: 'Me' dropdown only on md+ */}
           <li className="relative w-full md:w-auto hidden md:block" ref={meRef}>
             <button
               className="flex items-center gap-2 justify-between md:justify-start w-full md:w-auto px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100"
@@ -377,34 +474,65 @@ export default function Navbar() {
 
             {/* Dropdown menu (desktop only) */}
             {meOpen && (
-              <ul className="absolute right-0 top-13 rounded-2xl bg-white border border-gray-200  shadow-xl w-50 py-5 animate-fade-in">
-                <li>
-                  <button
-                    className="w-full text-center block px-4 py-2 text-gray-800 hover:bg-gray-50"
-                    onClick={() => {
-                      setMeOpen(false);
-                      setMobileOpen(false);
-                      openAuth("register");
-                    }}
-                  >
-                    Register
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="w-full text-center block px-4 py-2 text-gray-800 hover:bg-gray-50"
-                    onClick={() => {
-                      setMeOpen(false);
-                      setMobileOpen(false);
-                      openAuth("login");
-                    }}
-                  >
-                    Login
-                  </button>
-                </li>
+              <ul className="absolute right-0 top-13 bg-white border border-gray-500  shadow-lg w-100 py-5 animate-fade-in">
+                {!isAuthenticated ? (
+                  <>
+                    <li>
+                      <button
+                        className="w-full text-center block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                        onClick={() => {
+                          setMeOpen(false);
+                          setMobileOpen(false);
+                          openAuth("register");
+                        }}
+                      >
+                        Register
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="w-full text-center block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                        onClick={() => {
+                          setMeOpen(false);
+                          setMobileOpen(false);
+                          openAuth("login");
+                        }}
+                      >
+                        Login
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link
+                        href="/Profile"
+                        className="w-full text-center block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                        onClick={() => {
+                          setMeOpen(false);
+                          setMobileOpen(false);
+                        }}
+                      >
+                        Profile
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        className="w-full text-center block px-4 py-2 text-gray-800 hover:bg-gray-50"
+                        onClick={() => {
+                          dispatch(logout());
+                          setMeOpen(false);
+                          toast.success("Logged out successfully");
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </>
+                )}
                 <li>
                   <Link
-                    href="/Menu"
+                    href="/Dashboard/Admin"
                     className="block px-4 py-2 border text-center rounded-3xl bg-red-400 text-white hover:bg-green-400"
                     onClick={() => {
                       setMeOpen(false);
@@ -419,28 +547,56 @@ export default function Navbar() {
           </li>
 
           {/* Mobile-only: replace dropdown with plain links inside mobile menu */}
-          <li className="md:hidden">
-            <button
-              className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block text-left"
-              onClick={() => {
-                setMobileOpen(false);
-                openAuth("register");
-              }}
-            >
-              Register
-            </button>
-          </li>
-          <li className="md:hidden">
-            <button
-              className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block text-left"
-              onClick={() => {
-                setMobileOpen(false);
-                openAuth("login");
-              }}
-            >
-              Login
-            </button>
-          </li>
+          {!isAuthenticated ? (
+            <>
+              <li className="md:hidden">
+                <button
+                  className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block text-left"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    openAuth("register");
+                  }}
+                >
+                  Register
+                </button>
+              </li>
+              <li className="md:hidden">
+                <button
+                  className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block text-left"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    openAuth("login");
+                  }}
+                >
+                  Login
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="md:hidden">
+                <Link
+                  href="/Profile"
+                  className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block text-left"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Profile
+                </Link>
+              </li>
+              <li className="md:hidden">
+                <button
+                  className="px-3 py-2 rounded-lg text-gray-800 font-semibold hover:bg-gray-100 w-full block text-left"
+                  onClick={() => {
+                    dispatch(logout());
+                    setMobileOpen(false);
+                    toast.success("Logged out successfully");
+                  }}
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          )}
           <li className="md:hidden">
             <Link
               href="/Menu"

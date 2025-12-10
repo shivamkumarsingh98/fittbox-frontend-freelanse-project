@@ -1,14 +1,76 @@
-import React from "react";
+"use client";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { testimonials } from "../Data";
+import { getAboutSection } from "../api/admin";
 
 function Contant() {
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [aboutData, setAboutData] = useState(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    async function fetchAbout() {
+      try {
+        const res = await getAboutSection();
+        if (!mounted) return;
+
+        // Prefer only the `about` field from the API response: res.data.about
+        const aboutFromResponse =
+          (res && typeof res === "object" && res.data && res.data.about) ||
+          (res && typeof res === "object" && res.about) ||
+          (typeof res === "string" ? res : null);
+
+        if (aboutFromResponse) {
+          setAboutData(aboutFromResponse);
+        }
+      } catch (err) {
+        // If API fails, keep aboutData null so UI falls back to existing text
+        // eslint-disable-next-line no-console
+        console.error("getAboutSection error:", err);
+      }
+    }
+
+    fetchAbout();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <div className="w-full bg-white">
       {/* Top Section - Heading and Subheading */}
       <div className="text-center py-12 px-4 md:py-16">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 md:mb-6 leading-tight px-4">
-          From Salads, High Protein bowl, Acai bowls To Smoothies...
+        <h1
+          ref={sectionRef}
+          className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 md:mb-6 leading-tight px-4 transform transition-all duration-700 ease-out ${
+            isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+          }`}
+        >
+          High Protein bowl
         </h1>
         <p className="text-base sm:text-lg md:text-xl text-black max-w-4xl mx-auto px-4">
           Fresh, zesty, and bursting with crunch—our sprout salad is a flavor
@@ -93,33 +155,309 @@ function Contant() {
             {/* Text Section */}
             <div className="w-full md:w-1/2">
               <div className="space-y-6">
-                <p className="text-gray-700 text-base md:text-lg leading-relaxed">
-                  At <span className="font-bold text-black">Fitbos</span>, we
-                  believe good food should be both nourishing and exciting. Born
-                  in the heart of India, our café is dedicated to serving
-                  vibrant, handcrafted salads, protein bowls, and smoothies made
-                  fresh every single day.
+                {aboutData ? (
+                  // If API returned data, try to render it.
+                  typeof aboutData === "string" ? (
+                    <>
+                      {aboutData.split("\n\n").map((para, idx) => (
+                        <p
+                          key={idx}
+                          className="text-gray-700 text-base md:text-lg leading-relaxed"
+                        >
+                          {para}
+                        </p>
+                      ))}
+                    </>
+                  ) : Array.isArray(aboutData) ? (
+                    aboutData.map((txt, i) => (
+                      <p
+                        key={i}
+                        className="text-gray-700 text-base md:text-lg leading-relaxed"
+                      >
+                        {txt}
+                      </p>
+                    ))
+                  ) : typeof aboutData === "object" &&
+                    (aboutData.content ||
+                      aboutData.description ||
+                      aboutData.text ||
+                      aboutData.body) ? (
+                    // render common object fields
+                    <>
+                      {(
+                        (aboutData.content ??
+                          aboutData.description ??
+                          aboutData.text ??
+                          aboutData.body) ||
+                        ""
+                      )
+                        .toString()
+                        .split("\n\n")
+                        .map((para, idx) => (
+                          <p
+                            key={idx}
+                            className="text-gray-700 text-base md:text-lg leading-relaxed"
+                          >
+                            {para}
+                          </p>
+                        ))}
+                    </>
+                  ) : (
+                    // Fallback: stringify small objects sensibly
+                    <p className="text-gray-700 text-base md:text-lg leading-relaxed">
+                      {JSON.stringify(aboutData)}
+                    </p>
+                  )
+                ) : (
+                  // Existing static content as fallback
+                  <>
+                    <p className="text-gray-700 text-base md:text-lg leading-relaxed">
+                      At <span className="font-bold text-black">Fittbox</span>,
+                      we believe good food should be both nourishing and
+                      exciting. Born in the heart of India, our café is
+                      dedicated to serving vibrant, handcrafted salads, protein
+                      bowls, and smoothies made fresh every single day.
+                    </p>
+
+                    <p className="text-gray-700 text-base md:text-lg leading-relaxed">
+                      Whether you're walking in for a power-packed lunch or
+                      subscribing to our weekly plans, every bowl reflects our
+                      passion for clean ingredients, balanced meals, and
+                      feel-good flavours. We're also available on{" "}
+                      <span className="font-bold text-black">Swiggy</span>,{" "}
+                      <span className="font-bold text-black">Zomato</span>, and{" "}
+                      <span className="font-bold text-black">WhatsApp</span>,
+                      making healthy eating effortless.
+                    </p>
+
+                    <p className="text-gray-700 text-base md:text-lg leading-relaxed">
+                      We're not just a salad café – we're a daily ritual for
+                      those who choose freshness, simplicity, and real taste.
+                    </p>
+
+                    <div className="pt-4">
+                      <button className="border-2 border-black bg-white text-black px-8 py-3 text-base md:text-lg font-semibold hover:bg-black hover:text-white transition-colors duration-300">
+                        READ MORE
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      {/* <div className="py-16 md:py-20 px-4  text-black">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Start Your Healthy Journey?
+          </h2>
+          <image
+            src="/fittbox2.png"
+            alt="Fitbos Logo"
+            width={200}
+            height={50}
+            className="text-lg md:text-xl mb-8 text-gray-300"
+          />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-white text-black px-8 py-4 text-lg font-semibold hover:bg-gray-100 transition-colors duration-300">
+              Order Now
+            </button>
+            <button className="border-2 border-white text-black px-8 py-4 text-lg font-semibold hover:bg-white hover:text-black transition-colors duration-300">
+              View Menu
+            </button>
+          </div>
+        </div>
+      </div> */}
+
+      {/* Diet Meal Plans Section */}
+      <div className="py-20 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <span className="inline-block bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-medium">
+              Meal Plans
+            </span>
+
+            <h2 className="mt-6 text-4xl md:text-5xl font-serif font-extrabold text-black leading-tight">
+              Diet Plans for Every Goal
+            </h2>
+
+            <p className="mt-4 text-gray-500 max-w-3xl mx-auto">
+              Choose a plan that fits your lifestyle and let us handle the
+              nutrition
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
+            {/* Fat Loss Card */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 h-full flex flex-col">
+              <div className="flex-1 flex flex-col items-center text-center">
+                <div className="w-28 h-28 rounded-full overflow-hidden border-8 border-gray-100 bg-white mb-6 flex items-center justify-center">
+                  <Image
+                    src="/hero2.jpg"
+                    alt="Fat Loss Meal"
+                    width={140}
+                    height={140}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+
+                <h3 className="text-lg font-semibold text-black mb-2">
+                  Fat Loss
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Ready to transform your body? Our macro-specific meals help
+                  you shed unwanted pounds while staying energized.
                 </p>
 
-                <p className="text-gray-700 text-base md:text-lg leading-relaxed">
-                  Whether you're walking in for a power-packed lunch or
-                  subscribing to our weekly plans, every bowl reflects our
-                  passion for clean ingredients, balanced meals, and feel-good
-                  flavours. We're also available on{" "}
-                  <span className="font-bold text-black">Swiggy</span>,{" "}
-                  <span className="font-bold text-black">Zomato</span>, and{" "}
-                  <span className="font-bold text-black">WhatsApp</span>, making
-                  healthy eating effortless.
+                <div className="mt-auto w-full">
+                  <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-semibold hover:bg-emerald-600 transition">
+                    Get Started
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Muscle Building Card */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 h-full flex flex-col">
+              <div className="flex-1 flex flex-col items-center text-center">
+                <div className="w-28 h-28 rounded-full overflow-hidden border-8 border-gray-100 bg-white mb-6 flex items-center justify-center">
+                  <Image
+                    src="/hero3.jpg"
+                    alt="Muscle Building Meal"
+                    width={140}
+                    height={140}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+
+                <h3 className="text-lg font-semibold text-black mb-2">
+                  Muscle Building
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Bulk up with high-protein, fiber-rich meals perfect for
+                  post-workout recovery.
                 </p>
 
-                <p className="text-gray-700 text-base md:text-lg leading-relaxed">
-                  We're not just a salad café – we're a daily ritual for those
-                  who choose freshness, simplicity, and real taste.
+                <div className="mt-auto w-full">
+                  <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-semibold hover:bg-emerald-600 transition">
+                    Get Started
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Balanced Nourishment Card */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 h-full flex flex-col">
+              <div className="flex-1 flex flex-col items-center text-center">
+                <div className="w-28 h-28 rounded-full overflow-hidden border-8 border-gray-100 bg-white mb-6 flex items-center justify-center">
+                  <Image
+                    src="/hero4.jpg"
+                    alt="Balanced Nourishment Meal"
+                    width={140}
+                    height={140}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+
+                <h3 className="text-lg font-semibold text-black mb-2">
+                  Balanced Nourishment
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Maintain a healthy lifestyle with our macro-balanced meals —
+                  delicious, convenient, delivered daily.
                 </p>
 
-                <div className="pt-4">
-                  <button className="border-2 border-black bg-white text-black px-8 py-3 text-base md:text-lg font-semibold hover:bg-black hover:text-white transition-colors duration-300">
-                    READ MORE
+                <div className="mt-auto w-full">
+                  <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-semibold hover:bg-emerald-600 transition">
+                    Get Started
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Custom Diet Plan Card */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 h-full flex flex-col">
+              <div className="flex-1 flex flex-col items-center text-center">
+                <div className="w-28 h-28 rounded-full overflow-hidden border-8 border-gray-100 bg-white mb-6 flex items-center justify-center">
+                  <Image
+                    src="/hero5.jpg"
+                    alt="Custom Diet Plan"
+                    width={140}
+                    height={140}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+
+                <h3 className="text-lg font-semibold text-black mb-2">
+                  Custom Diet Plan
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Bring your nutritionist's chart to us, and our chefs will
+                  create a personalized meal plan for you.
+                </p>
+
+                <div className="mt-auto w-full">
+                  <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-semibold hover:bg-emerald-600 transition">
+                    Get Started
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -128,209 +466,53 @@ function Contant() {
         </div>
       </div>
 
-      {/* Diet Meal Plans Section */}
-      <div className="py-20 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-black mb-20">
-            Dite Meal Plans
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Fat Loss Card */}
-            <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 relative group">
-              <div className="text-center">
-                <div className="relative mb-8">
-                  <div className="w-44 h-44 mx-auto rounded-full overflow-hidden bg-white shadow-md group cursor-pointer relative">
-                    <Image
-                      src="/hero2.jpg"
-                      alt="Fat Loss Meal"
-                      width={176}
-                      height={176}
-                      className="w-full h-full object-cover rounded-full group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ease-in-out"
-                    />
-                  </div>
-                </div>
-
-                <h3 className="text-2xl font-bold text-black mb-4">Fat Loss</h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-8">
-                  Ready to transform your body and achieve your weight goals?
-                  Our specially curated, macro specific meals are exactly what
-                  you need to shed those unwanted pounds.
-                </p>
-
-                <button className="w-full bg-green-500 animate-bounce text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-green-600 hover:scale-105 transition-all duration-300 shadow-md">
-                  GET STARTED
-                </button>
-              </div>
-            </div>
-
-            {/* Muscle Building Card */}
-            <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 relative group">
-              <div className="text-center">
-                <div className="relative mb-8">
-                  <div className="w-44 h-44 mx-auto rounded-full overflow-hidden bg-white shadow-md group cursor-pointer relative">
-                    <Image
-                      src="/hero3.jpg"
-                      alt="Muscle Building Meal"
-                      width={176}
-                      height={176}
-                      className="w-full h-full object-cover rounded-full group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ease-in-out"
-                    />
-                  </div>
-                </div>
-
-                <h3 className="text-2xl font-bold text-black mb-4">
-                  Muscle Building
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-8">
-                  Ready to bulk up and show off those gains? Our specially
-                  curated meals have got you covered. A high-protein and
-                  fiber-rich meal is all you need after a pumped workout.
-                </p>
-
-                <button className="w-full bg-green-500 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-green-600 hover:scale-105 transition-all duration-300 shadow-md">
-                  GET STARTED
-                </button>
-              </div>
-            </div>
-
-            {/* Balanced Nourishment Card */}
-            <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 relative group">
-              <div className="text-center">
-                <div className="relative mb-8">
-                  <div className="w-44 h-44 mx-auto rounded-full overflow-hidden bg-white shadow-md group cursor-pointer relative">
-                    <Image
-                      src="/hero4.jpg"
-                      alt="Balanced Nourishment Meal"
-                      width={176}
-                      height={176}
-                      className="w-full h-full object-cover rounded-full group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ease-in-out"
-                    />
-                  </div>
-                </div>
-
-                <h3 className="text-2xl font-bold text-black mb-4">
-                  Balanced Nourishment
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-8">
-                  Looking to nourish your body and maintain a healthy diet? Our
-                  macro-balanced meal has got you covered. Delicious, convenient
-                  meals delivered to you every day.
-                </p>
-
-                <button className="w-full bg-green-500 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-green-600 hover:scale-105 transition-all duration-300 shadow-md">
-                  GET STARTED
-                </button>
-              </div>
-            </div>
-
-            {/* Bring Your Own Chart Card */}
-            <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 relative group">
-              <div className="text-center">
-                <div className="relative mb-8">
-                  <div className="w-44 h-44 mx-auto rounded-full overflow-hidden bg-white shadow-md group cursor-pointer relative">
-                    <Image
-                      src="/hero5.jpg"
-                      alt="Bring Your Own Chart"
-                      width={176}
-                      height={176}
-                      className="w-full h-full object-cover rounded-full group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 ease-in-out"
-                    />
-                  </div>
-                </div>
-
-                <h3 className="text-2xl font-bold text-black mb-4">
-                  Bring Your Own Chart
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-8">
-                  Finding it challenging to stick to your nutritionist's or
-                  trainer's recommended meal? Bring your chart to us, and our
-                  team of chefs will take care of the rest.
-                </p>
-
-                <button className="w-full bg-green-500 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-green-600 hover:scale-105 transition-all duration-300 shadow-md">
-                  GET STARTED
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Features Section */}
-      {/* <div className="py-16 md:py-20 px-4 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-black mb-12">
-            Why Choose Fitbos?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white text-2xl">🌱</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Fresh Ingredients</h3>
-              <p className="text-gray-600">
-                We use only the freshest, locally sourced ingredients for all
-                our meals.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white text-2xl">⚡</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Quick Delivery</h3>
-              <p className="text-gray-600">
-                Get your healthy meals delivered fresh to your doorstep within
-                30 minutes.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white text-2xl">💪</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Nutrition Focused</h3>
-              <p className="text-gray-600">
-                Every meal is carefully crafted to provide optimal nutrition and
-                taste.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
       {/* Testimonials Section */}
-      <section className="py-16 md:py-20 px-4 bg-gray-50 overflow-hidden">
-        <div className="max-w-6xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-black">
+      <section className="py-16 md:py-20 px-4 bg-white overflow-hidden">
+        <div className="max-w-4xl mx-auto text-center mb-8">
+          <span className="inline-block bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-medium">
             Testimonials
+          </span>
+
+          <h2 className="mt-6 text-4xl md:text-6xl font-serif font-extrabold text-black leading-tight">
+            What Our Customers Say
           </h2>
+
+          <p className="mt-4 text-gray-500 max-w-3xl mx-auto">
+            Join thousands of happy customers who've made Fittbox their daily
+            health partner
+          </p>
         </div>
 
         {/* Infinite Scroll Container */}
         <div className="relative w-full overflow-hidden">
-          <div id="scroll-track" className="inline-flex hover:pause-animation">
+          <div
+            id="scroll-track"
+            className="inline-flex hover:pause-animation py-6"
+          >
             {[...testimonials, ...testimonials].map((item, index) => (
               <div
                 key={index}
-                className="bg-white border border-gray-300 shadow-md rounded-xl p-6 mx-3 w-80 h-44 flex-shrink-0 flex flex-col justify-between"
+                className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 mx-3 w-80 flex-shrink-0 flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center mb-4">
-                    <Image
+                  <div className="flex items-center mb-3">
+                    {/* <Image
                       src={item.image}
                       alt={item.name}
-                      width={50}
-                      height={50}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div className="ml-3 text-left">
-                      <h4 className="font-semibold text-gray-900">
+                      width={56}
+                      height={56}
+                      className="w-14 h-14 rounded-full object-cover"
+                    /> */}
+                    <div className=" text-left">
+                      <h4 className="font-semibold text-gray-900 text-lg">
                         {item.name}
                       </h4>
-                      <p className="text-yellow-500 text-sm">{item.rating}</p>
+                      <p className="text-yellow-500 text-sm mt-1">
+                        {item.rating}
+                      </p>
                     </div>
                   </div>
-                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-4">
+                  <p className="text-gray-600 text-sm leading-relaxed">
                     "{item.text}"
                   </p>
                 </div>
