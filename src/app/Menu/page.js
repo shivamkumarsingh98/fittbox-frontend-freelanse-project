@@ -127,7 +127,7 @@ function Page() {
       try {
         setLoadingTrialMeals(true);
         const data = await getTrialMeals();
-        // console.log("getTrialMeals:", data);
+        console.log("getTrialMeals:", data);
         // Handle both direct array and nested data structure
         const meals = Array.isArray(data) ? data : data?.data || [];
         setTrialMeals(meals);
@@ -210,7 +210,7 @@ function Page() {
       planType: meal.planType || "TrialMeal",
       price: price,
       days: 1,
-      image: meal.img || null,
+      image: meal.image || null,
     };
 
     console.log("🛒 Sending to cart:", cartItem); // debug
@@ -330,7 +330,7 @@ function Page() {
         productId: meal._id || null,
         name: `${meal.name} ${meal.type}`,
         price: price,
-        image: meal.img,
+        image: meal.image,
         days: isTrialMeal ? 1 : undefined, // Add days for trial meals only
         planType: meal.planType,
       })
@@ -394,8 +394,8 @@ function Page() {
                     ? Number(opt.nonveg.price)
                     : null;
                   const cardImage =
-                    (opt.veg && opt.veg.img) ||
-                    (opt.nonveg && opt.nonveg.img) ||
+                    (opt.veg && opt.veg.image) ||
+                    (opt.nonveg && opt.nonveg.image) ||
                     "/hero2.jpg";
                   const capitalizedName =
                     opt.name.charAt(0).toUpperCase() + opt.name.slice(1);
@@ -482,8 +482,8 @@ function Page() {
                   <div className="w-full h-56 relative -m-0">
                     <Image
                       src={
-                        (lunchVeg && lunchVeg.img) ||
-                        (lunchNonveg && lunchNonveg.img) ||
+                        (lunchVeg && lunchVeg.image) ||
+                        (lunchNonveg && lunchNonveg.image) ||
                         "/hero2.jpg"
                       }
                       alt="Lunch"
@@ -554,8 +554,8 @@ function Page() {
                   <div className="w-full h-56 relative -m-0">
                     <Image
                       src={
-                        (dinnerVeg && dinnerVeg.img) ||
-                        (dinnerNonveg && dinnerNonveg.img) ||
+                        (dinnerVeg && dinnerVeg.image) ||
+                        (dinnerNonveg && dinnerNonveg.image) ||
                         "/hero2.jpg"
                       }
                       alt="Dinner"
@@ -649,7 +649,7 @@ function Page() {
                   >
                     <div className="w-full h-56 relative -m-0">
                       <Image
-                        src={meal.img || "/hero2.jpg"}
+                        src={meal.image || "/hero2.jpg"}
                         alt={meal.name}
                         fill
                         className="object-cover"

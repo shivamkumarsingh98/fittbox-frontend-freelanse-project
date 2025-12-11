@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FiUser, FiShoppingCart, FiLogOut } from "react-icons/fi";
+import { MdOutlineShoppingBag } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
@@ -303,7 +304,7 @@ export default function Navbar() {
             onClick={() => setMobileOpen(false)}
             aria-label="Cart"
           >
-            <FiShoppingCart className="w-6 h-6 text-gray-800" />
+            <MdOutlineShoppingBag className="w-6 h-6 text-gray-800" />
             {cartItems > 0 && (
               <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {cartItems}
@@ -430,7 +431,7 @@ export default function Navbar() {
               onClick={() => setMobileOpen(false)}
               aria-label="Cart"
             >
-              <FiShoppingCart className="w-5 h-5" />
+              <MdOutlineShoppingBag className="w-5 h-5" />
               {cartItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {cartItems}

@@ -19,9 +19,10 @@ const subscriptionApi = {
     console.log("➡️ URL:", `${api}/api/subscriptions/upload-bloodreport`);
     console.log("➡️ Method: POST");
     console.log("➡️ Token (finalToken):", finalToken);
+    // When sending FormData do NOT set Content-Type so the browser
+    // can add the correct multipart boundary header automatically.
     const headers = {
-      Authorization: `Bearer ${explicitToken || token}`,
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${finalToken}`,
     };
     console.log("➡️ Headers Sent:", headers);
     console.log("➡️ FormData Values:");

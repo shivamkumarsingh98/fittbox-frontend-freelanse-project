@@ -26,6 +26,11 @@ export default function Checkout() {
     cvv: "",
   });
 
+  // Upload modal state: show immediately when page loads
+  const [showUploadModal, setShowUploadModal] = useState(true);
+  const [reportFile, setReportFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
   // Initialize name & email from auth
   useEffect(() => {
     if (auth.user) {
@@ -36,6 +41,11 @@ export default function Checkout() {
       }));
     }
   }, [auth.user]);
+
+  // ensure modal shows when component mounts (explicit)
+  useEffect(() => {
+    setShowUploadModal(true);
+  }, []);
 
   // Protect route
   useEffect(() => {
@@ -59,6 +69,47 @@ export default function Checkout() {
       setFormData({ ...formData, bloodReport: e.target.files[0] });
     } else {
       setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
+  };
+
+  // Handlers for the upload modal
+  const handleReportChange = (e) => {
+    const f = e.target.files && e.target.files[0];
+    setReportFile(f || null);
+  };
+
+  const handleSkipUpload = () => {
+    setShowUploadModal(false);
+  };
+
+  const handleUploadReport = async () => {
+    if (!reportFile) {
+      toast.error("Please select a file or click Skip");
+      return;
+    }
+    setUploading(true);
+    const fd = new FormData();
+    // key name 'bloodReport' is used for debugging in the api
+    fd.append("bloodReport", reportFile);
+    try {
+      const res = await subscriptionApi.uplodeBloodReport(fd, auth.token);
+      toast.success(res?.data?.message || "Report uploaded successfully");
+      // optionally save returned URL into formData for later use
+      try {
+        if (res?.data?.fileUrl) {
+          setFormData((prev) => ({ ...prev, bloodReport: res.data.fileUrl }));
+        } else {
+          setFormData((prev) => ({ ...prev, bloodReport: reportFile }));
+        }
+      } catch (e) {
+        // ignore
+      }
+      setShowUploadModal(false);
+    } catch (err) {
+      const msg = err?.message || "Upload failed";
+      toast.error(msg);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -166,7 +217,7 @@ export default function Checkout() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
         amount: order.amount,
         currency: "INR",
-        name: "Fitbox",
+        name: "Fittbox",
         description: "Subscription Payment",
         order_id: order.id,
 
@@ -267,154 +318,374 @@ export default function Checkout() {
     }
   };
 
+  // return (
+  //   <div className="container mx-auto px-4 py-8 min-h-[60vh]">
+  //     <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+  //     <div className="flex flex-col lg:flex-row gap-8">
+  //       {/* LEFT SIDE */}
+  //       <div className="lg:w-2/3">
+  //         <form onSubmit={handleSubmit} className="space-y-6">
+  //           {/* SHIPPING */}
+  //           <div className="bg-white p-6 rounded-lg shadow">
+  //             <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
+  //             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  //               <div>
+  //                 <label className="block text-gray-700 mb-2">Full Name</label>
+  //                 <input
+  //                   type="text"
+  //                   name="name"
+  //                   value={formData.name}
+  //                   readOnly
+  //                   className="w-full p-2 border rounded bg-gray-100 cursor-not-allowed"
+  //                 />
+  //               </div>
+
+  //               <div>
+  //                 <label className="block text-gray-700 mb-2">Email</label>
+  //                 <input
+  //                   type="email"
+  //                   name="email"
+  //                   readOnly
+  //                   value={formData.email}
+  //                   className="w-full p-2 border rounded bg-gray-100 cursor-not-allowed"
+  //                 />
+  //               </div>
+
+  //               <div className="md:col-span-2">
+  //                 <label className="block text-gray-700 mb-2">Address</label>
+  //                 <input
+  //                   type="text"
+  //                   name="address"
+  //                   required
+  //                   value={formData.address}
+  //                   onChange={handleChange}
+  //                   className="w-full p-2 border rounded"
+  //                 />
+  //               </div>
+
+  //               <div>
+  //                 <label className="block text-gray-700 mb-2">City</label>
+  //                 <input
+  //                   type="text"
+  //                   name="city"
+  //                   required
+  //                   value={formData.city}
+  //                   onChange={handleChange}
+  //                   className="w-full p-2 border rounded"
+  //                 />
+  //               </div>
+
+  //               <div>
+  //                 <label className="block text-gray-700 mb-2">ZIP Code</label>
+  //                 <input
+  //                   type="text"
+  //                   name="zipCode"
+  //                   required
+  //                   value={formData.zipCode}
+  //                   onChange={handleChange}
+  //                   className="w-full p-2 border rounded"
+  //                 />
+  //               </div>
+  //             </div>
+  //           </div>
+
+  //           <button
+  //             type="submit"
+  //             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+  //           >
+  //             Pay ₹{cart.totalAmount.toFixed(2)}
+  //           </button>
+  //         </form>
+  //       </div>
+
+  //       {/* RIGHT SIDE SUMMARY */}
+  //       <div className="lg:w-1/3">
+  //         <div className="bg-gray-50 p-6 rounded-lg">
+  //           <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+
+  //           {cart.items.map((item) => (
+  //             <div key={item.id} className="flex justify-between py-2">
+  //               <span>
+  //                 {item.name} x {item.quantity}
+  //               </span>
+  //               <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+  //             </div>
+  //           ))}
+
+  //           <div className="border-t mt-4 pt-4 flex justify-between font-bold">
+  //             <span>Total</span>
+  //             <span>₹{cart.totalAmount.toFixed(2)}</span>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="container mx-auto px-4 py-8 min-h-[60vh]">
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* LEFT SIDE */}
-        <div className="lg:w-2/3">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* SHIPPING */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-700 mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    readOnly
-                    className="w-full p-2 border rounded bg-gray-100 cursor-not-allowed"
-                  />
-                </div>
+    <>
+      {showUploadModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          {/* modal container - clicking backdrop does nothing */}
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-xl font-bold mb-4">
+              Upload Latest Blood Report
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Please upload your latest blood report. You can skip and upload
+              later, but uploading now helps us personalize your meals.
+            </p>
 
-                <div>
-                  <label className="block text-gray-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    readOnly
-                    value={formData.email}
-                    className="w-full p-2 border rounded bg-gray-100 cursor-not-allowed"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-gray-700 mb-2">Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    required
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 mb-2">City</label>
-                  <input
-                    type="text"
-                    name="city"
-                    required
-                    value={formData.city}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 mb-2">ZIP Code</label>
-                  <input
-                    type="text"
-                    name="zipCode"
-                    required
-                    value={formData.zipCode}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-              </div>
+            <div className="mb-4">
+              <input
+                type="file"
+                accept="application/pdf,image/*"
+                onChange={handleReportChange}
+                className="w-full"
+              />
+              {reportFile && (
+                <p className="mt-2 text-sm text-gray-700">
+                  Selected: {reportFile.name}
+                </p>
+              )}
             </div>
 
-            {/* PAYMENT (UI only – Razorpay handle karega) */}
-            {/* <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-bold mb-4">
-                Payment Information (Card Dummy UI)
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label>Card Number</label>
-                  <input
-                    type="text"
-                    name="cardNumber"
-                    value={formData.cardNumber}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-
-                <div>
-                  <label>Expiry (MM/YY)</label>
-                  <input
-                    type="text"
-                    name="expiryDate"
-                    value={formData.expiryDate}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-
-                <div>
-                  <label>CVV</label>
-                  <input
-                    type="text"
-                    name="cvv"
-                    maxLength="4"
-                    value={formData.cvv}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-              </div>
-            </div> */}
-
-            {/* PLACE ORDER */}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
-            >
-              Pay ₹{cart.totalAmount.toFixed(2)}
-            </button>
-          </form>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={handleSkipUpload}
+                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700"
+              >
+                Skip
+              </button>
+              <button
+                type="button"
+                onClick={handleUploadReport}
+                disabled={uploading}
+                className="px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-60"
+              >
+                {uploading ? "Uploading..." : "Upload & Continue"}
+              </button>
+            </div>
+          </div>
         </div>
+      )}
 
-        {/* RIGHT SIDE SUMMARY */}
-        <div className="lg:w-1/3">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-12">
+            Complete Your Order
+          </h1>
 
-            {cart.items.map((item) => (
-              <div key={item.id} className="flex justify-between py-2">
-                <span>
-                  {item.name} x {item.quantity}
-                </span>
-                <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            {/* LEFT SIDE - Checkout Form */}
+            <div className="lg:col-span-2">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Shipping Information Card */}
+                <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+                  <div className="flex items-center mb-8">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900 ml-4">
+                      Shipping Information
+                    </h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        readOnly
+                        className="w-full px-5 py-4 bg-gray-100 border border-gray-300 rounded-xl cursor-not-allowed text-gray-700 font-medium"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        readOnly
+                        value={formData.email}
+                        className="w-full px-5 py-4 bg-gray-100 border border-gray-300 rounded-xl cursor-not-allowed text-gray-700 font-medium"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Delivery Address
+                      </label>
+                      <input
+                        type="text"
+                        name="address"
+                        required
+                        value={formData.address}
+                        onChange={handleChange}
+                        placeholder="123 Main St, Apt 4B"
+                        className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        City
+                      </label>
+                      <input
+                        type="text"
+                        name="city"
+                        required
+                        value={formData.city}
+                        onChange={handleChange}
+                        placeholder="Mumbai"
+                        className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        ZIP Code
+                      </label>
+                      <input
+                        type="text"
+                        name="zipCode"
+                        required
+                        value={formData.zipCode}
+                        onChange={handleChange}
+                        placeholder="400001"
+                        className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pay Button */}
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold text-xl py-5 rounded-2xl hover:from-blue-700 hover:to-indigo-800 transform hover:scale-105 transition duration-300 shadow-2xl flex items-center justify-center gap-3"
+                >
+                  <svg
+                    className="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v5m-3 0h6M5 11l1.5-3h11l1.5 3m-12 0h10a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4a2 2 0 012-2z"
+                    />
+                  </svg>
+                  Pay ₹{cart.totalAmount.toFixed(2)}
+                </button>
+
+                <p className="text-center text-sm text-gray-500 mt-6">
+                  Secured by 256-bit SSL • No hidden charges • Fresh meals
+                  delivered
+                </p>
+              </form>
+            </div>
+
+            {/* RIGHT SIDE - Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-3xl shadow-2xl p-8 sticky top-8 border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+                  Order Summary
+                </h2>
+
+                <div className="space-y-5">
+                  {cart.items.map((item) => {
+                    const isTrialMeal = item.planType === "TrialMeal";
+                    const qty = isTrialMeal ? item.quantity || 1 : 1;
+                    const days = isTrialMeal ? item.days || 1 : 30;
+                    const displayText = isTrialMeal
+                      ? `${item.name} × ${qty} (${days} day${
+                          days > 1 ? "s" : ""
+                        })`
+                      : `${item.name}`;
+
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between py-4 border-b border-gray-100 last:border-0"
+                      >
+                        <div>
+                          <p className="font-semibold text-gray-800">
+                            {displayText}
+                          </p>
+                          {isTrialMeal && (
+                            <p className="text-xs text-blue-600 font-medium mt-1">
+                              Trial Plan
+                            </p>
+                          )}
+                        </div>
+                        <span className="font-bold text-lg text-gray-900">
+                          ₹{(item.price * qty).toFixed(2)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-8 pt-8 border-t-4 border-blue-100">
+                  <div className="flex justify-between items-center">
+                    <span className="text-2xl font-bold text-gray-800">
+                      Total
+                    </span>
+                    <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700">
+                      ₹{cart.totalAmount.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex items-center justify-center gap-2 text-green-600 font-medium">
+                  <svg
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Free Delivery • 100% Fresh • Cancel Anytime
+                </div>
               </div>
-            ))}
-
-            <div className="border-t mt-4 pt-4 flex justify-between font-bold">
-              <span>Total</span>
-              <span>₹{cart.totalAmount.toFixed(2)}</span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
