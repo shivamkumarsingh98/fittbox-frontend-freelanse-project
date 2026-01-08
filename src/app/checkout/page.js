@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import subscriptionApi from "../api/Subscribe";
 import paymentApi from "../api/PaymentApi";
 import { clearCart } from "../redux/slices/cartSlice";
-import {updateUserProfile} from "../api/auth";
+import { updateUserProfile } from "../api/auth";
 
 export default function Checkout() {
   const cart = useSelector((state) => state.cart);
@@ -32,8 +32,7 @@ export default function Checkout() {
   const [reportFile, setReportFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [isAddressSaved, setIsAddressSaved] = useState(false);
-const [savingAddress, setSavingAddress] = useState(false);
-
+  const [savingAddress, setSavingAddress] = useState(false);
 
   // Initialize name & email from auth
   useEffect(() => {
@@ -75,8 +74,6 @@ const [savingAddress, setSavingAddress] = useState(false);
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
-
-
 
   // Handlers for the upload modal
   const handleReportChange = (e) => {
@@ -120,32 +117,28 @@ const [savingAddress, setSavingAddress] = useState(false);
   };
 
   const handleSaveAddress = async () => {
-  if (!formData.address || !formData.city || !formData.postalcode) {
-    toast.error("Please fill complete address");
-    return;
-  }
+    if (!formData.address || !formData.city || !formData.postalcode) {
+      toast.error("Please fill complete address");
+      return;
+    }
 
-  try {
-    setSavingAddress(true);
+    try {
+      setSavingAddress(true);
 
-   
-    
-
-    await updateUserProfile( auth.token,{
-       address: formData.address,
+      await updateUserProfile(auth.token, {
+        address: formData.address,
         city: formData.city,
         postalcode: formData.postalcode,
+      });
 
-    });
-
-    toast.success("Address saved successfully");
-    setIsAddressSaved(true); // 🔥 enable pay button
-  } catch (err) {
-    toast.error(err?.message || "Failed to save address");
-  } finally {
-    setSavingAddress(false);
-  }
-};
+      toast.success("Address saved successfully");
+      setIsAddressSaved(true); // 🔥 enable pay button
+    } catch (err) {
+      toast.error(err?.message || "Failed to save address");
+    } finally {
+      setSavingAddress(false);
+    }
+  };
 
   // --------------------- 🔥 MAIN CHECKOUT LOGIC ---------------------
   const handleSubmit = async (e) => {
@@ -189,18 +182,18 @@ const [savingAddress, setSavingAddress] = useState(false);
           plan: item._id || item.id.split("-")[0],
           deliveryAddress: formData.address,
           startDate: new Date().toISOString(),
-          endDate: new Date(
-            Date.now() + durationDays * 24 * 60 * 60 * 1000
-          ),
-          totalAmount: item.totalPrice || (item.price * item.quantity * (isTrialMeal ? durationDays : 1)),
+          endDate: new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000),
+          totalAmount:
+            item.totalPrice ||
+            item.price * item.quantity * (isTrialMeal ? durationDays : 1),
           bloodReport: null,
         };
-        
+
         // Add days field for TrialMeal (required by backend)
         if (isTrialMeal) {
           payload.days = durationDays;
         }
-        
+
         return payload;
       });
       console.log("📦 Payload Sending:", payloads);
@@ -315,7 +308,7 @@ const [savingAddress, setSavingAddress] = useState(false);
 
               // Redirect user immediately to success page
               toast.success("Payment Success!");
-              router.push("/success");
+              router.push("/Profile");
 
               // Clear cart in background (do not block redirect)
               try {
@@ -357,7 +350,6 @@ const [savingAddress, setSavingAddress] = useState(false);
       toast.error("Checkout failed");
     }
   };
-
 
   return (
     <>
@@ -527,47 +519,46 @@ const [savingAddress, setSavingAddress] = useState(false);
                 {/* Pay Button */}
                 <div className="flex gap-5">
                   {/* //save details button */}
-                <button
-  type="button"
-  onClick={handleSaveAddress}
-  disabled={savingAddress}
-  className="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-xl disabled:opacity-50"
->
-  {savingAddress ? "Saving Address..." : "Save Address"}
-</button>
-                <button
-                  type="submit"
-                 disabled={!isAddressSaved}
-  className={`w-full font-bold text-xl py-5 rounded-2xl transition duration-300 shadow-2xl flex items-center justify-center gap-3
+                  <button
+                    type="button"
+                    onClick={handleSaveAddress}
+                    disabled={savingAddress}
+                    className="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-xl disabled:opacity-50"
+                  >
+                    {savingAddress ? "Saving Address..." : "Save Address"}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!isAddressSaved}
+                    className={`w-full font-bold text-xl py-5 rounded-2xl transition duration-300 shadow-2xl flex items-center justify-center gap-3
     ${
       isAddressSaved
         ? "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800"
         : "bg-gray-300 cursor-not-allowed"
     }
   `}
-                >
-                  <svg
-                    className="w-7 h-7"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 15v5m-3 0h6M5 11l1.5-3h11l1.5 3m-12 0h10a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4a2 2 0 012-2z"
-                    />
-                  </svg>
-                  Pay ₹{cart.totalAmount.toFixed(2)}
-                </button>
+                    <svg
+                      className="w-7 h-7"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 15v5m-3 0h6M5 11l1.5-3h11l1.5 3m-12 0h10a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4a2 2 0 012-2z"
+                      />
+                    </svg>
+                    Pay ₹{cart.totalAmount.toFixed(2)}
+                  </button>
                 </div>
 
                 <p className="text-center text-sm text-gray-500 mt-6">
                   Secured by 256-bit SSL • No hidden charges • Fresh meals
                   delivered
                 </p>
-                
               </form>
             </div>
 
