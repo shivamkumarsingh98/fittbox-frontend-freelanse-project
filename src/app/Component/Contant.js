@@ -485,63 +485,42 @@ function Contant() {
 
         {/* Infinite Scroll Container */}
         <div className="relative w-full overflow-hidden">
-          <div
-            id="scroll-track"
-            className="inline-flex hover:pause-animation py-6"
-          >
-            {[...testimonials, ...testimonials].map((item, index) => (
-              <div
-                key={index}
-                className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 mx-3 w-80 flex-shrink-0 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center mb-3">
-                    {/* <Image
-                      src={item.image}
-                      alt={item.name}
-                      width={56}
-                      height={56}
-                      className="w-14 h-14 rounded-full object-cover"
-                    /> */}
-                    <div className=" text-left">
-                      <h4 className="font-semibold text-gray-900 text-lg">
-                        {item.name}
-                      </h4>
-                      <p className="text-yellow-500 text-sm mt-1">
-                        {item.rating}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    "{item.text}"
-                  </p>
-                </div>
-              </div>
-            ))}
+  <div
+    id="scroll-track"
+    className="inline-flex hover:pause-animation py-6"
+  >
+    {[...testimonials, ...testimonials].map((item, index) => (
+      <div
+        key={index}
+        className="bg-white border border-gray-100 shadow-sm rounded-2xl 
+                   p-8 mx-3 w-80 h-72 flex-shrink-0 
+                   flex flex-col justify-between"
+      >
+        {/* Top content */}
+        <div>
+          <div className="flex items-center mb-3">
+            <div className="text-left">
+              <h4 className="font-semibold text-gray-900 text-lg truncate">
+                {item.name}
+              </h4>
+              <p className="text-yellow-500 text-sm mt-1">
+                {item.rating}
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* CTA Section */}
-      {/* <div className="py-16 md:py-20 px-4 bg-black text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Start Your Healthy Journey?
-          </h2>
-          <p className="text-lg md:text-xl mb-8 text-gray-300">
-            Join thousands of satisfied customers who have transformed their
-            eating habits with Fitbos.
+          {/* Text with clamp */}
+          <p className="text-gray-600 text-sm leading-relaxed 
+                        line-clamp-4">
+            "{item.text}"
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-black px-8 py-4 text-lg font-semibold hover:bg-gray-100 transition-colors duration-300">
-              Order Now
-            </button>
-            <button className="border-2 border-white text-white px-8 py-4 text-lg font-semibold hover:bg-white hover:text-black transition-colors duration-300">
-              View Menu
-            </button>
-          </div>
         </div>
-      </div> */}
+      </div>
+    ))}
+  </div>
+</div>
+
+      </section>
     </div>
   );
 }

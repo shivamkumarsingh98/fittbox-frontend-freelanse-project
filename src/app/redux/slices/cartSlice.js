@@ -1,24 +1,75 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 // Get initial state from localStorage if available
+
+function removeDuplicateItems(items) {
+  const map = {};
+  items.forEach((item) => {
+    if (!map[item.id]) {
+      map[item.id] = item;
+    }
+  });
+  return Object.values(map);
+}
+
+// const getInitialState = () => {
+//   if (typeof window !== "undefined") {
+//     const savedCart = localStorage.getItem("cart");
+//     if (savedCart) {
+//       try {
+//         const parsed = JSON.parse(savedCart);
+
+//         const cleanedItems = removeDuplicateItems(parsed.items || []);
+//         // Recalculate totals to ensure consistency
+//         const totalQuantity = parsed.items.reduce(
+//           (sum, item) => sum + item.quantity,
+//           0
+//         );
+//         const totalAmount = parsed.items.reduce(
+//           (total, item) =>
+//             total + item.price * item.quantity * (item.days ?? 1),
+//           0
+//         );
+//         return {
+//           items: parsed.items || [],
+//           totalQuantity,
+//           totalAmount,
+//         };
+//       } catch (error) {
+//         console.error("Error parsing cart from localStorage:", error);
+//       }
+//     }
+//   }
+//   return {
+//     items: [],
+//     totalQuantity: 0,
+//     totalAmount: 0,
+//   };
+// };
+
 const getInitialState = () => {
   if (typeof window !== "undefined") {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
       try {
         const parsed = JSON.parse(savedCart);
-        // Recalculate totals to ensure consistency
-        const totalQuantity = parsed.items.reduce(
+
+        // CLEAN DUPLICATES HERE
+        const cleanedItems = removeDuplicateItems(parsed.items || []);
+
+        // Recalculate totals
+        const totalQuantity = cleanedItems.reduce(
           (sum, item) => sum + item.quantity,
           0
         );
-        const totalAmount = parsed.items.reduce(
-          (total, item) =>
-            total + item.price * item.quantity * (item.days ?? 1),
+
+        const totalAmount = cleanedItems.reduce(
+          (total, item) => total + item.totalPrice,
           0
         );
+
         return {
-          items: parsed.items || [],
+          items: cleanedItems,
           totalQuantity,
           totalAmount,
         };
@@ -52,6 +103,7 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action) => {
+      state.items = removeDuplicateItems(state.items);
       const meal = action.payload;
 
       // Use the id already passed
@@ -64,9 +116,15 @@ export const cartSlice = createSlice({
       const quantity = isTrialMeal ? meal.quantity ?? 1 : 1;
 
       if (existingItem) {
-        if (isTrialMeal) {
-          existingItem.quantity++;
+        if (meal.planType === "MealPlan") {
+          return;
         }
+        if (meal.planType === "TrialMeal") {
+          return;
+        }
+        // if (isTrialMeal) {
+        //   existingItem.quantity++;
+        // }
         existingItem.totalPrice =
           existingItem.price * existingItem.quantity * existingItem.days;
       } else {
@@ -79,9 +137,8 @@ export const cartSlice = createSlice({
           price: meal.price,
           quantity,
           days,
-          totalPrice: isTrialMeal
-            ? meal.price * quantity * days
-            : meal.price * quantity,
+          // totalPrice: isTrialMeal ? meal.price * quantity * days : meal.price,
+          totalPrice: meal.price,
         });
       }
 

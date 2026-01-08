@@ -17,7 +17,13 @@ function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [profile, setProfile] = useState(null);
-  const [edit, setEdit] = useState({ name: "", phone: "" });
+  const [edit, setEdit] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalcode: "",
+  });
   const [pwd, setPwd] = useState({ currentPassword: "", newPassword: "" });
   const [activeTab, setActiveTab] = useState("overview"); // overview | update
 
@@ -35,7 +41,13 @@ function Page() {
         if (!mounted) return;
         const u = res?.user || null;
         setProfile(u);
-        setEdit({ name: u?.name || "", phone: u?.phone || "" });
+        setEdit({
+          name: u?.name || "",
+          phone: u?.phone || "",
+          address: u?.address || "",
+          city: u?.city || "",
+          postalcode: u?.postalcode || "",
+        });
       } catch (err) {
         if (!mounted) return;
         const msg = err?.message || "";
@@ -310,114 +322,6 @@ transition-shadow duration-300 border border-neutral-100"
                 </div>
               )}
 
-              {/* {activeTab === "update" && (
-                <>
-                  <div className="bg-white rounded-2xl border p-5">
-                    <h2 className="text-lg font-semibold mb-4">
-                      Update Profile
-                    </h2>
-                    <form
-                      onSubmit={async (e) => {
-                        e.preventDefault();
-                        try {
-                          const res = await updateUserProfile(token, {
-                            name: edit.name,
-                            phone: edit.phone,
-                          });
-                          toast.success(res?.message || "Profile updated");
-                          const fresh = await fetchUserProfile(token);
-                          setProfile(fresh?.user || null);
-                        } catch (err) {
-                          toast.error(err?.message || "");
-                        }
-                      }}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                    >
-                      <label className="text-sm">
-                        <span className="text-neutral-600">Name</span>
-                        <input
-                          value={edit.name}
-                          onChange={(e) =>
-                            setEdit({ ...edit, name: e.target.value })
-                          }
-                          className="mt-1 w-full border rounded px-3 py-2"
-                          placeholder="Your name"
-                        />
-                      </label>
-                      <label className="text-sm">
-                        <span className="text-neutral-600">Phone</span>
-                        <input
-                          value={edit.phone}
-                          onChange={(e) =>
-                            setEdit({ ...edit, phone: e.target.value })
-                          }
-                          className="mt-1 w-full border rounded px-3 py-2"
-                          placeholder="Phone number"
-                        />
-                      </label>
-                      <div className="md:col-span-2 flex justify-end">
-                        <button className="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white shadow">
-                          Save
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-
-                  <div className="bg-white rounded-2xl border p-5">
-                    <h2 className="text-lg font-semibold mb-4">
-                      Change Password
-                    </h2>
-                    <form
-                      onSubmit={async (e) => {
-                        e.preventDefault();
-                        try {
-                          const res = await changeUserPassword(token, {
-                            currentPassword: pwd.currentPassword,
-                            newPassword: pwd.newPassword,
-                          });
-                          toast.success(res?.message || "Password changed");
-                          setPwd({ currentPassword: "", newPassword: "" });
-                        } catch (err) {
-                          toast.error(err?.message || "");
-                        }
-                      }}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                    >
-                      <label className="text-sm">
-                        <span className="text-neutral-600">
-                          Current Password
-                        </span>
-                        <input
-                          type="password"
-                          value={pwd.currentPassword}
-                          onChange={(e) =>
-                            setPwd({ ...pwd, currentPassword: e.target.value })
-                          }
-                          className="mt-1 w-full border rounded px-3 py-2"
-                          placeholder="Current password"
-                        />
-                      </label>
-                      <label className="text-sm">
-                        <span className="text-neutral-600">New Password</span>
-                        <input
-                          type="password"
-                          value={pwd.newPassword}
-                          onChange={(e) =>
-                            setPwd({ ...pwd, newPassword: e.target.value })
-                          }
-                          className="mt-1 w-full border rounded px-3 py-2"
-                          placeholder="New password (min 8 chars)"
-                        />
-                      </label>
-                      <div className="md:col-span-2 flex justify-end">
-                        <button className="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white shadow">
-                          Update Password
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </>
-              )} */}
               {activeTab === "update" && (
                 <>
                   {/* Update Profile */}
@@ -466,6 +370,91 @@ transition-shadow duration-300 border border-neutral-100"
                           }
                           className="mt-1 w-full border-2 border-emerald-200 focus:border-emerald-500 outline-none rounded-xl px-4 py-3 bg-white transition"
                           placeholder="Phone number"
+                        />
+                      </label>
+
+                      <div className="sm:col-span-2 flex justify-end">
+                        <button className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-all shadow-sm hover:shadow-md">
+                          Save Changes
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                  <div className="bg-gradient-to-br from-emerald-50 to-white rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition-all border border-emerald-100 mb-6">
+                    <h2 className="text-xl font-bold mb-2 text-emerald-700">
+                      Update Delivery Address
+                    </h2>
+
+                    <p className="text-sm text-neutral-600 mb-5 leading-relaxed">
+                      <span className="font-semibold text-emerald-700">
+                        Address Update Rules:
+                      </span>
+                      <br />• If you update your address <b>before 8:00 PM</b>,
+                      your dinner will be delivered to the new address.
+                      <br />• If you update your address <b>after 8:00 PM</b>,
+                      today’s dinner will be delivered to the old address, and
+                      future meals will go to the new address.
+                      <br />• If you update your address <b>before 10:00 AM</b>,
+                      lunch and dinner will be delivered to the new address.
+                      <br />• If you update your address <b>after 10:00 AM</b>,
+                      lunch will go to the old address and dinner to the new
+                      address.
+                    </p>
+
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        try {
+                          const res = await updateUserProfile(token, {
+                            address: edit.address,
+                            city: edit.city,
+                            postalcode: edit.postalcode,
+                          });
+                          toast.success(
+                            res?.message || "Profile updated successfully!"
+                          );
+                          const freshData = await fetchUserProfile(token);
+                          setProfile(freshData?.user || null);
+                        } catch (err) {
+                          toast.error(err?.message || "Something went wrong");
+                        }
+                      }}
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+                    >
+                      <label className="text-sm font-medium text-neutral-700">
+                        Update Delivery Address
+                        <textarea
+                          value={edit.address}
+                          onChange={(e) =>
+                            setEdit({ ...edit, address: e.target.value })
+                          }
+                          className="mt-1 w-full border-2 border-emerald-200 focus:border-emerald-500 outline-none rounded-xl px-4 py-3 bg-white transition"
+                          placeholder="Delivery address"
+                          type="text"
+                        />
+                      </label>
+                      <label className="text-sm font-medium text-neutral-700">
+                        City
+                        <input
+                          value={edit.city}
+                          onChange={(e) =>
+                            setEdit({ ...edit, city: e.target.value })
+                          }
+                          className="mt-1 w-full border-2 border-emerald-200 focus:border-emerald-500 outline-none rounded-xl px-4 py-3 bg-white transition"
+                          placeholder="Delivery address"
+                          type="text"
+                        />
+                      </label>
+                      <label className="text-sm font-medium text-neutral-700">
+                        Postalcode
+                        <input
+                          value={edit.postalcode}
+                          onChange={(e) =>
+                            setEdit({ ...edit, postalcode: e.target.value })
+                          }
+                          className="mt-1 w-full border-2 border-emerald-200 focus:border-emerald-500 outline-none rounded-xl px-4 py-3 bg-white transition"
+                          placeholder="Delivery address"
+                          type="text"
                         />
                       </label>
 

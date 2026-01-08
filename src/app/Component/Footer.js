@@ -120,9 +120,16 @@ export default function Footer() {
               </p>
 
               <div className="flex gap-3">
-                <SocialIcon href="#" label="Instagram" icon={Instagram} />
-                <SocialIcon href="#" label="Facebook" icon={Facebook} />
-                <SocialIcon href="#" label="Twitter" icon={Twitter} />
+                <SocialIcon
+                  href="https://www.instagram.com/fittbox.in?igsh=aTVreW5lYnlzc2Q="
+                  label="Instagram"
+                  icon={Instagram}
+                />
+                <SocialIcon
+                  href="https://www.facebook.com/share/1JqfqJ9PGn/?mibextid=wwXIfr"
+                  label="Facebook"
+                  icon={Facebook}
+                />
               </div>
             </div>
 

@@ -205,39 +205,39 @@ export const deleteTrialMeal = async (id, token) => {
   }
 };
 
-export const MonthlyMealCreation = async (mealData, token) => {
-  try {
-    const headers = getHeaders(token);
-    console.log(
-      "[admin.js] MonthlyMealCreation -> url:",
-      `${api}/api/createMonthlyMeal`
-    );
-    console.log("[admin.js] MonthlyMealCreation -> token param:", token);
-    console.log("[admin.js] MonthlyMealCreation -> headers:", headers);
-    console.log("[admin.js] MonthlyMealCreation -> payload:", mealData);
-    const response = await axios.post(
-      `${api}/api/createMonthlyMeal`,
-      mealData,
-      { headers }
-    );
-    return response.data; // expect backend to return created meal data
-  } catch (error) {
-    const fieldErrors = error?.response?.data?.errors;
-    const message =
-      fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length
-        ? fieldErrors
-            .map((e) => e?.msg || "")
-            .filter(Boolean)
-            .join("\n")
-        : error?.response?.data?.message || error?.message;
-    throw new Error(message);
-  }
-};
+// export const MonthlyMealCreation = async (mealData, token) => {
+//   try {
+//     const headers = getHeaders(token);
+//     console.log(
+//       "[admin.js] MonthlyMealCreation -> url:",
+//       `${api}/api/createMonthlyMeal`
+//     );
+//     console.log("[admin.js] MonthlyMealCreation -> token param:", token);
+//     console.log("[admin.js] MonthlyMealCreation -> headers:", headers);
+//     console.log("[admin.js] MonthlyMealCreation -> payload:", mealData);
+//     const response = await axios.post(
+//       `${api}/api/createMonthlyMeal`,
+//       mealData,
+//       { headers }
+//     );
+//     return response.data; // expect backend to return created meal data
+//   } catch (error) {
+//     const fieldErrors = error?.response?.data?.errors;
+//     const message =
+//       fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length
+//         ? fieldErrors
+//             .map((e) => e?.msg || "")
+//             .filter(Boolean)
+//             .join("\n")
+//         : error?.response?.data?.message || error?.message;
+//     throw new Error(message);
+//   }
+// };
 
 export const createMonthlyMeal = async (mealData, imageFile, token) => {
   try {
     const headers = getHeaders(token);
-    const url = `${api}/api/createMonthlyMeal`;
+    const url = `${api}/api/mealplan/createMonthlyMeal`;
     console.log("[admin.js] createMonthlyMeal -> url:", url);
     console.log("[admin.js] createMonthlyMeal -> headers:", headers);
 
@@ -270,7 +270,7 @@ export const createMonthlyMeal = async (mealData, imageFile, token) => {
 export const updateMonthlyMeal = async (id, mealData, imageFile, token) => {
   try {
     const headers = getHeaders(token);
-    const url = `${api}/api/${id}`;
+    const url = `${api}/api/mealplan/${id}`;
     console.log("[admin.js] updateMonthlyMeal -> url:", url);
     console.log("[admin.js] updateMonthlyMeal -> headers:", headers);
 
@@ -303,7 +303,7 @@ export const updateMonthlyMeal = async (id, mealData, imageFile, token) => {
 export const deleteMonthlyMeal = async (id, token) => {
   try {
     const headers = getHeaders(token);
-    const url = `${api}/api/${id}`;
+    const url = `${api}/api/mealplan/${id}`;
     console.log("[admin.js] deleteMonthlyMeal -> url:", url);
     console.log("[admin.js] deleteMonthlyMeal -> headers:", headers);
     const res = await axios.delete(url, { headers });

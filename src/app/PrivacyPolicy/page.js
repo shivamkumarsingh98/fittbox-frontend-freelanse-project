@@ -5,325 +5,146 @@ import React from "react";
 function Page() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-red-600 to-black text-white py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
-          <p className="text-lg text-green-100">
-            Last Updated: December 5, 2025
+      {/* Header */}
+      <div className="bg-gradient-to-r from-red-600 to-black text-white py-10">
+        <div className="max-w-5xl mx-auto px-4">
+          <h1 className="text-4xl font-bold mb-2">
+            Privacy Policy & Terms of Service
+          </h1>
+          <p className="text-sm text-gray-200">
+            FITTBOX • Last Updated: December 2025
           </p>
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="prose prose-lg max-w-none">
-          {/* Introduction */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              1. Introduction
-            </h2>
-            <p className="text-gray-700 leading-relaxed">
-              Welcome to Dite Meals ("Company," "we," "us," "our," or
-              "Service"). We are committed to protecting your privacy and
-              ensuring you have a positive experience on our platform. This
-              Privacy Policy explains how we collect, use, disclose, and
-              safeguard your information when you visit our website and use our
-              services.
-            </p>
-          </section>
+      {/* Content */}
+      <div className="max-w-5xl mx-auto px-4 py-10 space-y-12 text-gray-800">
 
-          {/* Information We Collect */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              2. Information We Collect
-            </h2>
+        {/* Privacy Policy */}
+        <section>
+          <h2 className="text-2xl font-bold mb-4">Privacy Policy for FITTBOX</h2>
 
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  2.1 Personal Information You Provide
-                </h3>
-                <ul className="list-disc list-inside text-gray-700 space-y-2">
-                  <li>
-                    Account information (name, email, phone number, password)
-                  </li>
-                  <li>Delivery address and billing information</li>
-                  <li>Payment details and transaction history</li>
-                  <li>Profile information and preferences</li>
-                  <li>
-                    Communication history and customer service interactions
-                  </li>
-                  <li>Feedback, reviews, and ratings</li>
-                </ul>
-              </div>
+          <h3 className="font-semibold mt-4">1. Introduction</h3>
+          <p>
+            Welcome to Fittbox. We respect your privacy and are committed to
+            protecting your personal data when you use our website/app and meal
+            subscription services in South Bangalore.
+          </p>
 
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  2.2 Automatically Collected Information
-                </h3>
-                <ul className="list-disc list-inside text-gray-700 space-y-2">
-                  <li>
-                    Device information (IP address, browser type, operating
-                    system)
-                  </li>
-                  <li>Cookies and tracking technologies</li>
-                  <li>Usage data and analytics</li>
-                  <li>Location data (with your permission)</li>
-                  <li>Log files and access history</li>
-                </ul>
-              </div>
+          <h3 className="font-semibold mt-4">2. Information We Collect</h3>
+          <ul className="list-disc ml-6 space-y-2">
+            <li><strong>Personal Identity:</strong> Name, Phone Number, Email Address</li>
+            <li><strong>Delivery Details:</strong> Address, Landmark, Delivery Instructions</li>
+            <li>
+              <strong>Health & Dietary Data:</strong> Allergies, food preferences,
+              health goals, caloric requirements (Sensitive Data)
+            </li>
+            <li>
+              <strong>Payment Information:</strong> Transaction IDs only. Card
+              details are handled securely by payment gateways like Razorpay /
+              PhonePe
+            </li>
+          </ul>
 
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  2.3 Third-Party Information
-                </h3>
-                <p className="text-gray-700">
-                  We may receive information about you from third parties
-                  including payment processors, delivery partners, and analytics
-                  providers.
-                </p>
-              </div>
-            </div>
-          </section>
+          <h3 className="font-semibold mt-4">3. How We Use Your Information</h3>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>To prepare and deliver meals</li>
+            <li>To personalize meals based on your goals and allergies</li>
+            <li>To send delivery updates and reminders</li>
+            <li>To improve menu quality and services</li>
+          </ul>
 
-          {/* How We Use Information */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              3. How We Use Your Information
-            </h2>
-            <p className="text-gray-700 mb-4">
-              We use the information we collect for various purposes:
-            </p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
-              <li>To process orders and deliver meals to you</li>
-              <li>To manage your account and provide customer support</li>
-              <li>To process payments and prevent fraud</li>
-              <li>To send promotional emails and marketing communications</li>
-              <li>To improve our services and website functionality</li>
-              <li>To analyze usage patterns and conduct market research</li>
-              <li>To comply with legal obligations and enforce agreements</li>
-              <li>To personalize your experience and recommendations</li>
-            </ul>
-          </section>
+          <h3 className="font-semibold mt-4">4. Data Sharing</h3>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>Delivery partners (Dunzo, Porter, internal fleet)</li>
+            <li>Payment gateways and IT service providers</li>
+            <li>Legal authorities if required by law or FSSAI</li>
+          </ul>
 
-          {/* Information Sharing */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              4. How We Share Your Information
-            </h2>
-            <p className="text-gray-700 mb-4">
-              We may share your information with:
-            </p>
+          <h3 className="font-semibold mt-4">5. Cookies</h3>
+          <p>
+            We use cookies to remember login sessions and dietary preferences for
+            a better user experience.
+          </p>
 
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  4.1 Service Providers
-                </h3>
-                <p className="text-gray-700">
-                  Payment processors, delivery partners, hosting providers, and
-                  email services that assist us in operating our website and
-                  conducting our business.
-                </p>
-              </div>
+          <h3 className="font-semibold mt-4">6. Your Rights</h3>
+          <p>
+            You may request to review, update, or delete your data by contacting
+            our Grievance Officer at <strong>fittbox4all@gmail.com</strong>.
+          </p>
+        </section>
 
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  4.2 Business Partners
-                </h3>
-                <p className="text-gray-700">
-                  Marketing partners and affiliated businesses with your
-                  consent.
-                </p>
-              </div>
+        {/* Terms of Service */}
+        <section>
+          <h2 className="text-2xl font-bold mb-4">Terms of Service</h2>
 
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  4.3 Legal Requirements
-                </h3>
-                <p className="text-gray-700">
-                  We may disclose information when required by law or to protect
-                  our legal rights and safety.
-                </p>
-              </div>
+          <h3 className="font-semibold mt-4">1. Acceptance of Terms</h3>
+          <p>
+            By subscribing to Fittbox meal plans, you agree to these Terms of
+            Service.
+          </p>
 
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  4.4 Business Transactions
-                </h3>
-                <p className="text-gray-700">
-                  Information may be transferred in the event of a merger,
-                  acquisition, or sale of assets.
-                </p>
-              </div>
-            </div>
-          </section>
+          <h3 className="font-semibold mt-4">2. Service Area</h3>
+          <p>
+            We currently operate only in South Bangalore (Banashankari,
+            Jayanagar, JP Nagar, Kanakapura Road, Bannerghatta Road, RR Nagar, BTM
+            Layout).
+          </p>
 
-          {/* Data Security */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              5. Data Security
-            </h2>
-            <p className="text-gray-700 leading-relaxed">
-              We implement appropriate technical, administrative, and physical
-              security measures to protect your personal information against
-              unauthorized access, alteration, disclosure, or destruction.
-              However, no method of transmission over the Internet or electronic
-              storage is completely secure, and we cannot guarantee absolute
-              security.
-            </p>
-          </section>
+          <h3 className="font-semibold mt-4">3. Subscriptions & Pause</h3>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>All meal plans are prepaid (Weekly / Monthly)</li>
+            <li>Menu items may change based on availability</li>
+            <li>
+              Pause requests must be made before <strong>8:00 PM</strong> the
+              previous day
+            </li>
+          </ul>
 
-          {/* Cookies and Tracking */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              6. Cookies and Tracking Technologies
-            </h2>
-            <p className="text-gray-700 mb-4">
-              Our website uses cookies and similar tracking technologies to
-              enhance your experience, remember preferences, and gather
-              analytics. You can control cookie preferences through your browser
-              settings.
-            </p>
-            <p className="text-gray-700">Types of cookies we use:</p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2 mt-2">
-              <li>Essential cookies (required for site functionality)</li>
-              <li>Performance cookies (analytics and improvements)</li>
-              <li>Functional cookies (remember preferences)</li>
-              <li>Marketing cookies (targeted advertising)</li>
-            </ul>
-          </section>
+          <h3 className="font-semibold mt-4">4. Cancellation & Refunds</h3>
+          <p>
+            Refunds are processed after deducting a 20% cancellation fee and the
+            cost of meals already delivered. Refunds take 5–7 business days.
+          </p>
 
-          {/* User Rights */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              7. Your Rights and Choices
-            </h2>
-            <p className="text-gray-700 mb-4">You have the right to:</p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
-              <li>Access your personal information</li>
-              <li>Correct inaccurate information</li>
-              <li>Request deletion of your data</li>
-              <li>Opt-out of marketing communications</li>
-              <li>Withdraw consent at any time</li>
-              <li>Portability of your data</li>
-              <li>Lodge a complaint with relevant authorities</li>
-            </ul>
-          </section>
+          <h3 className="font-semibold mt-4">5. Delivery Policy</h3>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>Breakfast: 8:00 – 9:30 AM</li>
+            <li>Lunch: 12:30 – 2:00 PM</li>
+            <li>Dinner: 7:00 – 9:00 PM</li>
+          </ul>
 
-          {/* Third-Party Links */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              8. Third-Party Links
-            </h2>
-            <p className="text-gray-700">
-              Our website may contain links to third-party websites. We are not
-              responsible for the privacy practices of these external sites. We
-              encourage you to review their privacy policies before providing
-              any personal information.
-            </p>
-          </section>
+          <h3 className="font-semibold mt-4">6. Health Disclaimer</h3>
+          <p>
+            Our meals are not medical advice. Please consult a doctor before
+            starting any strict diet plan.
+          </p>
 
-          {/* Children's Privacy */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              9. Children's Privacy
-            </h2>
-            <p className="text-gray-700">
-              Our services are not intended for children under 13 years of age.
-              We do not knowingly collect personal information from children
-              under 13. If we become aware that we have collected information
-              from a child under 13, we will take steps to delete such
-              information promptly.
-            </p>
-          </section>
+          <h3 className="font-semibold mt-4">7. Food Safety</h3>
+          <p>
+            Meals must be consumed within 4 hours of delivery. No returns are
+            accepted due to the perishable nature of food.
+          </p>
 
-          {/* Data Retention */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              10. Data Retention
-            </h2>
-            <p className="text-gray-700">
-              We retain your personal information for as long as necessary to
-              fulfill the purposes outlined in this Privacy Policy, comply with
-              legal obligations, and resolve disputes. You may request deletion
-              of your data subject to legal retention requirements.
-            </p>
-          </section>
+          <h3 className="font-semibold mt-4">8. Governing Law</h3>
+          <p>
+            These terms are governed by the laws of India. Jurisdiction:
+            Bengaluru, Karnataka.
+          </p>
+        </section>
 
-          {/* International Data Transfer */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              11. International Data Transfer
-            </h2>
-            <p className="text-gray-700">
-              Your information may be transferred to, stored in, and processed
-              in countries other than your country of residence. These countries
-              may have data protection laws that differ from your country. By
-              using our services, you consent to the transfer of your
-              information as described in this Privacy Policy.
-            </p>
-          </section>
-
-          {/* Updates to Privacy Policy */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              12. Changes to This Privacy Policy
-            </h2>
-            <p className="text-gray-700">
-              We may update this Privacy Policy from time to time. We will
-              notify you of any material changes by posting the updated policy
-              on our website and updating the "Last Updated" date. Your
-              continued use of our services following the posting of revised
-              Privacy Policy means that you accept and agree to the changes.
-            </p>
-          </section>
-
-          {/* Contact Information */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              13. Contact Us
-            </h2>
-            <p className="text-gray-700 mb-4">
-              If you have questions, concerns, or requests regarding this
-              Privacy Policy or our privacy practices, please contact us at:
-            </p>
-            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-              <p className="text-gray-700 mb-2">
-                <strong>Dite Meals</strong>
-              </p>
-              <p className="text-gray-700 mb-2">
-                Email:{" "}
-                <a
-                  href="mailto:privacy@dite-meals.com"
-                  className="text-green-600 hover:text-green-700"
-                >
-                  privacy@dite-meals.com
-                </a>
-              </p>
-              <p className="text-gray-700 mb-2">
-                Phone:{" "}
-                <a
-                  href="tel:+1-800-MEALS-01"
-                  className="text-green-600 hover:text-green-700"
-                >
-                  +1-800-MEALS-01
-                </a>
-              </p>
-              <p className="text-gray-700">Address: [Your Business Address]</p>
-            </div>
-          </section>
-
-          {/* Acknowledgment */}
-          <section className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
-            <p className="text-gray-700">
-              By using Dite Meals, you acknowledge that you have read this
-              Privacy Policy and agree to its terms. If you do not agree with
-              our privacy practices, please do not use our services.
-            </p>
-          </section>
-        </div>
+        {/* Footer Info */}
+        <section className="bg-gray-50 p-6 rounded-lg border">
+          <p><strong>FSSAI License No:</strong> 21225186000334</p>
+          <p className="mt-2"><strong>Grievance Officer:</strong> Yogesh K</p>
+          <p className="mt-2">
+            #3, FittBox, 5th Floor, Kanakapura Main Rd, Raghuvanahalli, Bengaluru
+            560109
+          </p>
+          <p className="mt-2">
+            Email: <strong>fittbox4all@gmail.com</strong>
+          </p>
+        </section>
       </div>
     </div>
   );

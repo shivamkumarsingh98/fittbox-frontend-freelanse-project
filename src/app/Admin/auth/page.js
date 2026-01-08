@@ -8,6 +8,7 @@ import {
   setAdminError,
 } from "../../redux/slices/adminAuthSlice";
 import { adminLogin } from "../../api/admin";
+import {toast} from "react-hot-toast";
 
 function Page() {
   const [email, setEmail] = useState("");
@@ -42,7 +43,9 @@ function Page() {
         };
       }
       dispatch(setAdminAuth({ admin, token }));
+      
       router.push("/Dashboard/Admin");
+      toast.success("Welcome Back");
     } catch (err) {
       const msg = err?.message || "Login failed";
       setError(msg);

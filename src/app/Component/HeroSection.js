@@ -87,7 +87,7 @@ const HeroSection = () => {
             <div className="glass-effect px-4 py-2 rounded-full flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-secondary" />
               <span className="text-sm font-medium text-white">
-                Fresh & Healthy Meals
+                Fuel your life Style
               </span>
             </div>
           </div>
@@ -102,7 +102,7 @@ const HeroSection = () => {
             style={{ transitionDelay: "400ms" }}
           >
             <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4 drop-shadow-2xl">
-              FittBox Diet Food
+              FittBox Balanced Meal
             </span>
           </h1>
 
@@ -115,8 +115,8 @@ const HeroSection = () => {
             }`}
             style={{ transitionDelay: "600ms" }}
           >
-            Fresh, nutritious, and delicious meals crafted by expert chefs and
-            delivered to your doorstep
+            Fresh, nutritious, and delicious meals crafted by expert chefs &
+            nutrionist. Directly delivered to your doorstep
           </p>
 
           {/* CTA Buttons */}

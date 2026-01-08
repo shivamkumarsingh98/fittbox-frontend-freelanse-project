@@ -27,8 +27,10 @@ export const getMonthlyMeals = async (token) => {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     // console.log("[Meals.js] getMonthlyMeals -> token:", token);
     // console.log("[Meals.js] getMonthlyMeals -> headers:", headers);
-    const response = await axios.get(`${api}/api/monthly`, { headers });
-    // console.log("[Meals.js] monthly API Response:", response.data);
+    const response = await axios.get(`${api}/api/mealplan/monthly`, {
+      headers,
+    });
+    console.log("[Meals.js] monthly API Response:", response.data.meals);
     return response.data.meals; // expect backend to return list of monthly meals
   } catch (error) {
     const fieldErrors = error?.response?.data?.errors;

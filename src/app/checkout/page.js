@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import subscriptionApi from "../api/Subscribe";
 import paymentApi from "../api/PaymentApi";
 import { clearCart } from "../redux/slices/cartSlice";
+import {updateUserProfile} from "../api/auth";
 
 export default function Checkout() {
   const cart = useSelector((state) => state.cart);
@@ -19,7 +20,7 @@ export default function Checkout() {
     email: "",
     address: "",
     city: "",
-    zipCode: "",
+    postalcode: "",
     bloodReport: null,
     cardNumber: "",
     expiryDate: "",
@@ -30,6 +31,9 @@ export default function Checkout() {
   const [showUploadModal, setShowUploadModal] = useState(true);
   const [reportFile, setReportFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [isAddressSaved, setIsAddressSaved] = useState(false);
+const [savingAddress, setSavingAddress] = useState(false);
+
 
   // Initialize name & email from auth
   useEffect(() => {
@@ -72,6 +76,8 @@ export default function Checkout() {
     }
   };
 
+
+
   // Handlers for the upload modal
   const handleReportChange = (e) => {
     const f = e.target.files && e.target.files[0];
@@ -113,6 +119,34 @@ export default function Checkout() {
     }
   };
 
+  const handleSaveAddress = async () => {
+  if (!formData.address || !formData.city || !formData.postalcode) {
+    toast.error("Please fill complete address");
+    return;
+  }
+
+  try {
+    setSavingAddress(true);
+
+   
+    
+
+    await updateUserProfile( auth.token,{
+       address: formData.address,
+        city: formData.city,
+        postalcode: formData.postalcode,
+
+    });
+
+    toast.success("Address saved successfully");
+    setIsAddressSaved(true); // 🔥 enable pay button
+  } catch (err) {
+    toast.error(err?.message || "Failed to save address");
+  } finally {
+    setSavingAddress(false);
+  }
+};
+
   // --------------------- 🔥 MAIN CHECKOUT LOGIC ---------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -150,18 +184,24 @@ export default function Checkout() {
         const planType = item.planType;
         const isTrialMeal = item.planType === "TrialMeal";
         const durationDays = isTrialMeal ? item.days || 1 : 30;
-        return {
+        const payload = {
           planType,
           plan: item._id || item.id.split("-")[0],
           deliveryAddress: formData.address,
           startDate: new Date().toISOString(),
           endDate: new Date(
-            Date.now() +
-              (planType === "MealPlan" ? 30 : 1) * 24 * 60 * 60 * 1000
+            Date.now() + durationDays * 24 * 60 * 60 * 1000
           ),
-          totalAmount: item.price * item.quantity,
+          totalAmount: item.totalPrice || (item.price * item.quantity * (isTrialMeal ? durationDays : 1)),
           bloodReport: null,
         };
+        
+        // Add days field for TrialMeal (required by backend)
+        if (isTrialMeal) {
+          payload.days = durationDays;
+        }
+        
+        return payload;
       });
       console.log("📦 Payload Sending:", payloads);
       console.log("🔑 Auth Token:", auth.token);
@@ -318,109 +358,6 @@ export default function Checkout() {
     }
   };
 
-  // return (
-  //   <div className="container mx-auto px-4 py-8 min-h-[60vh]">
-  //     <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-  //     <div className="flex flex-col lg:flex-row gap-8">
-  //       {/* LEFT SIDE */}
-  //       <div className="lg:w-2/3">
-  //         <form onSubmit={handleSubmit} className="space-y-6">
-  //           {/* SHIPPING */}
-  //           <div className="bg-white p-6 rounded-lg shadow">
-  //             <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
-  //             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-  //               <div>
-  //                 <label className="block text-gray-700 mb-2">Full Name</label>
-  //                 <input
-  //                   type="text"
-  //                   name="name"
-  //                   value={formData.name}
-  //                   readOnly
-  //                   className="w-full p-2 border rounded bg-gray-100 cursor-not-allowed"
-  //                 />
-  //               </div>
-
-  //               <div>
-  //                 <label className="block text-gray-700 mb-2">Email</label>
-  //                 <input
-  //                   type="email"
-  //                   name="email"
-  //                   readOnly
-  //                   value={formData.email}
-  //                   className="w-full p-2 border rounded bg-gray-100 cursor-not-allowed"
-  //                 />
-  //               </div>
-
-  //               <div className="md:col-span-2">
-  //                 <label className="block text-gray-700 mb-2">Address</label>
-  //                 <input
-  //                   type="text"
-  //                   name="address"
-  //                   required
-  //                   value={formData.address}
-  //                   onChange={handleChange}
-  //                   className="w-full p-2 border rounded"
-  //                 />
-  //               </div>
-
-  //               <div>
-  //                 <label className="block text-gray-700 mb-2">City</label>
-  //                 <input
-  //                   type="text"
-  //                   name="city"
-  //                   required
-  //                   value={formData.city}
-  //                   onChange={handleChange}
-  //                   className="w-full p-2 border rounded"
-  //                 />
-  //               </div>
-
-  //               <div>
-  //                 <label className="block text-gray-700 mb-2">ZIP Code</label>
-  //                 <input
-  //                   type="text"
-  //                   name="zipCode"
-  //                   required
-  //                   value={formData.zipCode}
-  //                   onChange={handleChange}
-  //                   className="w-full p-2 border rounded"
-  //                 />
-  //               </div>
-  //             </div>
-  //           </div>
-
-  //           <button
-  //             type="submit"
-  //             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
-  //           >
-  //             Pay ₹{cart.totalAmount.toFixed(2)}
-  //           </button>
-  //         </form>
-  //       </div>
-
-  //       {/* RIGHT SIDE SUMMARY */}
-  //       <div className="lg:w-1/3">
-  //         <div className="bg-gray-50 p-6 rounded-lg">
-  //           <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-
-  //           {cart.items.map((item) => (
-  //             <div key={item.id} className="flex justify-between py-2">
-  //               <span>
-  //                 {item.name} x {item.quantity}
-  //               </span>
-  //               <span>₹{(item.price * item.quantity).toFixed(2)}</span>
-  //             </div>
-  //           ))}
-
-  //           <div className="border-t mt-4 pt-4 flex justify-between font-bold">
-  //             <span>Total</span>
-  //             <span>₹{cart.totalAmount.toFixed(2)}</span>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
 
   return (
     <>
@@ -576,9 +513,9 @@ export default function Checkout() {
                       </label>
                       <input
                         type="text"
-                        name="zipCode"
+                        name="postalcode"
                         required
-                        value={formData.zipCode}
+                        value={formData.postalcode}
                         onChange={handleChange}
                         placeholder="400001"
                         className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition"
@@ -588,9 +525,26 @@ export default function Checkout() {
                 </div>
 
                 {/* Pay Button */}
+                <div className="flex gap-5">
+                  {/* //save details button */}
+                <button
+  type="button"
+  onClick={handleSaveAddress}
+  disabled={savingAddress}
+  className="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-xl disabled:opacity-50"
+>
+  {savingAddress ? "Saving Address..." : "Save Address"}
+</button>
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold text-xl py-5 rounded-2xl hover:from-blue-700 hover:to-indigo-800 transform hover:scale-105 transition duration-300 shadow-2xl flex items-center justify-center gap-3"
+                 disabled={!isAddressSaved}
+  className={`w-full font-bold text-xl py-5 rounded-2xl transition duration-300 shadow-2xl flex items-center justify-center gap-3
+    ${
+      isAddressSaved
+        ? "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800"
+        : "bg-gray-300 cursor-not-allowed"
+    }
+  `}
                 >
                   <svg
                     className="w-7 h-7"
@@ -607,11 +561,13 @@ export default function Checkout() {
                   </svg>
                   Pay ₹{cart.totalAmount.toFixed(2)}
                 </button>
+                </div>
 
                 <p className="text-center text-sm text-gray-500 mt-6">
                   Secured by 256-bit SSL • No hidden charges • Fresh meals
                   delivered
                 </p>
+                
               </form>
             </div>
 

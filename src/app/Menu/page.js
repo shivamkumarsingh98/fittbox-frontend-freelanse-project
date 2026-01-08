@@ -175,7 +175,8 @@ function Page() {
           const price = type === "veg" ? item.price : item.price + 40;
           dispatch(
             addToCart({
-              id: `breakfast-${itemId}-${type}`,
+              // id: `breakfast-${itemId}-${type}`,
+              id: `${itemId}-${type}`,
               name: `${item.name} (${type})`,
               price: price,
               image: item.img,
@@ -297,7 +298,8 @@ function Page() {
       type === "veg" ? meal.price?.veg ?? 0 : meal.price?.nonVeg ?? 0;
 
     const cartItem = {
-      id: `${meal._id}-${type}-monthly`,
+      // id: `${meal._id}-${meal.type}-monthly`,
+      id: `${meal._id}-${type}`,
       productId: meal._id,
       name: meal.name,
       type: type === "veg" ? "vegetarian" : "non-vegetarian",

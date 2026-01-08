@@ -486,9 +486,22 @@ export default function Page() {
               const isTrialMeal = item.planType === "TrialMeal";
               const durationDays = isTrialMeal ? item.days ?? 1 : 30;
               const quantity = isTrialMeal ? item.quantity ?? 1 : 1;
-              const itemTotal = isTrialMeal
-                ? item.price * quantity * durationDays
-                : item.price;
+              // const itemTotal = isTrialMeal
+              //   ? item.price * quantity * durationDays
+              //   : item.price;
+              const itemTotal = item.totalPrice;
+
+              console.log("🛒 Cart Item Debug:", {
+                id: item.id,
+                name: item.name,
+                type: item.type,
+                category: item.category,
+                planType: item.planType,
+                price: item.price,
+                quantity: item.quantity,
+                days: item.days,
+                itemTotal,
+              });
 
               return (
                 <div
