@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { FiUser, FiSettings } from "react-icons/fi";
+import { FaCrown } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import {
@@ -41,12 +42,19 @@ function Page() {
         if (!mounted) return;
         const u = res?.user || null;
         setProfile(u);
+        
+        // Get latest address from address array (sorted by updatedAt)
+        const addresses = Array.isArray(u?.address) ? u.address : [];
+        const latestAddress = addresses.length > 0 
+          ? addresses.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0]
+          : null;
+        
         setEdit({
           name: u?.name || "",
           phone: u?.phone || "",
-          address: u?.address || "",
-          city: u?.city || "",
-          postalcode: u?.postalcode || "",
+          address: latestAddress?.street || "",
+          city: latestAddress?.city || "",
+          postalcode: latestAddress?.postalCode || "",
         });
       } catch (err) {
         if (!mounted) return;
@@ -342,7 +350,23 @@ transition-shadow duration-300 border border-neutral-100"
                             res?.message || "Profile updated successfully!"
                           );
                           const freshData = await fetchUserProfile(token);
-                          setProfile(freshData?.user || null);
+                          const u = freshData?.user || null;
+                          setProfile(u);
+                          
+                          // Update edit state with latest address
+                          const addresses = Array.isArray(u?.address) ? u.address : [];
+                          const latestAddress = addresses.length > 0 
+                            ? addresses.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0]
+                            : null;
+                          
+                          setEdit(prev => ({
+                            ...prev,
+                            name: u?.name || prev.name,
+                            phone: u?.phone || prev.phone,
+                            address: latestAddress?.street || prev.address,
+                            city: latestAddress?.city || prev.city,
+                            postalcode: latestAddress?.postalCode || prev.postalcode,
+                          }));
                         } catch (err) {
                           toast.error(err?.message || "Something went wrong");
                         }
@@ -380,12 +404,23 @@ transition-shadow duration-300 border border-neutral-100"
                       </div>
                     </form>
                   </div>
-                  <div className="bg-gradient-to-br from-emerald-50 to-white rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition-all border border-emerald-100 mb-6">
-                    <h2 className="text-xl font-bold mb-2 text-emerald-700">
-                      Update Delivery Address
-                    </h2>
+                  <div className="relative rounded-3xl p-6 mb-6 backdrop-blur-md bg-white/50 border border-white/30 shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all overflow-hidden">
+                    {/* Premium Overlay - Center */}
+                    <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
+                      <div className="backdrop-blur-md bg-gradient-to-r from-amber-400/90 via-yellow-400/90 to-amber-500/90 px-5 py-2.5 rounded-xl shadow-2xl border-2 border-white/50 flex items-center gap-2">
+                        <FaCrown className="text-yellow-300 text-xl drop-shadow-lg" />
+                        <span className="text-white text-lg font-extrabold uppercase tracking-wider">
+                          Premium
+                        </span>
+                      </div>
+                    </div>
+                    {/* Blurred Content - Not Editable */}
+                    <div className="pointer-events-none opacity-85 blur-[0.5px]">
+                      <h2 className="text-xl font-bold mb-2 text-emerald-700 pt-2">
+                        Update Delivery Address
+                      </h2>
 
-                    <p className="text-sm text-neutral-600 mb-5 leading-relaxed">
+                      <p className="text-sm text-neutral-600 mb-5 leading-relaxed">
                       <span className="font-semibold text-emerald-700">
                         Address Update Rules:
                       </span>
@@ -401,69 +436,49 @@ transition-shadow duration-300 border border-neutral-100"
                       address.
                     </p>
 
-                    <form
-                      onSubmit={async (e) => {
-                        e.preventDefault();
-                        try {
-                          const res = await updateUserProfile(token, {
-                            address: edit.address,
-                            city: edit.city,
-                            postalcode: edit.postalcode,
-                          });
-                          toast.success(
-                            res?.message || "Profile updated successfully!"
-                          );
-                          const freshData = await fetchUserProfile(token);
-                          setProfile(freshData?.user || null);
-                        } catch (err) {
-                          toast.error(err?.message || "Something went wrong");
-                        }
-                      }}
-                      className="grid grid-cols-1 sm:grid-cols-2 gap-5"
-                    >
-                      <label className="text-sm font-medium text-neutral-700">
-                        Update Delivery Address
-                        <textarea
-                          value={edit.address}
-                          onChange={(e) =>
-                            setEdit({ ...edit, address: e.target.value })
-                          }
-                          className="mt-1 w-full border-2 border-emerald-200 focus:border-emerald-500 outline-none rounded-xl px-4 py-3 bg-white transition"
-                          placeholder="Delivery address"
-                          type="text"
-                        />
-                      </label>
-                      <label className="text-sm font-medium text-neutral-700">
-                        City
-                        <input
-                          value={edit.city}
-                          onChange={(e) =>
-                            setEdit({ ...edit, city: e.target.value })
-                          }
-                          className="mt-1 w-full border-2 border-emerald-200 focus:border-emerald-500 outline-none rounded-xl px-4 py-3 bg-white transition"
-                          placeholder="Delivery address"
-                          type="text"
-                        />
-                      </label>
-                      <label className="text-sm font-medium text-neutral-700">
-                        Postalcode
-                        <input
-                          value={edit.postalcode}
-                          onChange={(e) =>
-                            setEdit({ ...edit, postalcode: e.target.value })
-                          }
-                          className="mt-1 w-full border-2 border-emerald-200 focus:border-emerald-500 outline-none rounded-xl px-4 py-3 bg-white transition"
-                          placeholder="Delivery address"
-                          type="text"
-                        />
-                      </label>
+                      <form className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <label className="text-sm font-medium text-neutral-700">
+                          Update Delivery Address
+                          <textarea
+                            value={edit.address}
+                            readOnly
+                            disabled
+                            className="mt-1 w-full border-2 border-white/40 backdrop-blur-sm bg-white/70 outline-none rounded-xl px-4 py-3 transition shadow-sm cursor-not-allowed"
+                            placeholder="Delivery address"
+                          />
+                        </label>
+                        <label className="text-sm font-medium text-neutral-700">
+                          City
+                          <input
+                            value={edit.city}
+                            readOnly
+                            disabled
+                            className="mt-1 w-full border-2 border-white/40 backdrop-blur-sm bg-white/70 outline-none rounded-xl px-4 py-3 transition shadow-sm cursor-not-allowed"
+                            placeholder="City"
+                          />
+                        </label>
+                        <label className="text-sm font-medium text-neutral-700">
+                          Postalcode
+                          <input
+                            value={edit.postalcode}
+                            readOnly
+                            disabled
+                            className="mt-1 w-full border-2 border-white/40 backdrop-blur-sm bg-white/70 outline-none rounded-xl px-4 py-3 transition shadow-sm cursor-not-allowed"
+                            placeholder="Postal code"
+                          />
+                        </label>
 
-                      <div className="sm:col-span-2 flex justify-end">
-                        <button className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-all shadow-sm hover:shadow-md">
-                          Save Changes
-                        </button>
-                      </div>
-                    </form>
+                        <div className="sm:col-span-2 flex justify-end">
+                          <button
+                            type="button"
+                            disabled
+                            className="px-6 py-3 rounded-xl backdrop-blur-md bg-emerald-500/50 border border-emerald-400/30 text-white/50 font-semibold transition-all shadow-lg cursor-not-allowed"
+                          >
+                            Save Changes
+                          </button>
+                        </div>
+                      </form>
+                    </div>
                   </div>
 
                   {/* Change Password */}

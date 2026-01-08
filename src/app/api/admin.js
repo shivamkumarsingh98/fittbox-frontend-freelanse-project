@@ -245,9 +245,51 @@ export const createMonthlyMeal = async (mealData, imageFile, token) => {
       const fd = new FormData();
       Object.keys(mealData || {}).forEach((k) => {
         const v = mealData[k];
-        if (v !== undefined && v !== null) fd.append(k, v);
+        if (v !== undefined && v !== null) {
+          // Properly serialize arrays and objects for FormData
+          if (Array.isArray(v)) {
+            // Send array as multiple form fields with [] notation
+            // Express.js body-parser/multer will automatically parse this as an array
+            v.forEach((item) => {
+              fd.append(`${k}[]`, item);
+            });
+          } else if (typeof v === "object" && v !== null) {
+            // Serialize objects (e.g., price) as JSON strings so the server
+            // can parse them reliably from multipart/form-data.
+            try {
+              fd.append(k, JSON.stringify(v));
+            } catch (e) {
+              // fallback: append individual keys
+              Object.keys(v).forEach((objKey) => {
+                const objValue = v[objKey];
+                if (objValue !== undefined && objValue !== null) {
+                  fd.append(`${k}[${objKey}]`, objValue);
+                }
+              });
+            }
+          } else {
+            fd.append(k, v);
+          }
+        }
       });
       fd.append("image", imageFile);
+      // Log FormData entries for debugging (browser env)
+      try {
+        const entries = {};
+        fd.forEach((val, key) => {
+          // For File values, just note it's a File
+          entries[key] = val instanceof File ? `[File:${val.name}]` : val;
+        });
+        console.log(
+          "[admin.js] createMonthlyMeal -> FormData entries:",
+          entries
+        );
+      } catch (e) {
+        console.log(
+          "[admin.js] createMonthlyMeal -> could not enumerate FormData entries",
+          e
+        );
+      }
       const res = await axios.post(url, fd, { headers });
       return res.data;
     }
@@ -278,9 +320,48 @@ export const updateMonthlyMeal = async (id, mealData, imageFile, token) => {
       const fd = new FormData();
       Object.keys(mealData || {}).forEach((k) => {
         const v = mealData[k];
-        if (v !== undefined && v !== null) fd.append(k, v);
+        if (v !== undefined && v !== null) {
+          // Properly serialize arrays and objects for FormData
+          if (Array.isArray(v)) {
+            // Send array as multiple form fields with [] notation
+            // Express.js body-parser/multer will automatically parse this as an array
+            v.forEach((item) => {
+              fd.append(`${k}[]`, item);
+            });
+          } else if (typeof v === "object" && v !== null) {
+            // Serialize objects (e.g., price) as JSON strings so the server
+            // can parse them reliably from multipart/form-data.
+            try {
+              fd.append(k, JSON.stringify(v));
+            } catch (e) {
+              Object.keys(v).forEach((objKey) => {
+                const objValue = v[objKey];
+                if (objValue !== undefined && objValue !== null) {
+                  fd.append(`${k}[${objKey}]`, objValue);
+                }
+              });
+            }
+          } else {
+            fd.append(k, v);
+          }
+        }
       });
       fd.append("image", imageFile);
+      try {
+        const entries = {};
+        fd.forEach((val, key) => {
+          entries[key] = val instanceof File ? `[File:${val.name}]` : val;
+        });
+        console.log(
+          "[admin.js] updateMonthlyMeal -> FormData entries:",
+          entries
+        );
+      } catch (e) {
+        console.log(
+          "[admin.js] updateMonthlyMeal -> could not enumerate FormData entries",
+          e
+        );
+      }
       const res = await axios.put(url, fd, { headers });
       return res.data;
     }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import {
   createTrialMeal,
   createMonthlyMeal,
@@ -13,17 +14,43 @@ import { getMonthlyMeals } from "../../../api/Meals";
 function PriceInput({ label, value, onChange, theme }) {
   return (
     <label className="block text-sm">
-      <span className={`${theme === "dark" ? "text-neutral-300" : "text-neutral-700"}`}>{label}</span>
-      <input type="number" min={0} value={value} onChange={(e) => onChange(Number(e.target.value))} className={`mt-1 w-full rounded border px-3 py-2 ${theme === "dark" ? "bg-neutral-900 border-neutral-700 text-white" : "bg-white"}`} />
+      <span
+        className={`${
+          theme === "dark" ? "text-neutral-300" : "text-neutral-700"
+        }`}
+      >
+        {label}
+      </span>
+      <input
+        type="number"
+        min={0}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className={`mt-1 w-full rounded border px-3 py-2 ${
+          theme === "dark"
+            ? "bg-neutral-900 border-neutral-700 text-white"
+            : "bg-white"
+        }`}
+      />
     </label>
   );
 }
 
 function MealCard({ title, img, children, theme }) {
   return (
-    <div className={`${theme === "dark" ? "bg-neutral-800 border-neutral-700" : "bg-white border"} rounded-xl p-4 border`}>
+    <div
+      className={`${
+        theme === "dark"
+          ? "bg-neutral-800 border-neutral-700"
+          : "bg-white border"
+      } rounded-xl p-4 border`}
+    >
       <div className="flex items-center gap-3 mb-3">
-        <img src={img} alt={title} className="w-14 h-14 rounded-full object-cover border" />
+        <img
+          src={img}
+          alt={title}
+          className="w-14 h-14 rounded-full object-cover border"
+        />
         <h4 className="text-lg font-semibold">{title}</h4>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{children}</div>
@@ -92,21 +119,49 @@ export default function MealPlansTab({ theme }) {
   const [editingAllTrial, setEditingAllTrial] = useState(false);
 
   const handleTrialImage = (key, file, idx = null) => {
-    // support per-option images for breakfast: idx === null -> default, idx is number -> per-option
-    setTrialImages((s) => {
-      if (key === "breakfast") {
-        const current = s.breakfast || {};
-        if (idx === null) {
-          return { ...s, breakfast: { ...current, default: file } };
-        }
-        return { ...s, breakfast: { ...current, [idx]: file } };
+    if (file) {
+      // Check file size (1MB = 1024 * 1024 bytes)
+      const maxSize = 1024 * 1024; // 1MB in bytes
+      if (file.size > maxSize) {
+        toast.error("Image size should be less than 1MB");
+        return;
       }
-      return { ...s, [key]: file };
-    });
+      // support per-option images for breakfast: idx === null -> default, idx is number -> per-option
+      setTrialImages((s) => {
+        if (key === "breakfast") {
+          const current = s.breakfast || {};
+          if (idx === null) {
+            return { ...s, breakfast: { ...current, default: file } };
+          }
+          return { ...s, breakfast: { ...current, [idx]: file } };
+        }
+        return { ...s, [key]: file };
+      });
+    }
   };
 
   const handleMonthlyImage = (key, file) => {
-    setMonthlyImages((s) => ({ ...s, [key]: file }));
+    if (file) {
+      // Check file size (1MB = 1024 * 1024 bytes)
+      const maxSize = 1024 * 1024; // 1MB in bytes
+      if (file.size > maxSize) {
+        toast.error("Image size should be less than 1MB");
+        return;
+      }
+      setMonthlyImages((s) => ({ ...s, [key]: file }));
+    }
+  };
+
+  const handleEditTrialImage = (id, file) => {
+    if (file) {
+      // Check file size (1MB = 1024 * 1024 bytes)
+      const maxSize = 1024 * 1024; // 1MB in bytes
+      if (file.size > maxSize) {
+        toast.error("Image size should be less than 1MB");
+        return;
+      }
+      setEditTrialImage((s) => ({ ...s, [id]: file }));
+    }
   };
 
   const getMonthlyPayload = (key, obj) => {
@@ -160,7 +215,7 @@ export default function MealPlansTab({ theme }) {
       const id = actual && (actual._id || actual.id);
 
       if (!actual || !id) {
-        alert("No existing monthly plan to update (missing id)");
+        toast.error("No existing monthly plan to update (missing id)");
         return;
       }
 
@@ -171,10 +226,10 @@ export default function MealPlansTab({ theme }) {
       // 🔥 Refresh DB data (same as Trial)
       await fetchMonthlyItems();
 
-      alert("Monthly plan updated");
+      toast.success("Monthly plan updated");
     } catch (err) {
       console.error(err);
-      alert(err?.message || "Update failed");
+      toast.error(err?.message || "Update failed");
     }
   };
 
@@ -324,7 +379,7 @@ export default function MealPlansTab({ theme }) {
       const id = actual?._id || actual?.id;
 
       if (!id) {
-        alert("Missing monthly plan id");
+        toast.error("Missing monthly plan id");
         return;
       }
 
@@ -335,10 +390,10 @@ export default function MealPlansTab({ theme }) {
       delete copy[key];
       setCreatedMonthly(copy);
 
-      alert("Monthly plan deleted");
+      toast.success("Monthly plan deleted");
     } catch (err) {
       console.error(err);
-      alert(err?.message || "Delete failed");
+      toast.error(err?.message || "Delete failed");
     }
   };
 
@@ -347,10 +402,10 @@ export default function MealPlansTab({ theme }) {
       await deleteTrialMeal(id);
       // refresh from server to ensure DB was updated
       await fetchTrialItems();
-      alert("Trial meal deleted");
+      toast.success("Trial meal deleted");
     } catch (err) {
       console.error(err);
-      alert(err?.message || "Delete failed");
+      toast.error(err?.message || "Delete failed");
     }
   };
 
@@ -401,7 +456,7 @@ export default function MealPlansTab({ theme }) {
   const saveAllEditedTrials = async () => {
     try {
       const ids = Object.keys(editTrialData || {});
-      if (ids.length === 0) return alert("Nothing to save");
+      if (ids.length === 0) return toast.error("Nothing to save");
       for (const id of ids) {
         const data = editTrialData[id];
         const payload = {
@@ -428,10 +483,10 @@ export default function MealPlansTab({ theme }) {
       // refresh list from server
       await fetchTrialItems();
       cancelEditAllTrials();
-      alert("All trial items updated");
+      toast.success("All trial items updated");
     } catch (err) {
       console.error(err);
-      alert(err?.message || "Failed to save all trial items");
+      toast.error(err?.message || "Failed to save all trial items");
     }
   };
 
@@ -474,7 +529,7 @@ export default function MealPlansTab({ theme }) {
   const saveEditedTrial = async (id) => {
     try {
       const data = editTrialData[id];
-      if (!data) return alert("No changes to save");
+      if (!data) return toast.error("No changes to save");
       console.debug(
         "[Admin] saveEditedTrial -> id, data, file:",
         id,
@@ -494,10 +549,10 @@ export default function MealPlansTab({ theme }) {
       // refresh from server to ensure data is consistent
       await fetchTrialItems();
       cancelEditTrial(id);
-      alert("Trial meal updated");
+      toast.success("Trial meal updated");
     } catch (err) {
       console.error(err);
-      alert(err?.message || "Update failed");
+      toast.error(err?.message || "Update failed");
     }
   };
 
@@ -600,11 +655,11 @@ export default function MealPlansTab({ theme }) {
       setCreatedTrial(results.map((r) => r.data || r));
       // refresh from server to ensure we have DB IDs
       await fetchTrialItems();
-      alert("Trial meal plan updated successfully");
+      toast.success("Trial meal plan updated successfully");
     } catch (err) {
       console.error(err);
       setError(err.message || "Failed to save trial meal");
-      alert("Failed to save trial meal: " + (err.message || err));
+      toast.error("Failed to save trial meal: " + (err.message || err));
     } finally {
       setSavingTrial(false);
     }
@@ -687,18 +742,43 @@ export default function MealPlansTab({ theme }) {
 
       const results = [];
       for (const c of creations) {
-        const res = await createMonthlyMeal(c.payload, c.image);
-        results.push({ key: c.key, data: res.data || res });
+        console.log(
+          "[MealPlansTab] creating monthly plan ->",
+          c.key,
+          c.payload,
+          c.image
+        );
+        if (c.image) {
+          // create without image to avoid multipart parsing/validation issues
+          const createRes = await createMonthlyMeal(c.payload, null);
+          const created = createRes.data || createRes;
+          const id =
+            (created &&
+              (created.mealPlan?._id ||
+                created._id ||
+                (created.data && created.data._id))) ||
+            null;
+          if (!id) {
+            results.push({ key: c.key, data: created });
+            continue;
+          }
+          // attach image with update endpoint
+          const updateRes = await updateMonthlyMeal(id, {}, c.image);
+          results.push({ key: c.key, data: updateRes.data || updateRes });
+        } else {
+          const res = await createMonthlyMeal(c.payload, null);
+          results.push({ key: c.key, data: res.data || res });
+        }
       }
       const map = {};
       results.forEach((r) => (map[r.key] = r.data));
       console.log("[DEBUG] createdMonthly after creation:", map);
       setCreatedMonthly(map); // 🔥 UI me turant reflect hoga
-      alert("Monthly meal plans create successfully");
+      toast.success("Monthly meal plans created successfully");
     } catch (err) {
       console.error(err);
       setError(err.message || "Failed to save monthly plans");
-      alert("Failed to save monthly plans: " + (err.message || err));
+      toast.error("Failed to save monthly plans: " + (err.message || err));
     } finally {
       setSavingMonthly(false);
     }
@@ -973,10 +1053,7 @@ export default function MealPlansTab({ theme }) {
                           type="file"
                           accept="image/*"
                           onChange={(e) =>
-                            setEditTrialImage((s) => ({
-                              ...s,
-                              [id]: e.target.files[0],
-                            }))
+                            handleEditTrialImage(id, e.target.files[0])
                           }
                           className="w-full text-xs md:text-sm"
                         />
@@ -1140,10 +1217,7 @@ export default function MealPlansTab({ theme }) {
                               type="file"
                               accept="image/*"
                               onChange={(e) =>
-                                setEditTrialImage((s) => ({
-                                  ...s,
-                                  [id]: e.target.files[0],
-                                }))
+                                handleEditTrialImage(id, e.target.files[0])
                               }
                               className="text-xs"
                             />
@@ -1308,10 +1382,7 @@ export default function MealPlansTab({ theme }) {
                               type="file"
                               accept="image/*"
                               onChange={(e) =>
-                                setEditTrialImage((s) => ({
-                                  ...s,
-                                  [id]: e.target.files[0],
-                                }))
+                                handleEditTrialImage(id, e.target.files[0])
                               }
                               className="text-xs"
                             />
@@ -1368,15 +1439,17 @@ export default function MealPlansTab({ theme }) {
       >
         <h3 className="text-lg font-semibold mb-4">Monthly Meal Plans</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <MealCard
-            title="Breakfast Only"
-            img={monthly.breakfastOnly.img}
-            theme={theme}
+          <div
+            className={`${
+              theme === "dark"
+                ? "bg-neutral-800 border-neutral-700"
+                : "bg-white border"
+            } rounded-xl p-5 border shadow-sm`}
           >
             {createdMonthly.breakfastOnly &&
             editingMonthlyKey !== "breakfastOnly" ? (
               // show created summary when present and not editing
-              <div className=" rounded border bg-white dark:bg-neutral-800">
+              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
                 <div className="font-medium">
                   {createdMonthly.breakfastOnly.name}
                 </div>
@@ -1410,50 +1483,67 @@ export default function MealPlansTab({ theme }) {
               </div>
             ) : (
               // show inputs (either creating or editing)
-              <>
-                <div className="mb-3">
-                  <label className="block text-sm">Image (optional)</label>
+              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+                {/* Header with Image + Title */}
+                <div className="flex items-center gap-3 mb-4">
+                  {monthlyImages.breakfastOnly ? (
+                    <img
+                      src={URL.createObjectURL(monthlyImages.breakfastOnly)}
+                      alt="Preview"
+                      className="w-12 h-12 rounded-full object-cover border shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                  )}
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                    Breakfast Only
+                  </h2>
+                </div>
+
+                {/* Upload Section */}
+                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                  Upload Option Image
+                </label>
+                <div className="flex items-center gap-3 mt-1">
                   <input
                     type="file"
                     accept="image/*"
+                    className="text-sm file:px-3 file:py-1 file:border file:rounded-md file:bg-neutral-100 dark:file:bg-neutral-800 file:border-neutral-300 dark:file:border-neutral-700 file:text-neutral-700 dark:file:text-neutral-300 cursor-pointer"
                     onChange={(e) =>
                       handleMonthlyImage("breakfastOnly", e.target.files[0])
                     }
-                    className="mt-1"
                   />
-                  {monthlyImages.breakfastOnly && (
-                    <img
-                      src={URL.createObjectURL(monthlyImages.breakfastOnly)}
-                      alt="preview"
-                      className="w-20 h-20 rounded mt-2 object-cover"
-                    />
-                  )}
                 </div>
-                <PriceInput
-                  label="Veg Price"
-                  value={monthly.breakfastOnly.veg}
-                  theme={theme}
-                  onChange={(v) =>
-                    setMonthly({
-                      ...monthly,
-                      breakfastOnly: { ...monthly.breakfastOnly, veg: v },
-                    })
-                  }
-                />
-                <PriceInput
-                  label="Non-Veg Price"
-                  value={monthly.breakfastOnly.nonveg}
-                  theme={theme}
-                  onChange={(v) =>
-                    setMonthly({
-                      ...monthly,
-                      breakfastOnly: { ...monthly.breakfastOnly, nonveg: v },
-                    })
-                  }
-                />
+
+                {/* Prices */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <PriceInput
+                    label="Veg Price"
+                    value={monthly.breakfastOnly.veg}
+                    theme={theme}
+                    onChange={(v) =>
+                      setMonthly({
+                        ...monthly,
+                        breakfastOnly: { ...monthly.breakfastOnly, veg: v },
+                      })
+                    }
+                  />
+                  <PriceInput
+                    label="Non-Veg Price"
+                    value={monthly.breakfastOnly.nonveg}
+                    theme={theme}
+                    onChange={(v) =>
+                      setMonthly({
+                        ...monthly,
+                        breakfastOnly: { ...monthly.breakfastOnly, nonveg: v },
+                      })
+                    }
+                  />
+                </div>
+
                 {createdMonthly.breakfastOnly &&
                   editingMonthlyKey === "breakfastOnly" && (
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-4">
                       <button
                         onClick={() => {
                           handleUpdateMonthly("breakfastOnly");
@@ -1471,23 +1561,20 @@ export default function MealPlansTab({ theme }) {
                       </button>
                     </div>
                   )}
-              </>
+              </div>
             )}
-          </MealCard>
+          </div>
 
           <div
             className={`${
               theme === "dark"
                 ? "bg-neutral-800 border-neutral-700"
                 : "bg-white border"
-            } rounded-xl p-4 border`}
+            } rounded-xl p-5 border shadow-sm`}
           >
-            <h4 className="text-lg font-semibold mb-2">
-              1 Meal ({monthly.twoMealsLorD.label})
-            </h4>
             {createdMonthly.twoMealsLorD &&
             editingMonthlyKey !== "twoMealsLorD" ? (
-              <div className="p-3 rounded border bg-white dark:bg-neutral-800">
+              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
                 <div className="font-medium">
                   {createdMonthly.twoMealsLorD.name}
                 </div>
@@ -1497,9 +1584,7 @@ export default function MealPlansTab({ theme }) {
                 </div>
                 <div className="mt-2 text-sm">
                   Veg: ₹{createdMonthly.twoMealsLorD.price?.veg ?? "-"} •
-                  Non-Veg: ₹
-                  {createdMonthly.twoMealsLorD.price?.nonVeg ??
-                    "-"}
+                  Non-Veg: ₹{createdMonthly.twoMealsLorD.price?.nonVeg ?? "-"}
                 </div>
                 <div className="flex gap-2 mt-3">
                   <button
@@ -1517,26 +1602,40 @@ export default function MealPlansTab({ theme }) {
                 </div>
               </div>
             ) : (
-              <>
-                <div className="mb-3 ">
-                  <label className="block text-sm">Image (optional)</label>
+              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+                {/* Header with Image + Title */}
+                <div className="flex items-center gap-3 mb-4">
+                  {monthlyImages.twoMealsLorD ? (
+                    <img
+                      src={URL.createObjectURL(monthlyImages.twoMealsLorD)}
+                      alt="Preview"
+                      className="w-12 h-12 rounded-full object-cover border shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                  )}
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                    {monthly.twoMealsLorD.label || "1 Meal"}
+                  </h2>
+                </div>
+
+                {/* Upload Section */}
+                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                  Upload Option Image
+                </label>
+                <div className="flex items-center gap-3 mt-1">
                   <input
                     type="file"
                     accept="image/*"
+                    className="text-sm file:px-3 file:py-1 file:border file:rounded-md file:bg-neutral-100 dark:file:bg-neutral-800 file:border-neutral-300 dark:file:border-neutral-700 file:text-neutral-700 dark:file:text-neutral-300 cursor-pointer"
                     onChange={(e) =>
                       handleMonthlyImage("twoMealsLorD", e.target.files[0])
                     }
-                    className="mt-1"
                   />
-                  {monthlyImages.twoMealsLorD && (
-                    <img
-                      src={URL.createObjectURL(monthlyImages.twoMealsLorD)}
-                      alt="preview"
-                      className="w-20 h-20 rounded mt-2 object-cover"
-                    />
-                  )}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                {/* Prices */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
                   <PriceInput
                     label="Veg Price"
                     value={monthly.twoMealsLorD.veg}
@@ -1560,9 +1659,10 @@ export default function MealPlansTab({ theme }) {
                     }
                   />
                 </div>
+
                 {createdMonthly.twoMealsLorD &&
                   editingMonthlyKey === "twoMealsLorD" && (
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-4">
                       <button
                         onClick={() => {
                           handleUpdateMonthly("twoMealsLorD");
@@ -1580,7 +1680,7 @@ export default function MealPlansTab({ theme }) {
                       </button>
                     </div>
                   )}
-              </>
+              </div>
             )}
           </div>
 
@@ -1589,14 +1689,11 @@ export default function MealPlansTab({ theme }) {
               theme === "dark"
                 ? "bg-neutral-800 border-neutral-700"
                 : "bg-white border"
-            } rounded-xl p-4 border`}
+            } rounded-xl p-5 border shadow-sm`}
           >
-            <h4 className="text-lg font-semibold mb-2">
-              2 Meals ({monthly.twoMealsBLD.label})
-            </h4>
             {createdMonthly.twoMealsBLD &&
             editingMonthlyKey !== "twoMealsBLD" ? (
-              <div className="p-3 rounded border bg-white dark:bg-neutral-800">
+              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
                 <div className="font-medium">
                   {createdMonthly.twoMealsBLD.name}
                 </div>
@@ -1627,26 +1724,40 @@ export default function MealPlansTab({ theme }) {
                 </div>
               </div>
             ) : (
-              <>
-                <div className="mb-3">
-                  <label className="block text-sm">Image (optional)</label>
+              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+                {/* Header with Image + Title */}
+                <div className="flex items-center gap-3 mb-4">
+                  {monthlyImages.twoMealsBLD ? (
+                    <img
+                      src={URL.createObjectURL(monthlyImages.twoMealsBLD)}
+                      alt="Preview"
+                      className="w-12 h-12 rounded-full object-cover border shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                  )}
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                    {monthly.twoMealsBLD.label || "2 Meals"}
+                  </h2>
+                </div>
+
+                {/* Upload Section */}
+                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                  Upload Option Image
+                </label>
+                <div className="flex items-center gap-3 mt-1">
                   <input
                     type="file"
                     accept="image/*"
+                    className="text-sm file:px-3 file:py-1 file:border file:rounded-md file:bg-neutral-100 dark:file:bg-neutral-800 file:border-neutral-300 dark:file:border-neutral-700 file:text-neutral-700 dark:file:text-neutral-300 cursor-pointer"
                     onChange={(e) =>
                       handleMonthlyImage("twoMealsBLD", e.target.files[0])
                     }
-                    className="mt-1"
                   />
-                  {monthlyImages.twoMealsBLD && (
-                    <img
-                      src={URL.createObjectURL(monthlyImages.twoMealsBLD)}
-                      alt="preview"
-                      className="w-20 h-20 rounded mt-2 object-cover"
-                    />
-                  )}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                {/* Prices */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
                   <PriceInput
                     label="Veg Price"
                     value={monthly.twoMealsBLD.veg}
@@ -1670,9 +1781,10 @@ export default function MealPlansTab({ theme }) {
                     }
                   />
                 </div>
+
                 {createdMonthly.twoMealsBLD &&
                   editingMonthlyKey === "twoMealsBLD" && (
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-4">
                       <button
                         onClick={() => {
                           handleUpdateMonthly("twoMealsBLD");
@@ -1690,7 +1802,7 @@ export default function MealPlansTab({ theme }) {
                       </button>
                     </div>
                   )}
-              </>
+              </div>
             )}
           </div>
 
@@ -1699,14 +1811,11 @@ export default function MealPlansTab({ theme }) {
               theme === "dark"
                 ? "bg-neutral-800 border-neutral-700"
                 : "bg-white border"
-            } rounded-xl p-4 border`}
+            } rounded-xl p-5 border shadow-sm`}
           >
-            <h4 className="text-lg font-semibold mb-2">
-              2 Meals ({monthly.twoMealsLandD.label})
-            </h4>
             {createdMonthly.twoMealsLandD &&
             editingMonthlyKey !== "twoMealsLandD" ? (
-              <div className="p-3 rounded border bg-white dark:bg-neutral-800">
+              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
                 <div className="font-medium">
                   {createdMonthly.twoMealsLandD.name}
                 </div>
@@ -1739,26 +1848,40 @@ export default function MealPlansTab({ theme }) {
                 </div>
               </div>
             ) : (
-              <>
-                <div className="mb-3">
-                  <label className="block text-sm">Image (optional)</label>
+              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+                {/* Header with Image + Title */}
+                <div className="flex items-center gap-3 mb-4">
+                  {monthlyImages.twoMealsLandD ? (
+                    <img
+                      src={URL.createObjectURL(monthlyImages.twoMealsLandD)}
+                      alt="Preview"
+                      className="w-12 h-12 rounded-full object-cover border shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                  )}
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                    {monthly.twoMealsLandD.label || "2 Meals"}
+                  </h2>
+                </div>
+
+                {/* Upload Section */}
+                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                  Upload Option Image
+                </label>
+                <div className="flex items-center gap-3 mt-1">
                   <input
                     type="file"
                     accept="image/*"
+                    className="text-sm file:px-3 file:py-1 file:border file:rounded-md file:bg-neutral-100 dark:file:bg-neutral-800 file:border-neutral-300 dark:file:border-neutral-700 file:text-neutral-700 dark:file:text-neutral-300 cursor-pointer"
                     onChange={(e) =>
                       handleMonthlyImage("twoMealsLandD", e.target.files[0])
                     }
-                    className="mt-1"
                   />
-                  {monthlyImages.twoMealsLandD && (
-                    <img
-                      src={URL.createObjectURL(monthlyImages.twoMealsLandD)}
-                      alt="preview"
-                      className="w-20 h-20 rounded mt-2 object-cover"
-                    />
-                  )}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                {/* Prices */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
                   <PriceInput
                     label="Veg Price"
                     value={monthly.twoMealsLandD.veg}
@@ -1782,9 +1905,10 @@ export default function MealPlansTab({ theme }) {
                     }
                   />
                 </div>
+
                 {createdMonthly.twoMealsLandD &&
                   editingMonthlyKey === "twoMealsLandD" && (
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-4">
                       <button
                         onClick={() => {
                           handleUpdateMonthly("twoMealsLandD");
@@ -1802,7 +1926,7 @@ export default function MealPlansTab({ theme }) {
                       </button>
                     </div>
                   )}
-              </>
+              </div>
             )}
           </div>
 
@@ -1811,11 +1935,10 @@ export default function MealPlansTab({ theme }) {
               theme === "dark"
                 ? "bg-neutral-800 border-neutral-700"
                 : "bg-white border"
-            } rounded-xl p-4 border`}
+            } rounded-xl p-5 border shadow-sm`}
           >
-            <h4 className="text-lg font-semibold mb-2">3 Meals a Day</h4>
             {createdMonthly.threeMeals && editingMonthlyKey !== "threeMeals" ? (
-              <div className="p-3 rounded border bg-white dark:bg-neutral-800">
+              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
                 <div className="font-medium">
                   {createdMonthly.threeMeals.name}
                 </div>
@@ -1846,26 +1969,40 @@ export default function MealPlansTab({ theme }) {
                 </div>
               </div>
             ) : (
-              <>
-                <div className="mb-3">
-                  <label className="block text-sm">Image (optional)</label>
+              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+                {/* Header with Image + Title */}
+                <div className="flex items-center gap-3 mb-4">
+                  {monthlyImages.threeMeals ? (
+                    <img
+                      src={URL.createObjectURL(monthlyImages.threeMeals)}
+                      alt="Preview"
+                      className="w-12 h-12 rounded-full object-cover border shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                  )}
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                    3 Meals a Day
+                  </h2>
+                </div>
+
+                {/* Upload Section */}
+                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                  Upload Option Image
+                </label>
+                <div className="flex items-center gap-3 mt-1">
                   <input
                     type="file"
                     accept="image/*"
+                    className="text-sm file:px-3 file:py-1 file:border file:rounded-md file:bg-neutral-100 dark:file:bg-neutral-800 file:border-neutral-300 dark:file:border-neutral-700 file:text-neutral-700 dark:file:text-neutral-300 cursor-pointer"
                     onChange={(e) =>
                       handleMonthlyImage("threeMeals", e.target.files[0])
                     }
-                    className="mt-1"
                   />
-                  {monthlyImages.threeMeals && (
-                    <img
-                      src={URL.createObjectURL(monthlyImages.threeMeals)}
-                      alt="preview"
-                      className="w-20 h-20 rounded mt-2 object-cover"
-                    />
-                  )}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                {/* Prices */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
                   <PriceInput
                     label="Veg Price"
                     value={monthly.threeMeals.veg}
@@ -1889,9 +2026,10 @@ export default function MealPlansTab({ theme }) {
                     }
                   />
                 </div>
+
                 {createdMonthly.threeMeals &&
                   editingMonthlyKey === "threeMeals" && (
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-4">
                       <button
                         onClick={() => {
                           handleUpdateMonthly("threeMeals");
@@ -1909,7 +2047,7 @@ export default function MealPlansTab({ theme }) {
                       </button>
                     </div>
                   )}
-              </>
+              </div>
             )}
           </div>
         </div>
