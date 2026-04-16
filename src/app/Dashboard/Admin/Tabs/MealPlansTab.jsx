@@ -1084,7 +1084,7 @@ export default function MealPlansTab({ theme }) {
             {/* LUNCH CARD */}
             <MealCard title="Lunch" img={trial.lunch.img} theme={theme}>
               {!hasCreatedCategory("lunch") && (
-                <div className="w-[210%] rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+                <div className="col-span-2 rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border ...">
                   {/* Header with Image + Title */}
                   <div className="flex items-center gap-3 mb-4">
                     {trialImages.lunch ? (
@@ -1148,7 +1148,7 @@ export default function MealPlansTab({ theme }) {
               )}
 
               {/* Render Lunch Items */}
-              <div className="space-y-3 mt-4 flex flex-col w-[400px]">
+              <div className="space-y-3 mt-4 flex flex-col w-full col-span-2">
                 {createdTrial
                   .filter((it) => it.category === "lunch")
                   .map((it) => {
@@ -1247,7 +1247,7 @@ export default function MealPlansTab({ theme }) {
             {/* DINNER CARD - Same Styling */}
             <MealCard title="Dinner" img={trial.dinner.img} theme={theme}>
               {!hasCreatedCategory("dinner") && (
-                <div className="w-[210%] rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+                <div className="col-span-2 rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border ...">
                   {/* Header with Image + Title */}
                   <div className="flex items-center gap-3 mb-4">
                     {trialImages.dinner ? (
@@ -1312,7 +1312,7 @@ export default function MealPlansTab({ theme }) {
 
               {/* Render Dinner Items */}
               {/* (Same layout as above mapping) */}
-              <div className="space-y-3 mt-4 flex flex-col w-[400px]">
+              <div className="space-y-3 mt-4 flex flex-col w-full col-span-2">
                 {createdTrial
                   .filter((it) => it.category === "dinner")
                   .map((it) => {
