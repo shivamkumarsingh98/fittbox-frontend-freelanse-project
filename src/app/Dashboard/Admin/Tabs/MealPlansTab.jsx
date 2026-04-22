@@ -140,18 +140,53 @@ export default function MealPlansTab({ theme }) {
     }
   };
 
-  const handleMonthlyImage = (key, file) => {
-    if (file) {
-      // Check file size (1MB = 1024 * 1024 bytes)
-      const maxSize = 1024 * 1024; // 1MB in bytes
-      if (file.size > maxSize) {
-        toast.error("Image size should be less than 1MB");
-        return;
-      }
-      setMonthlyImages((s) => ({ ...s, [key]: file }));
-    }
-  };
+  // const handleMonthlyImage = (key, file) => {
+  //   if (file) {
+  //     // Check file size (1MB = 1024 * 1024 bytes)
+  //     const maxSize = 1024 * 1024; // 1MB in bytes
+  //     if (file.size > maxSize) {
+  //       toast.error("Image size should be less than 1MB");
+  //       return;
+  //     }
+  //     setMonthlyImages((s) => ({ ...s, [key]: file }));
+  //   }
+  // };
 
+  const handleMonthlyImage = (key, file) => {
+    console.log(
+      `[MonthlyImage] handleMonthlyImage called -> key: ${key}, file:`,
+      file,
+    );
+    if (!file) {
+      console.warn(`[MonthlyImage] No file selected for key: ${key}`);
+      return;
+    }
+
+    const maxSize = 1024 * 1024;
+    console.log(
+      `[MonthlyImage] File size: ${file.size} bytes, max allowed: ${maxSize} bytes`,
+    );
+
+    if (file.size > maxSize) {
+      console.error(
+        `[MonthlyImage] File too large for key: ${key} -> ${file.size} bytes`,
+      );
+      toast.error("Image size should be less than 1MB");
+      return;
+    }
+
+    console.log(`[MonthlyImage] ✅ File accepted for key: ${key} ->`, {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
+
+    setMonthlyImages((s) => {
+      const updated = { ...s, [key]: file };
+      console.log(`[MonthlyImage] monthlyImages state updated:`, updated);
+      return updated;
+    });
+  };
   const handleEditTrialImage = (id, file) => {
     if (file) {
       // Check file size (1MB = 1024 * 1024 bytes)
@@ -212,7 +247,7 @@ export default function MealPlansTab({ theme }) {
     try {
       const existing = createdMonthly[key];
       const actual = (existing && existing?.mealPlan) || existing;
-      const id = actual && (actual._id || actual.id);
+      const id = actual?._id || actual?.id;
 
       if (!actual || !id) {
         toast.error("No existing monthly plan to update (missing id)");
@@ -471,7 +506,7 @@ export default function MealPlansTab({ theme }) {
           "[Admin] saveAllEditedTrials -> updating",
           id,
           payload,
-          editTrialImage[id]
+          editTrialImage[id],
         );
         try {
           await updateTrialMeal(id, payload, editTrialImage[id]);
@@ -534,7 +569,7 @@ export default function MealPlansTab({ theme }) {
         "[Admin] saveEditedTrial -> id, data, file:",
         id,
         data,
-        editTrialImage[id]
+        editTrialImage[id],
       );
       const payload = {
         name: data.name,
@@ -562,7 +597,7 @@ export default function MealPlansTab({ theme }) {
     try {
       const stripImages = (obj) =>
         JSON.parse(
-          JSON.stringify(obj, (k, v) => (k === "img" ? undefined : v))
+          JSON.stringify(obj, (k, v) => (k === "img" ? undefined : v)),
         );
 
       const clean = stripImages(trial);
@@ -649,10 +684,10 @@ export default function MealPlansTab({ theme }) {
       // sequentially call createTrialMeal so uploads are handled predictably
       const results = [];
       for (const c of creations) {
-        const res = await createTrialMeal(c.payload, c.image);
-        results.push(res);
+        const res = await createTrialMeal(c.payload, c.image || null);
+        results.push({ key: c.key, data: res.data || res });
       }
-      setCreatedTrial(results.map((r) => r.data || r));
+      // setCreatedTrial(results.map((r) => r.data || r));
       // refresh from server to ensure we have DB IDs
       await fetchTrialItems();
       toast.success("Trial meal plan updated successfully");
@@ -665,126 +700,469 @@ export default function MealPlansTab({ theme }) {
     }
   };
 
-  const saveMonthly = async () => {
-    setError(null);
-    setSavingMonthly(true);
-    try {
-      const stripImages = (obj) =>
-        JSON.parse(
-          JSON.stringify(obj, (k, v) => (k === "img" ? undefined : v))
-        );
+  // const saveMonthly = async () => {
+  //   setError(null);
+  //   setSavingMonthly(true);
+  //   try {
+  //     const stripImages = (obj) =>
+  //       JSON.parse(
+  //         JSON.stringify(obj, (k, v) => (k === "img" ? undefined : v))
+  //       );
 
-      const clean = stripImages(monthly);
+  //     const clean = stripImages(monthly);
 
-      // Build per-plan payloads matching backend: { name, mealsIncluded: [...], price: { veg, nonVeg } }
-      const toPayload = (key, obj) => {
-        switch (key) {
-          case "breakfastOnly":
-            return {
-              name: obj.label || "Breakfast Only",
-              mealsIncluded: ["breakfast"],
-              price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
-            };
-          case "oneMeal": {
-            const label = (obj.label || "1 Meal").toLowerCase();
-            const meals = [];
-            if (label.includes("breakfast")) meals.push("breakfast");
-            if (label.includes("lunch")) meals.push("lunch");
-            if (label.includes("dinner")) meals.push("dinner");
-            if (meals.length === 0) meals.push("lunch");
-            return {
-              name: obj.label || "1 Meal",
-              mealsIncluded: meals,
-              price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
-            };
-          }
-          case "twoMealsBLD":
-            return {
-              name: obj.label || "Breakfast + Lunch/Dinner",
-              mealsIncluded: ["breakfast", "lunch"],
-              price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
-            };
-          case "twoMealsLorD":
-            return {
-              name: obj.label || "Lunch / Dinner",
-              mealsIncluded: ["lunch", "dinner"],
-              price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
-              isChoice: true,
-            };
-          case "twoMealsLandD":
-            return {
-              name: obj.label || "Lunch + Dinner",
-              mealsIncluded: ["lunch", "dinner"],
-              price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
-              isChoice: false,
-            };
-          case "threeMeals":
-            return {
-              name: obj.label || "3 Meals a day",
-              mealsIncluded: ["breakfast", "lunch", "dinner"],
-              price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
-            };
-          default:
-            return null;
-        }
-      };
+  //     // Build per-plan payloads matching backend: { name, mealsIncluded: [...], price: { veg, nonVeg } }
+  //     const toPayload = (key, obj) => {
+  //       switch (key) {
+  //         case "breakfastOnly":
+  //           return {
+  //             name: obj.label || "Breakfast Only",
+  //             mealsIncluded: ["breakfast"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         case "oneMeal": {
+  //           const label = (obj.label || "1 Meal").toLowerCase();
+  //           const meals = [];
+  //           if (label.includes("breakfast")) meals.push("breakfast");
+  //           if (label.includes("lunch")) meals.push("lunch");
+  //           if (label.includes("dinner")) meals.push("dinner");
+  //           if (meals.length === 0) meals.push("lunch");
+  //           return {
+  //             name: obj.label || "1 Meal",
+  //             mealsIncluded: meals,
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         }
+  //         case "twoMealsBLD":
+  //           return {
+  //             name: obj.label || "Breakfast + Lunch/Dinner",
+  //             mealsIncluded: ["breakfast", "lunch"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         case "twoMealsLorD":
+  //           return {
+  //             name: obj.label || "Lunch / Dinner",
+  //             mealsIncluded: ["lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //             isChoice: true,
+  //           };
+  //         case "twoMealsLandD":
+  //           return {
+  //             name: obj.label || "Lunch + Dinner",
+  //             mealsIncluded: ["lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //             isChoice: false,
+  //           };
+  //         case "threeMeals":
+  //           return {
+  //             name: obj.label || "3 Meals a day",
+  //             mealsIncluded: ["breakfast", "lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         default:
+  //           return null;
+  //       }
+  //     };
 
-      const creations = [];
-      Object.entries(clean).forEach(([k, v]) => {
-        const p = toPayload(k, v);
-        if (p)
-          creations.push({
-            key: k,
-            payload: p,
-            image: monthlyImages[k] || null,
-          });
-      });
+  //     const creations = [];
+  //     Object.entries(clean).forEach(([k, v]) => {
+  //       const p = toPayload(k, v);
+  //       if (p)
+  //         creations.push({
+  //           key: k,
+  //           payload: p,
+  //           image: monthlyImages[k] || null,
+  //         });
+  //     });
 
-      const results = [];
-      for (const c of creations) {
-        console.log(
-          "[MealPlansTab] creating monthly plan ->",
-          c.key,
-          c.payload,
-          c.image
-        );
-        if (c.image) {
-          // create without image to avoid multipart parsing/validation issues
-          const createRes = await createMonthlyMeal(c.payload, null);
-          const created = createRes.data || createRes;
-          const id =
-            (created &&
-              (created.mealPlan?._id ||
-                created._id ||
-                (created.data && created.data._id))) ||
-            null;
-          if (!id) {
-            results.push({ key: c.key, data: created });
-            continue;
-          }
-          // attach image with update endpoint
-          const updateRes = await updateMonthlyMeal(id, {}, c.image);
-          results.push({ key: c.key, data: updateRes.data || updateRes });
-        } else {
-          const res = await createMonthlyMeal(c.payload, null);
-          results.push({ key: c.key, data: res.data || res });
-        }
-      }
-      const map = {};
-      results.forEach((r) => (map[r.key] = r.data));
-      console.log("[DEBUG] createdMonthly after creation:", map);
-      setCreatedMonthly(map); // 🔥 UI me turant reflect hoga
-      toast.success("Monthly meal plans created successfully");
-    } catch (err) {
-      console.error(err);
-      setError(err.message || "Failed to save monthly plans");
-      toast.error("Failed to save monthly plans: " + (err.message || err));
-    } finally {
-      setSavingMonthly(false);
-    }
-  };
+  //     const results = [];
+  //     for (const c of creations) {
+  //       console.log(
+  //         "[MealPlansTab] creating monthly plan ->",
+  //         c.key,
+  //         c.payload,
+  //         c.image
+  //       );
+  //       if (c.image) {
+  //         // create without image to avoid multipart parsing/validation issues
+  //         const createRes = await createMonthlyMeal(c.payload, null);
+  //         const created = createRes.data || createRes;
+  //         const id =
+  //           (created &&
+  //             (created.mealPlan?._id ||
+  //               created._id ||
+  //               (created.data && created.data._id))) ||
+  //           null;
+  //         if (!id) {
+  //           results.push({ key: c.key, data: created });
+  //           continue;
+  //         }
+  //         // attach image with update endpoint
+  //         const updateRes = await updateMonthlyMeal(id, {}, c.image);
+  //         results.push({ key: c.key, data: updateRes.data || updateRes });
+  //       } else {
+  //         const res = await createMonthlyMeal(c.payload, null);
+  //         results.push({ key: c.key, data: res.data || res });
+  //       }
+  //     }
+  //     const map = {};
+  //     results.forEach((r) => (map[r.key] = r.data));
+  //     console.log("[DEBUG] createdMonthly after creation:", map);
+  //     setCreatedMonthly(map); // 🔥 UI me turant reflect hoga
+  //     toast.success("Monthly meal plans created successfully");
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError(err.message || "Failed to save monthly plans");
+  //     toast.error("Failed to save monthly plans: " + (err.message || err));
+  //   } finally {
+  //     setSavingMonthly(false);
+  //   }
+  // };
 
   // fetch trial items on mount
+  // const saveMonthly = async () => {
+  //   setError(null);
+  //   setSavingMonthly(true);
+
+  //   console.log("[saveMonthly] 🚀 Started");
+  //   console.log("[saveMonthly] Current monthly state:", monthly);
+  //   console.log("[saveMonthly] Current monthlyImages state:", monthlyImages);
+
+  //   try {
+  //     const stripImages = (obj) =>
+  //       JSON.parse(
+  //         JSON.stringify(obj, (k, v) => (k === "img" ? undefined : v)),
+  //       );
+
+  //     const clean = stripImages(monthly);
+  //     console.log("[saveMonthly] Cleaned monthly (no img keys):", clean);
+
+  //     const toPayload = (key, obj) => {
+  //       switch (key) {
+  //         case "breakfastOnly":
+  //           return {
+  //             name: obj.label || "Breakfast Only",
+  //             mealsIncluded: ["breakfast"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         case "oneMeal": {
+  //           const label = (obj.label || "1 Meal").toLowerCase();
+  //           const meals = [];
+  //           if (label.includes("breakfast")) meals.push("breakfast");
+  //           if (label.includes("lunch")) meals.push("lunch");
+  //           if (label.includes("dinner")) meals.push("dinner");
+  //           if (meals.length === 0) meals.push("lunch");
+  //           return {
+  //             name: obj.label || "1 Meal",
+  //             mealsIncluded: meals,
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         }
+  //         case "twoMealsBLD":
+  //           return {
+  //             name: obj.label || "Breakfast + Lunch/Dinner",
+  //             mealsIncluded: ["breakfast", "lunch"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         case "twoMealsLorD":
+  //           return {
+  //             name: obj.label || "Lunch / Dinner",
+  //             mealsIncluded: ["lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //             isChoice: true,
+  //           };
+  //         case "twoMealsLandD":
+  //           return {
+  //             name: obj.label || "Lunch + Dinner",
+  //             mealsIncluded: ["lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //             isChoice: false,
+  //           };
+  //         case "threeMeals":
+  //           return {
+  //             name: obj.label || "3 Meals a day",
+  //             mealsIncluded: ["breakfast", "lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         default:
+  //           return null;
+  //       }
+  //     };
+
+  //     const creations = [];
+  //     Object.entries(clean).forEach(([k, v]) => {
+  //       const p = toPayload(k, v);
+  //       const image = monthlyImages[k] || null;
+  //       console.log(`[saveMonthly] Building creation for key: ${k}`, {
+  //         payload: p,
+  //         hasImage: !!image,
+  //         imageFile: image ? { name: image.name, size: image.size } : null,
+  //       });
+  //       if (p) creations.push({ key: k, payload: p, image });
+  //     });
+
+  //     console.log(
+  //       "[saveMonthly] Total creations to process:",
+  //       creations.length,
+  //     );
+
+  //     const results = [];
+  //     for (const c of creations) {
+  //       console.log(`\n[saveMonthly] ▶ Processing key: ${c.key}`);
+  //       console.log(`[saveMonthly] Payload:`, c.payload);
+  //       console.log(
+  //         `[saveMonthly] Image:`,
+  //         c.image ? { name: c.image.name, size: c.image.size } : "none",
+  //       );
+
+  //       // Step 1: Create meal plan (always without image first)
+  //       console.log(
+  //         `[saveMonthly] Step 1: createMonthlyMeal (no image) for key: ${c.key}`,
+  //       );
+  //       const createRes = await createMonthlyMeal(c.payload, null);
+  //       console.log(
+  //         `[saveMonthly] Step 1 Response for key: ${c.key}:`,
+  //         createRes,
+  //       );
+
+  //       const created = createRes?.data || createRes;
+  //       console.log(`[saveMonthly] Step 1 Extracted 'created':`, created);
+
+  //       // ✅ FIX: Try all possible id locations
+  //       const id =
+  //         created?.mealPlan?._id ||
+  //         created?.mealPlan?.id ||
+  //         created?._id ||
+  //         created?.id ||
+  //         created?.data?._id ||
+  //         created?.data?.id ||
+  //         null;
+
+  //       console.log(
+  //         `[saveMonthly] Step 1 Extracted ID for key: ${c.key} ->`,
+  //         id,
+  //       );
+
+  //       if (!id) {
+  //         console.error(
+  //           `[saveMonthly] ❌ No ID found for key: ${c.key}! Skipping image upload. Full response:`,
+  //           createRes,
+  //         );
+  //         results.push({ key: c.key, data: created });
+  //         continue;
+  //       }
+
+  //       // Step 2: Attach image if present
+  //       if (c.image) {
+  //         console.log(
+  //           `[saveMonthly] Step 2: updateMonthlyMeal with image for key: ${c.key}, id: ${id}`,
+  //         );
+  //         console.log(`[saveMonthly] Image being sent:`, {
+  //           name: c.image.name,
+  //           size: c.image.size,
+  //           type: c.image.type,
+  //         });
+
+  //         const updateRes = await updateMonthlyMeal(id, {}, c.image);
+  //         console.log(
+  //           `[saveMonthly] Step 2 Response for key: ${c.key}:`,
+  //           updateRes,
+  //         );
+
+  //         results.push({ key: c.key, data: updateRes?.data || updateRes });
+  //       } else {
+  //         console.log(
+  //           `[saveMonthly] Step 2: No image for key: ${c.key}, skipping update`,
+  //         );
+  //         results.push({ key: c.key, data: created });
+  //       }
+  //     }
+
+  //     const map = {};
+  //     results.forEach((r) => (map[r.key] = r.data));
+  //     console.log("[saveMonthly] ✅ Final createdMonthly map:", map);
+
+  //     setCreatedMonthly(map);
+  //     toast.success("Monthly meal plans created successfully");
+  //   } catch (err) {
+  //     console.error("[saveMonthly] ❌ Error:", err);
+  //     setError(err.message || "Failed to save monthly plans");
+  //     toast.error("Failed to save monthly plans: " + (err.message || err));
+  //   } finally {
+  //     setSavingMonthly(false);
+  //     console.log("[saveMonthly] 🏁 Done");
+  //   }
+
+  // };
+
+  // const saveMonthly = async () => {
+  //   setError(null);
+  //   setSavingMonthly(true);
+  //   console.log("[saveMonthly] 🚀 Started");
+
+  //   try {
+  //     const stripImages = (obj) =>
+  //       JSON.parse(
+  //         JSON.stringify(obj, (k, v) => (k === "img" ? undefined : v)),
+  //       );
+
+  //     const clean = stripImages(monthly);
+
+  //     const toPayload = (key, obj) => {
+  //       switch (key) {
+  //         case "breakfastOnly":
+  //           return {
+  //             name: obj.label || "Breakfast Only",
+  //             mealsIncluded: ["breakfast"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         case "twoMealsBLD":
+  //           return {
+  //             name: obj.label || "Breakfast + Lunch/Dinner",
+  //             mealsIncluded: ["breakfast", "lunch"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         case "twoMealsLorD":
+  //           return {
+  //             name: obj.label || "Lunch / Dinner",
+  //             mealsIncluded: ["lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //             isChoice: true,
+  //           };
+  //         case "twoMealsLandD":
+  //           return {
+  //             name: obj.label || "Lunch + Dinner",
+  //             mealsIncluded: ["lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //             isChoice: false,
+  //           };
+  //         case "threeMeals":
+  //           return {
+  //             name: obj.label || "3 Meals a day",
+  //             mealsIncluded: ["breakfast", "lunch", "dinner"],
+  //             price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
+  //           };
+  //         default:
+  //           return null;
+  //       }
+  //     };
+
+  //     const creations = [];
+  //     Object.entries(clean).forEach(([k, v]) => {
+  //       const p = toPayload(k, v);
+  //       const image = monthlyImages[k] || null;
+  //       console.log(`[saveMonthly] Building -> key: ${k}`, {
+  //         payload: p,
+  //         hasImage: !!image,
+  //       });
+  //       if (p) creations.push({ key: k, payload: p, image });
+  //     });
+
+  //     console.log("[saveMonthly] Total:", creations.length);
+
+  //     // ✅ Trial जैसा — एक ही call में image भेजो
+  //     for (const c of creations) {
+  //       console.log(
+  //         `[saveMonthly] ▶ Creating: ${c.key}`,
+  //         c.payload,
+  //         c.image ? c.image.name : "no image",
+  //       );
+  //       const res = await createMonthlyMeal(c.payload, c.image || null);
+  //       console.log(`[saveMonthly] ✅ Response for ${c.key}:`, res);
+  //     }
+
+  //     // ✅ Trial जैसा — DB से fresh data लो
+  //     await fetchMonthlyItems();
+  //     toast.success("Monthly meal plans created successfully");
+  //   } catch (err) {
+  //     console.error("[saveMonthly] ❌ Error:", err);
+  //     setError(err.message || "Failed to save monthly plans");
+  //     toast.error("Failed to save monthly plans: " + (err.message || err));
+  //   } finally {
+  //     setSavingMonthly(false);
+  //     console.log("[saveMonthly] 🏁 Done");
+  //   }
+  // };
+  
+  const saveMonthly = async () => {
+  setError(null);
+  setSavingMonthly(true);
+  console.log("[saveMonthly] 🚀 Started");
+
+  try {
+    const stripImages = (obj) =>
+      JSON.parse(JSON.stringify(obj, (k, v) => (k === "img" ? undefined : v)));
+
+    const clean = stripImages(monthly);
+
+    const toPayload = (key, obj) => {
+      switch (key) {
+        case "breakfastOnly":
+          return { name: obj.label || "Breakfast Only", mealsIncluded: ["breakfast"], price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) } };
+        case "twoMealsBLD":
+          return { name: obj.label || "Breakfast + Lunch/Dinner", mealsIncluded: ["breakfast", "lunch"], price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) } };
+        case "twoMealsLorD":
+          return { name: obj.label || "Lunch / Dinner", mealsIncluded: ["lunch", "dinner"], price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) }, isChoice: true };
+        case "twoMealsLandD":
+          return { name: obj.label || "Lunch + Dinner", mealsIncluded: ["lunch", "dinner"], price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) }, isChoice: false };
+        case "threeMeals":
+          return { name: obj.label || "3 Meals a day", mealsIncluded: ["breakfast", "lunch", "dinner"], price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) } };
+        default:
+          return null;
+      }
+    };
+
+    const creations = [];
+    Object.entries(clean).forEach(([k, v]) => {
+      const p = toPayload(k, v);
+      const image = monthlyImages[k] || null;
+      console.log(`[saveMonthly] Building -> key: ${k}`, { payload: p, hasImage: !!image });
+      if (p) creations.push({ key: k, payload: p, image });
+    });
+
+    console.log("[saveMonthly] Total:", creations.length);
+
+    for (const c of creations) {
+      console.log(`[saveMonthly] ▶ Creating: ${c.key}`, c.payload, c.image ? c.image.name : "no image");
+
+      // ✅ Step 1: हमेशा JSON से create करो (image नहीं)
+      const createRes = await createMonthlyMeal(c.payload, null);
+      console.log(`[saveMonthly] ✅ Created ${c.key}:`, createRes);
+
+      // ✅ Step 2: अगर image है तो अलग से update करो
+      if (c.image) {
+        const id =
+          createRes?.mealPlan?._id ||
+          createRes?.mealPlan?.id ||
+          createRes?._id ||
+          createRes?.id ||
+          null;
+
+        console.log(`[saveMonthly] ID for image upload: ${id}`);
+
+        if (id) {
+          const updateRes = await updateMonthlyMeal(id, {}, c.image);
+          console.log(`[saveMonthly] ✅ Image updated for ${c.key}:`, updateRes);
+        } else {
+          console.error(`[saveMonthly] ❌ No ID found for ${c.key}, skipping image`);
+        }
+      }
+    }
+
+    // ✅ DB से fresh data
+    await fetchMonthlyItems();
+    toast.success("Monthly meal plans created successfully");
+
+  } catch (err) {
+    console.error("[saveMonthly] ❌ Error:", err);
+    setError(err.message || "Failed to save monthly plans");
+    toast.error("Failed to save monthly plans: " + (err.message || err));
+  } finally {
+    setSavingMonthly(false);
+    console.log("[saveMonthly] 🏁 Done");
+  }
+};
+  
   React.useEffect(() => {
     fetchTrialItems();
     fetchMonthlyItems();
@@ -850,7 +1228,7 @@ export default function MealPlansTab({ theme }) {
                             breakfast: {
                               ...trial.breakfast,
                               options: trial.breakfast.options.filter(
-                                (_, i) => i !== idx
+                                (_, i) => i !== idx,
                               ),
                             },
                           })
@@ -896,7 +1274,7 @@ export default function MealPlansTab({ theme }) {
                             breakfast: {
                               ...trial.breakfast,
                               options: trial.breakfast.options.map((o, i) =>
-                                i === idx ? { ...o, label: e.target.value } : o
+                                i === idx ? { ...o, label: e.target.value } : o,
                               ),
                             },
                           })
@@ -921,7 +1299,7 @@ export default function MealPlansTab({ theme }) {
                             breakfast: {
                               ...trial.breakfast,
                               options: trial.breakfast.options.map((o, i) =>
-                                i === idx ? { ...o, veg: v } : o
+                                i === idx ? { ...o, veg: v } : o,
                               ),
                             },
                           })
@@ -937,7 +1315,7 @@ export default function MealPlansTab({ theme }) {
                             breakfast: {
                               ...trial.breakfast,
                               options: trial.breakfast.options.map((o, i) =>
-                                i === idx ? { ...o, nonveg: v } : o
+                                i === idx ? { ...o, nonveg: v } : o,
                               ),
                             },
                           })
@@ -1424,11 +1802,13 @@ export default function MealPlansTab({ theme }) {
             {savingTrial
               ? "Saving..."
               : hasCreatedTrial
-              ? "Trial Meals Already Created"
-              : "Save Trial Prices"}
+                ? "Trial Meals Already Created"
+                : "Save Trial Prices"}
           </button>
         </div>
       </div>
+
+      {/* This is monthly meal section */}
 
       <div
         className={`${
@@ -1456,7 +1836,7 @@ export default function MealPlansTab({ theme }) {
                 <div className="text-xs text-neutral-500">
                   Meals:{" "}
                   {(createdMonthly.breakfastOnly.mealsIncluded || []).join(
-                    ", "
+                    ", ",
                   )}
                 </div>
                 <div className="mt-2 text-sm">
@@ -1822,7 +2202,7 @@ export default function MealPlansTab({ theme }) {
                 <div className="text-xs text-neutral-500">
                   Meals:{" "}
                   {(createdMonthly.twoMealsLandD.mealsIncluded || []).join(
-                    ", "
+                    ", ",
                   )}
                 </div>
                 <div className="mt-2 text-sm">
@@ -2064,8 +2444,8 @@ export default function MealPlansTab({ theme }) {
             {savingMonthly
               ? "Saving..."
               : hasCreatedMonthly
-              ? "Monthly Meals Already Created"
-              : "Save Monthly Prices"}
+                ? "Monthly Meals Already Created"
+                : "Save Monthly Prices"}
           </button>
         </div>
       </div>

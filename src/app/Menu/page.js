@@ -181,7 +181,7 @@ function Page() {
               price: price,
               image: item.img,
               days: 1,
-            })
+            }),
           );
         }
       }
@@ -195,7 +195,7 @@ function Page() {
         type={type}
         options={breakfastOptions}
         onAddToCart={handleBreakfastAddToCart}
-      />
+      />,
     );
   };
 
@@ -223,10 +223,10 @@ function Page() {
   // Group trial meals into breakfast (3 options), lunch and dinner
   // If backend doesn't provide `mealOption`, fall back to list order.
   const breakfastVegList = trialMeals.filter(
-    (m) => m.category === "breakfast" && m.type === "vegetarian"
+    (m) => m.category === "breakfast" && m.type === "vegetarian",
   );
   const breakfastNonvegList = trialMeals.filter(
-    (m) => m.category === "breakfast" && m.type === "non-vegetarian"
+    (m) => m.category === "breakfast" && m.type === "non-vegetarian",
   );
 
   const breakfastOptions = [0, 1, 2].map((idx) => {
@@ -235,7 +235,7 @@ function Page() {
         (m) =>
           m.category === "breakfast" &&
           (m.mealOption === idx + 1 || Number(m.mealOption) === idx + 1) &&
-          m.type === "vegetarian"
+          m.type === "vegetarian",
       ) ||
       breakfastVegList[idx] ||
       null;
@@ -244,7 +244,7 @@ function Page() {
         (m) =>
           m.category === "breakfast" &&
           (m.mealOption === idx + 1 || Number(m.mealOption) === idx + 1) &&
-          m.type === "non-vegetarian"
+          m.type === "non-vegetarian",
       ) ||
       breakfastNonvegList[idx] ||
       null;
@@ -275,17 +275,17 @@ function Page() {
   });
 
   const lunchVeg = trialMeals.find(
-    (m) => m.category === "lunch" && m.type === "vegetarian"
+    (m) => m.category === "lunch" && m.type === "vegetarian",
   );
   const lunchNonveg = trialMeals.find(
-    (m) => m.category === "lunch" && m.type === "non-vegetarian"
+    (m) => m.category === "lunch" && m.type === "non-vegetarian",
   );
 
   const dinnerVeg = trialMeals.find(
-    (m) => m.category === "dinner" && m.type === "vegetarian"
+    (m) => m.category === "dinner" && m.type === "vegetarian",
   );
   const dinnerNonveg = trialMeals.find(
-    (m) => m.category === "dinner" && m.type === "non-vegetarian"
+    (m) => m.category === "dinner" && m.type === "non-vegetarian",
   );
   const handleAddMonthlyPlan = (meal, type) => {
     if (!meal || !meal._id) {
@@ -295,7 +295,7 @@ function Page() {
     }
 
     const price =
-      type === "veg" ? meal.price?.veg ?? 0 : meal.price?.nonVeg ?? 0;
+      type === "veg" ? (meal.price?.veg ?? 0) : (meal.price?.nonVeg ?? 0);
 
     const cartItem = {
       // id: `${meal._id}-${meal.type}-monthly`,
@@ -335,7 +335,7 @@ function Page() {
         image: meal.image,
         days: isTrialMeal ? 1 : undefined, // Add days for trial meals only
         planType: meal.planType,
-      })
+      }),
     );
     toast.success(`${meal.name} (${type}) added to cart!`);
   };
@@ -651,7 +651,7 @@ function Page() {
                   >
                     <div className="w-full h-56 relative -m-0">
                       <Image
-                        src={meal.image || "/hero2.jpg"}
+                        src={meal.image?.[0] || "/hero2.jpg"}
                         alt={meal.name}
                         fill
                         className="object-cover"
