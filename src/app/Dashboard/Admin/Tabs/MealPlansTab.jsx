@@ -1445,14 +1445,14 @@ export default function MealPlansTab({ theme }) {
                         />
 
                         {/* Image */}
-                        <input
+                        {/* <input
                           type="file"
                           accept="image/*"
                           onChange={(e) =>
                             handleEditTrialImage(id, e.target.files[0])
                           }
                           className="w-full text-xs md:text-sm"
-                        />
+                        /> */}
 
                         {/* Action Buttons */}
                         <div className="flex gap-2 mt-2">
@@ -1607,14 +1607,14 @@ export default function MealPlansTab({ theme }) {
                               className="px-3 py-2 text-sm rounded-lg border dark:border-neutral-700 bg-white "
                             />
 
-                            <input
+                            {/* <input
                               type="file"
                               accept="image/*"
                               onChange={(e) =>
                                 handleEditTrialImage(id, e.target.files[0])
                               }
                               className="text-xs"
-                            />
+                            /> */}
 
                             <div className="flex gap-2">
                               <button
@@ -1770,14 +1770,14 @@ export default function MealPlansTab({ theme }) {
                               className="px-3 py-2 rounded-lg border text-sm dark:border-neutral-700 bg-white "
                             />
 
-                            <input
+                            {/* <input
                               type="file"
                               accept="image/*"
                               onChange={(e) =>
                                 handleEditTrialImage(id, e.target.files[0])
                               }
                               className="text-xs"
-                            />
+                            /> */}
 
                             <div className="flex gap-2">
                               <button
