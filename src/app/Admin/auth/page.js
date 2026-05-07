@@ -92,7 +92,7 @@ function Page() {
         </div>
 
         {/* Right form */}
-        <div className="bg-white rounded-r-3xl p-8 shadow-lg">
+        <div className="bg-white text-black rounded-r-3xl p-8 shadow-lg">
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">Admin Sign In</h2>
@@ -113,7 +113,7 @@ function Page() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-2 block w-full border-2 border-neutral-100 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-300 transition"
+                className="mt-2 block w-full border-2 text-black border-neutral-100 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-300 transition"
                 placeholder="admin@yourdomain.com"
               />
             </div>
@@ -127,7 +127,7 @@ function Page() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-2 block w-full border-2 border-neutral-100 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-300 transition"
+                className="mt-2 block w-full border-2 text-black border-neutral-100 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-300 transition"
                 placeholder="••••••••"
               />
             </div>

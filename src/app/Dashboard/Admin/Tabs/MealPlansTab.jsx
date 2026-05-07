@@ -14,23 +14,13 @@ import { getMonthlyMeals } from "../../../api/Meals";
 function PriceInput({ label, value, onChange, theme }) {
   return (
     <label className="block text-sm">
-      <span
-        className={`${
-          theme === "dark" ? "text-neutral-300" : "text-neutral-700"
-        }`}
-      >
-        {label}
-      </span>
+      <span>{label}</span>
       <input
         type="number"
         min={0}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className={`mt-1 w-full rounded border px-3 py-2 ${
-          theme === "dark"
-            ? "bg-neutral-900 border-neutral-700 text-white"
-            : "bg-white"
-        }`}
+        className={`mt-1 w-full rounded border px-3 py-2 `}
       />
     </label>
   );
@@ -38,13 +28,7 @@ function PriceInput({ label, value, onChange, theme }) {
 
 function MealCard({ title, img, children, theme }) {
   return (
-    <div
-      className={`${
-        theme === "dark"
-          ? "bg-neutral-800 border-neutral-700"
-          : "bg-white border"
-      } rounded-xl p-4 border`}
-    >
+    <div className={` rounded-xl p-4 border`}>
       <div className="flex items-center gap-3 mb-3">
         <img
           src={img}
@@ -226,7 +210,7 @@ export default function MealPlansTab({ theme }) {
           mealsIncluded: ["breakfast", "lunch"],
           price: { veg: Number(obj.veg), nonVeg: Number(obj.nonveg) },
         };
-      case "twoMealsLandD":
+      case "twoMealsLorD":
         return {
           name: obj.label || "Lunch + Dinner",
           mealsIncluded: ["lunch", "dinner"],
@@ -256,10 +240,16 @@ export default function MealPlansTab({ theme }) {
 
       const payload = getMonthlyPayload(key, monthly[key]);
 
-      const res = await updateMonthlyMeal(id, payload, monthlyImages[key]);
+      // ✅ Step 1: Text data JSON ke saath bhejo (image nahi)
+      await updateMonthlyMeal(id, payload, null);
 
-      // 🔥 Refresh DB data (same as Trial)
+      // ✅ Step 2: Agar nayi image select ki hai toh alag bhejo
+      if (monthlyImages[key]) {
+        await updateMonthlyMeal(id, {}, monthlyImages[key]);
+      }
+
       await fetchMonthlyItems();
+      setMonthlyImages((s) => ({ ...s, [key]: null }));
 
       toast.success("Monthly plan updated");
     } catch (err) {
@@ -1231,30 +1221,23 @@ export default function MealPlansTab({ theme }) {
 
   return (
     <div className="space-y-8">
-      <div
-        className={`${
-          theme === "dark"
-            ? "bg-neutral-800 border-neutral-700"
-            : "bg-white border"
-        } rounded-xl p-4 border`}
-      >
+      <div className={` rounded-xl p-4 border`}>
         <h3 className="text-lg font-semibold mb-4">Trial Meal Plan</h3>
         <div className="grid grid-cols-1 gap-4">
           <MealCard
             title="Breakfast"
             img={trial.breakfast.img}
-            theme={theme}
-            className="flex flex-col rounded-xl bg-neutral-50 dark:bg-neutral-900 shadow-sm p-4 gap-4"
+            className="flex flex-col rounded-xl bg-neutral-50  shadow-sm p-4 gap-4"
           >
             {!hasCreatedCategory("breakfast") ? (
               <>
                 {trial.breakfast.options.map((opt, idx) => (
                   <div
                     key={idx}
-                    className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 rounded-xl shadow-sm space-y-4"
+                    className="bg-white  border border-neutral-200  p-4 rounded-xl shadow-sm space-y-4"
                   >
                     <div className="flex justify-between items-center">
-                      <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                      <h3 className="text-sm font-medium text-neutral-700 ">
                         Option #{idx + 1}
                       </h3>
                       <button
@@ -1286,7 +1269,7 @@ export default function MealPlansTab({ theme }) {
                         onChange={(e) =>
                           handleTrialImage("breakfast", e.target.files[0], idx)
                         }
-                        className="file:px-4 file:py-1 file:rounded-lg file:bg-neutral-200 dark:file:bg-neutral-700 file:text-xs text-xs"
+                        className="file:px-4 file:py-1 file:rounded-lg file:bg-neutral-200  file:text-xs text-xs"
                       />
                       {trialImages.breakfast?.[idx] && (
                         <img
@@ -1299,7 +1282,7 @@ export default function MealPlansTab({ theme }) {
 
                     {/* Name */}
                     <div>
-                      <label className="block text-xs font-medium mb-1 text-neutral-600 dark:text-neutral-300">
+                      <label className="block text-xs font-medium mb-1 text-neutral-600 ">
                         Name
                       </label>
                       <input
@@ -1316,7 +1299,7 @@ export default function MealPlansTab({ theme }) {
                             },
                           })
                         }
-                        className="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm bg-white dark:bg-neutral-900 text-neutral-800 dark:text-white"
+                        className="w-full rounded-lg border border-neutral-300  px-3 py-2 text-sm bg-white  text-neutral-800 "
                       />
                     </div>
 
@@ -1329,7 +1312,6 @@ export default function MealPlansTab({ theme }) {
                       <PriceInput
                         label="Veg Price"
                         value={opt.veg}
-                        theme={theme}
                         onChange={(v) =>
                           setTrial({
                             ...trial,
@@ -1345,7 +1327,6 @@ export default function MealPlansTab({ theme }) {
                       <PriceInput
                         label="Non-Veg Price"
                         value={opt.nonveg}
-                        theme={theme}
                         onChange={(v) =>
                           setTrial({
                             ...trial,
@@ -1402,7 +1383,7 @@ export default function MealPlansTab({ theme }) {
                 return (
                   <div
                     key={id}
-                    className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-sm p-4 mt-4 transition-all"
+                    className="bg-white d border border-neutral-200  rounded-2xl shadow-sm p-4 mt-4 transition-all"
                   >
                     {!editing ? (
                       <div className="flex justify-between items-center gap-3">
@@ -1411,7 +1392,7 @@ export default function MealPlansTab({ theme }) {
                           <p className="font-semibold text-sm md:text-base">
                             {it.name}
                           </p>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                          <p className="text-xs text-neutral-500 ">
                             {it.type} • {it.category}
                           </p>
                         </div>
@@ -1444,7 +1425,7 @@ export default function MealPlansTab({ theme }) {
                               [id]: { ...s[id], name: e.target.value },
                             }))
                           }
-                          className="w-full md:w-auto px-3 py-2 text-xs md:text-sm rounded-lg border dark:border-neutral-600 bg-white dark:bg-neutral-800"
+                          className="w-full md:w-auto px-3 py-2 text-xs md:text-sm rounded-lg border  bg-white "
                           placeholder="Food name"
                         />
 
@@ -1459,7 +1440,7 @@ export default function MealPlansTab({ theme }) {
                               [id]: { ...s[id], price: Number(e.target.value) },
                             }))
                           }
-                          className="w-full md:w-24 px-3 py-2 text-xs md:text-sm rounded-lg border dark:border-neutral-600 bg-white dark:bg-neutral-800"
+                          className="w-full md:w-24 px-3 py-2 text-xs md:text-sm rounded-lg border  bg-white "
                           placeholder="Price"
                         />
 
@@ -1482,7 +1463,7 @@ export default function MealPlansTab({ theme }) {
                             💾 Save
                           </button>
                           <button
-                            className="text-xs md:text-sm px-4 py-2 bg-neutral-300 dark:bg-neutral-700 hover:opacity-80 rounded-lg text-black dark:text-white transition"
+                            className="text-xs md:text-sm px-4 py-2 bg-neutral-300  hover:opacity-80 rounded-lg text-black  transition"
                             onClick={() => cancelEditTrial(id)}
                           >
                             ❌ Cancel
@@ -1497,9 +1478,9 @@ export default function MealPlansTab({ theme }) {
 
           <div className="grid  grid-cols-1 md:grid-cols-2 gap-6">
             {/* LUNCH CARD */}
-            <MealCard title="Lunch" img={trial.lunch.img} theme={theme}>
+            <MealCard title="Lunch" img={trial.lunch.img}>
               {!hasCreatedCategory("lunch") && (
-                <div className="col-span-2 rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border ...">
+                <div className="col-span-2 rounded-xl bg-white  shadow p-5 border ...">
                   {/* Header with Image + Title */}
                   <div className="flex items-center gap-3 mb-4">
                     {trialImages.lunch ? (
@@ -1509,16 +1490,16 @@ export default function MealPlansTab({ theme }) {
                         className="w-12 h-12 rounded-full object-cover border shadow-sm"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                      <div className="w-12 h-12 rounded-full bg-neutral-200 "></div>
                     )}
 
-                    <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                    <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-500">
                       Lunch
                     </h2>
                   </div>
 
                   {/* Upload Section */}
-                  <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                  <label className="text-sm text-neutral-600 dark:text-neutral-500">
                     Upload Option Image
                   </label>
 
@@ -1538,7 +1519,6 @@ export default function MealPlansTab({ theme }) {
                     <PriceInput
                       label="Veg Price"
                       value={trial.lunch.veg}
-                      theme={theme}
                       onChange={(v) =>
                         setTrial({
                           ...trial,
@@ -1550,7 +1530,6 @@ export default function MealPlansTab({ theme }) {
                     <PriceInput
                       label="Non-Veg Price"
                       value={trial.lunch.nonveg}
-                      theme={theme}
                       onChange={(v) =>
                         setTrial({
                           ...trial,
@@ -1573,7 +1552,7 @@ export default function MealPlansTab({ theme }) {
                     return (
                       <div
                         key={id}
-                        className="mt-4 p-3  border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 rounded-xl shadow-sm"
+                        className="mt-4 p-3  border border-neutral-200 dark:border-neutral-700 bg-white  rounded-xl shadow-sm"
                       >
                         {!editing ? (
                           <div className="flex justify-between items-center">
@@ -1610,7 +1589,7 @@ export default function MealPlansTab({ theme }) {
                                   [id]: { ...s[id], name: e.target.value },
                                 }))
                               }
-                              className="px-3 py-2 text-sm rounded-lg border dark:border-neutral-700 bg-white dark:bg-neutral-800"
+                              className="px-3 py-2 text-sm rounded-lg border dark:border-neutral-700 bg-white "
                             />
                             <input
                               type="number"
@@ -1625,7 +1604,7 @@ export default function MealPlansTab({ theme }) {
                                   },
                                 }))
                               }
-                              className="px-3 py-2 text-sm rounded-lg border dark:border-neutral-700 bg-white dark:bg-neutral-800"
+                              className="px-3 py-2 text-sm rounded-lg border dark:border-neutral-700 bg-white "
                             />
 
                             <input
@@ -1645,7 +1624,7 @@ export default function MealPlansTab({ theme }) {
                                 Save
                               </button>
                               <button
-                                className="px-3 py-2 text-xs rounded-lg bg-gray-300 dark:bg-neutral-700 text-black dark:text-white transition"
+                                className="px-3 py-2 text-xs rounded-lg bg-gray-300  text-black  transition"
                                 onClick={() => cancelEditTrial(id)}
                               >
                                 Cancel
@@ -1660,9 +1639,9 @@ export default function MealPlansTab({ theme }) {
             </MealCard>
 
             {/* DINNER CARD - Same Styling */}
-            <MealCard title="Dinner" img={trial.dinner.img} theme={theme}>
+            <MealCard title="Dinner" img={trial.dinner.img}>
               {!hasCreatedCategory("dinner") && (
-                <div className="col-span-2 rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border ...">
+                <div className="col-span-2 rounded-xl bg-white  shadow p-5 border ...">
                   {/* Header with Image + Title */}
                   <div className="flex items-center gap-3 mb-4">
                     {trialImages.dinner ? (
@@ -1672,16 +1651,16 @@ export default function MealPlansTab({ theme }) {
                         className="w-12 h-12 rounded-full object-cover border shadow-sm"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                      <div className="w-12 h-12 rounded-full bg-neutral-200 "></div>
                     )}
 
-                    <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                    <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-500">
                       Dinner
                     </h2>
                   </div>
 
                   {/* Upload Section */}
-                  <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                  <label className="text-sm text-neutral-600 dark:text-neutral-500">
                     Upload Option Image
                   </label>
 
@@ -1701,7 +1680,6 @@ export default function MealPlansTab({ theme }) {
                     <PriceInput
                       label="Veg Price"
                       value={trial.dinner.veg}
-                      theme={theme}
                       onChange={(v) =>
                         setTrial({
                           ...trial,
@@ -1713,7 +1691,6 @@ export default function MealPlansTab({ theme }) {
                     <PriceInput
                       label="Non-Veg Price"
                       value={trial.dinner.nonveg}
-                      theme={theme}
                       onChange={(v) =>
                         setTrial({
                           ...trial,
@@ -1738,7 +1715,7 @@ export default function MealPlansTab({ theme }) {
                     return (
                       <div
                         key={id}
-                        className="mt-4 p-3 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 rounded-xl shadow-sm"
+                        className="mt-4 p-3 border border-neutral-200 dark:border-neutral-700 bg-white  rounded-xl shadow-sm"
                       >
                         {!editing ? (
                           <div className="flex justify-between items-center">
@@ -1775,7 +1752,7 @@ export default function MealPlansTab({ theme }) {
                                   [id]: { ...s[id], name: e.target.value },
                                 }))
                               }
-                              className="px-3 py-2 rounded-lg border text-sm dark:border-neutral-700 bg-white dark:bg-neutral-800"
+                              className="px-3 py-2 rounded-lg border text-sm dark:border-neutral-700 bg-white "
                             />
                             <input
                               type="number"
@@ -1790,7 +1767,7 @@ export default function MealPlansTab({ theme }) {
                                   },
                                 }))
                               }
-                              className="px-3 py-2 rounded-lg border text-sm dark:border-neutral-700 bg-white dark:bg-neutral-800"
+                              className="px-3 py-2 rounded-lg border text-sm dark:border-neutral-700 bg-white "
                             />
 
                             <input
@@ -1810,7 +1787,7 @@ export default function MealPlansTab({ theme }) {
                                 Save
                               </button>
                               <button
-                                className="px-3 py-2 text-xs rounded-lg bg-gray-300 dark:bg-neutral-700 text-black dark:text-white transition"
+                                className="px-3 py-2 text-xs rounded-lg bg-gray-300  text-black  transition"
                                 onClick={() => cancelEditTrial(id)}
                               >
                                 Cancel
@@ -1847,26 +1824,14 @@ export default function MealPlansTab({ theme }) {
 
       {/* This is monthly meal section */}
 
-      <div
-        className={`${
-          theme === "dark"
-            ? "bg-neutral-800 border-neutral-700"
-            : "bg-white border"
-        } rounded-xl p-4 border`}
-      >
+      <div className={` rounded-xl p-4 border`}>
         <h3 className="text-lg font-semibold mb-4">Monthly Meal Plans</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div
-            className={`${
-              theme === "dark"
-                ? "bg-neutral-800 border-neutral-700"
-                : "bg-white border"
-            } rounded-xl p-5 border shadow-sm`}
-          >
+          <div className={` rounded-xl p-5 border shadow-sm`}>
             {createdMonthly.breakfastOnly &&
             editingMonthlyKey !== "breakfastOnly" ? (
               // show created summary when present and not editing
-              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
+              <div className="rounded border bg-white  p-3">
                 <div className="font-medium">
                   {createdMonthly.breakfastOnly.name}
                 </div>
@@ -1900,7 +1865,7 @@ export default function MealPlansTab({ theme }) {
               </div>
             ) : (
               // show inputs (either creating or editing)
-              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+              <div className="w-full rounded-xl bg-white  shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
                 {/* Header with Image + Title */}
                 <div className="flex items-center gap-3 mb-4">
                   {monthlyImages.breakfastOnly ? (
@@ -1910,15 +1875,15 @@ export default function MealPlansTab({ theme }) {
                       className="w-12 h-12 rounded-full object-cover border shadow-sm"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                    <div className="w-12 h-12 rounded-full bg-neutral-200"></div>
                   )}
-                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-500">
                     Breakfast Only
                   </h2>
                 </div>
 
                 {/* Upload Section */}
-                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                <label className="text-sm text-neutral-600 dark:text-neutral-500">
                   Upload Option Image
                 </label>
                 <div className="flex items-center gap-3 mt-1">
@@ -1937,7 +1902,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Veg Price"
                     value={monthly.breakfastOnly.veg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -1948,7 +1912,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Non-Veg Price"
                     value={monthly.breakfastOnly.nonveg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -1982,16 +1945,10 @@ export default function MealPlansTab({ theme }) {
             )}
           </div>
 
-          <div
-            className={`${
-              theme === "dark"
-                ? "bg-neutral-800 border-neutral-700"
-                : "bg-white border"
-            } rounded-xl p-5 border shadow-sm`}
-          >
+          <div className={` rounded-xl p-5 border shadow-sm`}>
             {createdMonthly.twoMealsLorD &&
             editingMonthlyKey !== "twoMealsLorD" ? (
-              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
+              <div className="rounded border bg-white  p-3">
                 <div className="font-medium">
                   {createdMonthly.twoMealsLorD.name}
                 </div>
@@ -2019,7 +1976,7 @@ export default function MealPlansTab({ theme }) {
                 </div>
               </div>
             ) : (
-              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+              <div className="w-full rounded-xl bg-white  shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
                 {/* Header with Image + Title */}
                 <div className="flex items-center gap-3 mb-4">
                   {monthlyImages.twoMealsLorD ? (
@@ -2029,15 +1986,15 @@ export default function MealPlansTab({ theme }) {
                       className="w-12 h-12 rounded-full object-cover border shadow-sm"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 "></div>
                   )}
-                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-500">
                     {monthly.twoMealsLorD.label || "1 Meal"}
                   </h2>
                 </div>
 
                 {/* Upload Section */}
-                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                <label className="text-sm text-neutral-600 dark:text-neutral-500">
                   Upload Option Image
                 </label>
                 <div className="flex items-center gap-3 mt-1">
@@ -2056,7 +2013,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Veg Price"
                     value={monthly.twoMealsLorD.veg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -2067,7 +2023,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Non-Veg Price"
                     value={monthly.twoMealsLorD.nonveg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -2101,16 +2056,10 @@ export default function MealPlansTab({ theme }) {
             )}
           </div>
 
-          <div
-            className={`${
-              theme === "dark"
-                ? "bg-neutral-800 border-neutral-700"
-                : "bg-white border"
-            } rounded-xl p-5 border shadow-sm`}
-          >
+          <div className={` rounded-xl p-5 border shadow-sm`}>
             {createdMonthly.twoMealsBLD &&
             editingMonthlyKey !== "twoMealsBLD" ? (
-              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
+              <div className="rounded border bg-white p-3">
                 <div className="font-medium">
                   {createdMonthly.twoMealsBLD.name}
                 </div>
@@ -2141,7 +2090,7 @@ export default function MealPlansTab({ theme }) {
                 </div>
               </div>
             ) : (
-              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+              <div className="w-full rounded-xl bg-white  shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
                 {/* Header with Image + Title */}
                 <div className="flex items-center gap-3 mb-4">
                   {monthlyImages.twoMealsBLD ? (
@@ -2151,15 +2100,15 @@ export default function MealPlansTab({ theme }) {
                       className="w-12 h-12 rounded-full object-cover border shadow-sm"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 "></div>
                   )}
-                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-500">
                     {monthly.twoMealsBLD.label || "2 Meals"}
                   </h2>
                 </div>
 
                 {/* Upload Section */}
-                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                <label className="text-sm text-neutral-600 dark:text-neutral-500">
                   Upload Option Image
                 </label>
                 <div className="flex items-center gap-3 mt-1">
@@ -2178,7 +2127,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Veg Price"
                     value={monthly.twoMealsBLD.veg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -2189,7 +2137,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Non-Veg Price"
                     value={monthly.twoMealsBLD.nonveg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -2223,16 +2170,10 @@ export default function MealPlansTab({ theme }) {
             )}
           </div>
 
-          <div
-            className={`${
-              theme === "dark"
-                ? "bg-neutral-800 border-neutral-700"
-                : "bg-white border"
-            } rounded-xl p-5 border shadow-sm`}
-          >
+          <div className={` rounded-xl p-5 border shadow-sm`}>
             {createdMonthly.twoMealsLandD &&
             editingMonthlyKey !== "twoMealsLandD" ? (
-              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
+              <div className="rounded border bg-white  p-3">
                 <div className="font-medium">
                   {createdMonthly.twoMealsLandD.name}
                 </div>
@@ -2265,7 +2206,7 @@ export default function MealPlansTab({ theme }) {
                 </div>
               </div>
             ) : (
-              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+              <div className="w-full rounded-xl bg-white  shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
                 {/* Header with Image + Title */}
                 <div className="flex items-center gap-3 mb-4">
                   {monthlyImages.twoMealsLandD ? (
@@ -2275,15 +2216,15 @@ export default function MealPlansTab({ theme }) {
                       className="w-12 h-12 rounded-full object-cover border shadow-sm"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 "></div>
                   )}
-                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-500">
                     {monthly.twoMealsLandD.label || "2 Meals"}
                   </h2>
                 </div>
 
                 {/* Upload Section */}
-                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                <label className="text-sm text-neutral-600 dark:text-neutral-500">
                   Upload Option Image
                 </label>
                 <div className="flex items-center gap-3 mt-1">
@@ -2302,7 +2243,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Veg Price"
                     value={monthly.twoMealsLandD.veg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -2313,7 +2253,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Non-Veg Price"
                     value={monthly.twoMealsLandD.nonveg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -2347,15 +2286,9 @@ export default function MealPlansTab({ theme }) {
             )}
           </div>
 
-          <div
-            className={`${
-              theme === "dark"
-                ? "bg-neutral-800 border-neutral-700"
-                : "bg-white border"
-            } rounded-xl p-5 border shadow-sm`}
-          >
+          <div className={` rounded-xl p-5 border shadow-sm`}>
             {createdMonthly.threeMeals && editingMonthlyKey !== "threeMeals" ? (
-              <div className="rounded border bg-white dark:bg-neutral-800 p-3">
+              <div className="rounded border bg-white  p-3">
                 <div className="font-medium">
                   {createdMonthly.threeMeals.name}
                 </div>
@@ -2386,7 +2319,7 @@ export default function MealPlansTab({ theme }) {
                 </div>
               </div>
             ) : (
-              <div className="w-full rounded-xl bg-white dark:bg-neutral-900 shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
+              <div className="w-full rounded-xl bg-white  shadow p-5 border border-neutral-200/60 dark:border-neutral-800/60">
                 {/* Header with Image + Title */}
                 <div className="flex items-center gap-3 mb-4">
                   {monthlyImages.threeMeals ? (
@@ -2396,15 +2329,15 @@ export default function MealPlansTab({ theme }) {
                       className="w-12 h-12 rounded-full object-cover border shadow-sm"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 "></div>
                   )}
-                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                  <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-500">
                     3 Meals a Day
                   </h2>
                 </div>
 
                 {/* Upload Section */}
-                <label className="text-sm text-neutral-600 dark:text-neutral-300">
+                <label className="text-sm text-neutral-600 dark:text-neutral-500">
                   Upload Option Image
                 </label>
                 <div className="flex items-center gap-3 mt-1">
@@ -2423,7 +2356,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Veg Price"
                     value={monthly.threeMeals.veg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,
@@ -2434,7 +2366,6 @@ export default function MealPlansTab({ theme }) {
                   <PriceInput
                     label="Non-Veg Price"
                     value={monthly.threeMeals.nonveg}
-                    theme={theme}
                     onChange={(v) =>
                       setMonthly({
                         ...monthly,

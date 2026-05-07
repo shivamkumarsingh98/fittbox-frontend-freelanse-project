@@ -118,12 +118,12 @@ export default function Page() {
       >
         <div className="px-4 py-4 flex items-center justify-between border-b border-neutral-200/60 dark:border-neutral-800/60">
           <div className="font-semibold text-lg">Admin</div>
-          <button
+          {/* <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="text-xs px-3 py-1 rounded border"
           >
             {theme === "dark" ? "Light" : "Dark"}
-          </button>
+          </button> */}
         </div>
         <div className="py-4 space-y-1 flex-1 overflow-hidden">
           <HomeButton
