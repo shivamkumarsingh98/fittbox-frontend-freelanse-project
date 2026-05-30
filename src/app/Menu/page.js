@@ -9,6 +9,17 @@ import toast from "react-hot-toast";
 import { useModal } from "../Component/ModalContext";
 import { getTrialMeals, getMonthlyMeals } from "../api/Meals";
 
+const getErrorMessage = (error, fallback) => {
+  if (!error) return fallback;
+  return (
+    error?.response?.data?.message ||
+    error?.response?.data?.error ||
+    error?.data?.message ||
+    error?.message ||
+    fallback
+  );
+};
+
 // Breakfast items for selection
 const breakfastItems = [
   { id: "bf1", name: "Oats & Fruits Bowl", price: 160, img: "/hero2.jpg" },
@@ -132,8 +143,9 @@ function Page() {
         const meals = Array.isArray(data) ? data : data?.data || [];
         setTrialMeals(meals);
       } catch (error) {
-        // console.error("Failed to fetch trial meals:", error);
-        toast.error("Failed to load trial meals");
+        const message = getErrorMessage(error, "Failed to load trial meals");
+        console.error("Failed to fetch trial meals:", error);
+        toast.error(message);
       } finally {
         setLoadingTrialMeals(false);
       }
@@ -148,8 +160,9 @@ function Page() {
         const meals = Array.isArray(data) ? data : data?.meals || [];
         setMonthlyMeals(meals);
       } catch (error) {
+        const message = getErrorMessage(error, "Failed to load monthly meals");
         console.error("Failed to fetch monthly meals:", error);
-        toast.error("Failed to load monthly meals");
+        toast.error(message);
       } finally {
         setLoadingMonthlyMeals(false);
       }
