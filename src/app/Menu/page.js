@@ -35,18 +35,18 @@ function BreakfastSelectionModal({ type, onAddToCart, options = null }) {
   // Build item list from backend options if provided, otherwise fall back to static breakfastItems
   const items = options
     ? options.map((opt) => {
-        const id = `opt${opt.option}`;
-        const price =
-          type === "veg"
-            ? opt.veg && Number(opt.veg.price)
-            : opt.nonveg && Number(opt.nonveg.price);
-        return { id, name: opt.name || `Breakfast ${opt.option}`, price };
-      })
+      const id = `opt${opt.option}`;
+      const price =
+        type === "veg"
+          ? opt.veg && Number(opt.veg.price)
+          : opt.nonveg && Number(opt.nonveg.price);
+      return { id, name: opt.name || `Breakfast ${opt.option}`, price };
+    })
     : breakfastItems.map((it) => ({
-        id: it.id,
-        name: it.name,
-        price: it.price,
-      }));
+      id: it.id,
+      name: it.name,
+      price: it.price,
+    }));
 
   const handleToggle = (itemId) => {
     const newSet = new Set(selected);
@@ -77,23 +77,21 @@ function BreakfastSelectionModal({ type, onAddToCart, options = null }) {
           return (
             <label
               key={item.id}
-              className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${
-                isSelected
+              className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${isSelected
                   ? type === "veg"
                     ? "bg-emerald-50 border-emerald-300"
                     : "bg-gray-50 border-gray-300"
                   : "hover:bg-gray-50"
-              }`}
+                }`}
             >
               <input
                 type="checkbox"
                 checked={isSelected}
                 onChange={() => handleToggle(item.id)}
-                className={`w-5 h-5 rounded focus:ring-2 ${
-                  type === "veg"
+                className={`w-5 h-5 rounded focus:ring-2 ${type === "veg"
                     ? "text-emerald-600 focus:ring-emerald-500"
                     : "text-gray-600 focus:ring-gray-500"
-                }`}
+                  }`}
               />
               <div className="flex-1">
                 <div className="font-medium text-base">{item.name}</div>
@@ -112,11 +110,10 @@ function BreakfastSelectionModal({ type, onAddToCart, options = null }) {
         </button>
         <button
           onClick={handleAdd}
-          className={`flex-1 px-4 py-2 rounded-lg font-semibold text-white transition shadow-md ${
-            type === "veg"
+          className={`flex-1 px-4 py-2 rounded-lg font-semibold text-white transition shadow-md ${type === "veg"
               ? "bg-emerald-600 hover:bg-emerald-700"
               : "bg-[#07101a] hover:bg-[#0c1b2a]"
-          }`}
+            }`}
         >
           Add Selected ({selected.size})
         </button>
@@ -268,9 +265,9 @@ function Page() {
       : null;
     const nonveg = foundNonveg
       ? {
-          ...foundNonveg,
-          price: Number(foundNonveg.price ?? foundNonveg.price ?? 0),
-        }
+        ...foundNonveg,
+        price: Number(foundNonveg.price ?? foundNonveg.price ?? 0),
+      }
       : null;
 
     const name =
@@ -354,55 +351,67 @@ function Page() {
   };
 
   return (
-    <main className="bg-[#f7f8fa] flex items-center">
-      <div className="w-full max-w-7xl mx-auto px-4 py-10">
+    <main className="bg-[#f8fafc] font-sans antialiased text-slate-800 flex items-center">
+      <div className="w-full max-w-7xl mx-auto px-4 py-12">
         {/* Hero Section */}
-        <section className="menu-hero flex flex-col md:flex-row gap-8 items-center relative border-b pb-10">
-          <div className="hero-left flex-1 max-w-[60%]">
-            <h1 className="text-[3.5rem] leading-none font-extrabold mb-5 animate-fadeUp">
-              <span className="text-black">Our</span>{" "}
-              <span className="text-red-600">Menu</span>
+        <section className="menu-hero flex flex-col md:flex-row gap-10 items-center relative border-b border-slate-100 pb-12 pt-4">
+          <div className="hero-left flex-1 md:max-w-[60%]">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-extrabold uppercase tracking-widest mb-4 animate-fadeUp">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+              Fresh & Delicious
+            </div>
+            <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight animate-fadeUp leading-tight">
+              <span className="text-slate-900">Our Premium</span>{" "}
+              <span className="bg-gradient-to-r from-red-600 to-rose-500 bg-clip-text text-transparent">Menu</span>
             </h1>
             <p
-              className="text-black/80 max-w-[48ch] mb-6 animate-fadeUp"
+              className="text-slate-600 text-lg leading-relaxed max-w-[48ch] mb-8 animate-fadeUp"
               style={{ animationDelay: "120ms" }}
             >
-              Fresh, zesty, and bursting with crunch—our meals are crafted to
-              keep you energized and healthy every day!
+              Fresh, zesty, and bursting with crunch—our meals are crafted by professional nutritionists to keep you energized, fit, and healthy every day!
             </p>
           </div>
 
-          <div className="hero-right flex-1 flex items-center justify-end relative">
+          <div className="hero-right flex-1 flex items-center justify-center md:justify-end relative">
             <div
-              className="relative w-[300px] h-[300px] rounded-full overflow-hidden shadow-lg animate-scaleIn"
+              className="relative w-[300px] h-[300px] md:w-[350px] md:h-[350px] rounded-full p-3 bg-white shadow-2xl border border-slate-100/80 animate-scaleIn"
               style={{ animationDelay: "200ms" }}
             >
-              <Image
-                src="/hero3.jpg"
-                alt="Healthy bowl"
-                fill
-                className="object-cover"
-              />
+              <div className="relative w-full h-full rounded-full overflow-hidden">
+                <Image
+                  src="/hero3.jpg"
+                  alt="Healthy bowl"
+                  fill
+                  className="object-cover hover:scale-110 transition-transform duration-700 ease-out"
+                />
+              </div>
             </div>
           </div>
         </section>
 
         {/* Trial Menu Section */}
-        <section className="menu-section mt-20">
-          <h2 className="text-3xl font-bold mb-8 text-[#07101a]">Trial Menu</h2>
+        <section className="menu-section mt-16 bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-100 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+            <div>
+              <h2 className="text-3xl font-black tracking-tight text-slate-900">Trial Menu Plan</h2>
+              <p className="text-slate-500 text-sm mt-1">Start your health journey with our delicious 1-day trial meals</p>
+            </div>
+            <div className="h-1 w-20 bg-red-500 rounded-full md:hidden"></div>
+          </div>
+
           {loadingTrialMeals ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
-              <p className="text-gray-600 mt-3">Loading trial meals...</p>
+            <div className="text-center py-16">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-red-600"></div>
+              <p className="text-slate-500 mt-4 font-semibold text-sm">Loading trial meals...</p>
             </div>
           ) : trialMeals.length === 0 ? (
-            <p className="text-center text-gray-600 py-8">
-              No trial meals available
-            </p>
+            <div className="text-center py-12 border border-dashed border-slate-200 rounded-3xl">
+              <p className="text-slate-500 font-medium">No trial meals available at the moment.</p>
+            </div>
           ) : (
-            <div className="space-y-8">
+            <div className="space-y-12">
               {/* Breakfast - 3 option cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
                 {breakfastOptions.map((opt) => {
                   const vegPrice = opt.veg ? Number(opt.veg.price) : null;
                   const nonvegPrice = opt.nonveg
@@ -418,65 +427,60 @@ function Page() {
                   return (
                     <div
                       key={`bf-${opt.option}`}
-                      className="w-full max-w-[420px] menu-card overflow-hidden shadow-md hover:shadow-lg transition flex flex-col bg-white border border-gray-200"
-                      style={{ borderRadius: "0 0 1rem 1rem" }}
+                      className="group relative w-full max-w-[380px] flex flex-col bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-out overflow-hidden"
                     >
-                      <div className="w-full h-56 relative -m-0">
+                      <div className="w-full h-64 relative overflow-hidden bg-slate-100">
                         <Image
                           src={cardImage}
                           alt={capitalizedName}
                           fill
-                          className="object-cover"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                           onError={(e) => {
                             e.currentTarget.src = "/hero2.jpg";
                           }}
                         />
-                        <div className="absolute top-3 right-3">
-                          <span className="px-3 py-1 bg-gray-800/85 text-white text-xs font-bold rounded-full uppercase tracking-wide shadow-md">
-                            {opt.category} Option {opt.option}
+                        <div className="absolute top-4 left-4 z-10">
+                          <span className="px-3.5 py-1.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold rounded-full uppercase tracking-wider shadow-md">
+                            {opt.category} • Opt {opt.option}
                           </span>
                         </div>
                       </div>
-                      <div className="px-6 pb-6 pt-4 flex flex-col flex-grow">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                      <div className="p-6 flex flex-col flex-grow">
+                        <h3 className="text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors duration-300 mb-5 line-clamp-1">
                           {capitalizedName}
-                        </h2>
-                        <div className="flex items-center gap-6 mb-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                        </h3>
+
+                        <div className="flex items-center gap-4 mb-6">
                           {vegPrice !== null && (
-                            <div className="flex-1 text-center">
-                              <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                                Veg Price
-                              </div>
-                              <div className="text-2xl font-bold text-green-500">
-                                ₹{vegPrice}
-                              </div>
+                            <div className="flex-1 p-3 bg-emerald-50/70 rounded-2xl border border-emerald-100/50 flex flex-col items-center">
+                              <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1">Veg Price</span>
+                              <span className="text-xl font-black text-emerald-600">₹{vegPrice}</span>
                             </div>
                           )}
                           {nonvegPrice !== null && (
-                            <div className="flex-1 text-center">
-                              <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                                Non-Veg Price
-                              </div>
-                              <div className="text-2xl font-bold text-red-600">
-                                ₹{nonvegPrice}
-                              </div>
+                            <div className="flex-1 p-3 bg-rose-50/70 rounded-2xl border border-rose-100/50 flex flex-col items-center">
+                              <span className="text-[10px] font-bold text-rose-800 uppercase tracking-widest mb-1">Non-Veg</span>
+                              <span className="text-xl font-black text-rose-600">₹{nonvegPrice}</span>
                             </div>
                           )}
                         </div>
+
                         <div className="mt-auto flex gap-3">
                           {opt.veg && (
                             <button
                               onClick={() => addSingleTrialToCart(opt.veg)}
-                              className="flex-1 bg-green-500 text-white py-3 px-4 rounded-full font-bold hover:bg-emerald-600 transition text-sm uppercase tracking-wide shadow-md"
+                              className="flex-1 py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/15 hover:shadow-emerald-600/25 active:scale-[0.96] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                             >
+                              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                               Add Veg
                             </button>
                           )}
                           {opt.nonveg && (
                             <button
                               onClick={() => addSingleTrialToCart(opt.nonveg)}
-                              className="flex-1 bg-red-500 text-white py-3 px-4 rounded-full font-bold hover:bg-red-600 transition text-sm uppercase tracking-wide shadow-md"
+                              className="flex-1 py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-red-600/15 hover:shadow-red-600/25 active:scale-[0.96] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                             >
+                              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                               Add Non-Veg
                             </button>
                           )}
@@ -488,13 +492,10 @@ function Page() {
               </div>
 
               {/* Lunch & Dinner single cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
                 {/* Lunch */}
-                <div
-                  className="w-full max-w-[420px] menu-card overflow-hidden shadow-md hover:shadow-lg transition flex flex-col bg-white border border-gray-200"
-                  style={{ borderRadius: "0 0 1rem 1rem" }}
-                >
-                  <div className="w-full h-56 relative -m-0">
+                <div className="group relative w-full max-w-[380px] flex flex-col bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-out overflow-hidden">
+                  <div className="w-full h-64 relative overflow-hidden bg-slate-100">
                     <Image
                       src={
                         (lunchVeg && lunchVeg.image) ||
@@ -503,57 +504,53 @@ function Page() {
                       }
                       alt="Lunch"
                       fill
-                      className="object-cover"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                       onError={(e) => {
                         e.currentTarget.src = "/hero2.jpg";
                       }}
                     />
-                    <div className="absolute top-3 right-3">
-                      <span className="px-3 py-1 bg-gray-800/85 text-white text-xs font-bold rounded-full uppercase tracking-wide shadow-md">
-                        Lunch
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="px-3.5 py-1.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold rounded-full uppercase tracking-wider shadow-md">
+                        Lunch Meal
                       </span>
                     </div>
                   </div>
-                  <div className="px-6 pb-6 pt-4 flex flex-col flex-grow">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                      Lunch
-                    </h2>
-                    <div className="flex items-center gap-6 mb-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                  <div className="p-6 flex flex-col flex-grow">
+                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors duration-300 mb-5">
+                      Healthy Lunch
+                    </h3>
+
+                    <div className="flex items-center gap-4 mb-6">
                       {lunchVeg && (
-                        <div className="flex-1 text-center">
-                          <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                            Veg Price
-                          </div>
-                          <div className="text-2xl font-bold text-emerald-600">
-                            ₹{Number(lunchVeg.price)}
-                          </div>
+                        <div className="flex-1 p-3 bg-emerald-50/70 rounded-2xl border border-emerald-100/50 flex flex-col items-center">
+                          <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1">Veg Price</span>
+                          <span className="text-xl font-black text-emerald-600">₹{Number(lunchVeg.price)}</span>
                         </div>
                       )}
                       {lunchNonveg && (
-                        <div className="flex-1 text-center">
-                          <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                            Non-Veg Price
-                          </div>
-                          <div className="text-2xl font-bold text-red-600">
-                            ₹{Number(lunchNonveg.price)}
-                          </div>
+                        <div className="flex-1 p-3 bg-rose-50/70 rounded-2xl border border-rose-100/50 flex flex-col items-center">
+                          <span className="text-[10px] font-bold text-rose-800 uppercase tracking-widest mb-1">Non-Veg</span>
+                          <span className="text-xl font-black text-rose-600">₹{Number(lunchNonveg.price)}</span>
                         </div>
                       )}
                     </div>
+
                     <div className="mt-auto flex gap-3">
                       {lunchVeg && (
                         <button
                           onClick={() => addSingleTrialToCart(lunchVeg)}
-                          className="flex-1 bg-green-500 text-white py-3 px-4 rounded-full font-bold hover:bg-emerald-600 transition text-sm uppercase tracking-wide shadow-md"
+                          className="flex-1 py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/15 hover:shadow-emerald-600/25 active:scale-[0.96] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                           Add Veg
                         </button>
                       )}
                       {lunchNonveg && (
                         <button
                           onClick={() => addSingleTrialToCart(lunchNonveg)}
-                          className="flex-1 bg-red-500 text-white py-3 px-4 rounded-full font-bold hover:bg-red-600 transition text-sm uppercase tracking-wide shadow-md"
+                          className="flex-1 py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-red-600/15 hover:shadow-red-600/25 active:scale-[0.96] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                           Add Non-Veg
                         </button>
                       )}
@@ -562,11 +559,8 @@ function Page() {
                 </div>
 
                 {/* Dinner */}
-                <div
-                  className="w-full max-w-[420px] menu-card overflow-hidden shadow-md hover:shadow-lg transition flex flex-col bg-white border border-gray-200"
-                  style={{ borderRadius: "0 0 1rem 1rem" }}
-                >
-                  <div className="w-full h-56 relative -m-0">
+                <div className="group relative w-full max-w-[380px] flex flex-col bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-out overflow-hidden">
+                  <div className="w-full h-64 relative overflow-hidden bg-slate-100">
                     <Image
                       src={
                         (dinnerVeg && dinnerVeg.image) ||
@@ -575,57 +569,53 @@ function Page() {
                       }
                       alt="Dinner"
                       fill
-                      className="object-cover"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                       onError={(e) => {
                         e.currentTarget.src = "/hero2.jpg";
                       }}
                     />
-                    <div className="absolute top-3 right-3">
-                      <span className="px-3 py-1 bg-gray-800/85 text-white text-xs font-bold rounded-full uppercase tracking-wide shadow-md">
-                        Dinner
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="px-3.5 py-1.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold rounded-full uppercase tracking-wider shadow-md">
+                        Dinner Meal
                       </span>
                     </div>
                   </div>
-                  <div className="px-6 pb-6 pt-4 flex flex-col flex-grow">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                      Dinner
-                    </h2>
-                    <div className="flex items-center gap-6 mb-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                  <div className="p-6 flex flex-col flex-grow">
+                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors duration-300 mb-5">
+                      Healthy Dinner
+                    </h3>
+
+                    <div className="flex items-center gap-4 mb-6">
                       {dinnerVeg && (
-                        <div className="flex-1 text-center">
-                          <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                            Veg Price
-                          </div>
-                          <div className="text-2xl font-bold text-emerald-600">
-                            ₹{Number(dinnerVeg.price)}
-                          </div>
+                        <div className="flex-1 p-3 bg-emerald-50/70 rounded-2xl border border-emerald-100/50 flex flex-col items-center">
+                          <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1">Veg Price</span>
+                          <span className="text-xl font-black text-emerald-600">₹{Number(dinnerVeg.price)}</span>
                         </div>
                       )}
                       {dinnerNonveg && (
-                        <div className="flex-1 text-center">
-                          <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                            Non-Veg Price
-                          </div>
-                          <div className="text-2xl font-bold text-red-600">
-                            ₹{Number(dinnerNonveg.price)}
-                          </div>
+                        <div className="flex-1 p-3 bg-rose-50/70 rounded-2xl border border-rose-100/50 flex flex-col items-center">
+                          <span className="text-[10px] font-bold text-rose-800 uppercase tracking-widest mb-1">Non-Veg</span>
+                          <span className="text-xl font-black text-rose-600">₹{Number(dinnerNonveg.price)}</span>
                         </div>
                       )}
                     </div>
+
                     <div className="mt-auto flex gap-3">
                       {dinnerVeg && (
                         <button
                           onClick={() => addSingleTrialToCart(dinnerVeg)}
-                          className="flex-1 bg-green-500 text-white py-3 px-4 rounded-full font-bold hover:bg-emerald-600 transition text-sm uppercase tracking-wide shadow-md"
+                          className="flex-1 py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/15 hover:shadow-emerald-600/25 active:scale-[0.96] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                           Add Veg
                         </button>
                       )}
                       {dinnerNonveg && (
                         <button
                           onClick={() => addSingleTrialToCart(dinnerNonveg)}
-                          className="flex-1 bg-red-500 text-white py-3 px-4 rounded-full font-bold hover:bg-red-600 transition text-sm uppercase tracking-wide shadow-md"
+                          className="flex-1 py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-red-600/15 hover:shadow-red-600/25 active:scale-[0.96] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                           Add Non-Veg
                         </button>
                       )}
@@ -638,79 +628,79 @@ function Page() {
         </section>
 
         {/* Monthly Menu Section */}
-        <section className="menu-section mt-20">
-          <h2 className="text-3xl font-bold mb-8 text-[#07101a]">
-            Monthly Menu
-          </h2>
+        <section className="menu-section mt-16 bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-100 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+            <div>
+              <h2 className="text-3xl font-black tracking-tight text-slate-900">Monthly Subscription Plans</h2>
+              <p className="text-slate-500 text-sm mt-1">Get fresh, nutritionist-approved meals delivered daily for 30 days</p>
+            </div>
+            <div className="h-1 w-20 bg-red-500 rounded-full md:hidden"></div>
+          </div>
+
           {loadingMonthlyMeals ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <p className="text-gray-600 mt-3">Loading monthly meals...</p>
+            <div className="text-center py-16">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-red-600"></div>
+              <p className="text-slate-500 mt-4 font-semibold text-sm">Loading subscription plans...</p>
             </div>
           ) : monthlyMeals.length === 0 ? (
-            <p className="text-center text-gray-600 py-8">
-              No monthly meals available
-            </p>
+            <div className="text-center py-12 border border-dashed border-slate-200 rounded-3xl">
+              <p className="text-slate-500 font-medium">No subscription plans available at the moment.</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
               {monthlyMeals.map((meal, i) => {
                 const vegPrice = meal.veg || meal.price?.veg || 0;
                 const nonvegPrice = meal.nonveg || meal.price?.nonVeg || 0;
                 return (
                   <div
                     key={i}
-                    className="w-full max-w-[420px] menu-card overflow-hidden shadow-md hover:shadow-lg transition flex flex-col bg-white border border-gray-200"
-                    style={{ borderRadius: "0 0 1rem 1rem" }}
+                    className="group relative w-full max-w-[380px] flex flex-col bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-out overflow-hidden"
                   >
-                    <div className="w-full h-56 relative -m-0">
+                    <div className="w-full h-64 relative overflow-hidden bg-slate-100">
                       <Image
                         src={meal.image?.[0] || "/hero2.jpg"}
                         alt={meal.name}
                         fill
-                        className="object-cover"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                         onError={(e) => {
                           e.currentTarget.src = "/hero2.jpg";
                         }}
                       />
-                      <div className="absolute top-3 right-3">
-                        <span className="px-3 py-1 bg-gray-800/85 text-white text-xs font-bold rounded-full uppercase tracking-wide shadow-md">
-                          Monthly
+                      <div className="absolute top-4 left-4 z-10">
+                        <span className="px-3.5 py-1.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold rounded-full uppercase tracking-wider shadow-md">
+                          30 Days Plan
                         </span>
                       </div>
                     </div>
-                    <div className="px-6 pb-6 pt-4 flex flex-col flex-grow">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                    <div className="p-6 flex flex-col flex-grow">
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors duration-300 mb-5 line-clamp-1">
                         {meal.name}
-                      </h2>
-                      <div className="flex items-center gap-6 mb-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                        <div className="flex-1 text-center">
-                          <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                            Veg Price
-                          </div>
-                          <div className="text-2xl font-bold text-emerald-600">
-                            ₹{vegPrice.toLocaleString()}
-                          </div>
+                      </h3>
+
+                      <div className="flex items-center gap-4 mb-6">
+                        <div className="flex-1 p-3 bg-emerald-50/70 rounded-2xl border border-emerald-100/50 flex flex-col items-center">
+                          <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1">Veg Price</span>
+                          <span className="text-xl font-black text-emerald-600">₹{vegPrice.toLocaleString()}</span>
                         </div>
-                        <div className="flex-1 text-center">
-                          <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                            Non-Veg Price
-                          </div>
-                          <div className="text-2xl font-bold text-red-600">
-                            ₹{nonvegPrice.toLocaleString()}
-                          </div>
+                        <div className="flex-1 p-3 bg-rose-50/70 rounded-2xl border border-rose-100/50 flex flex-col items-center">
+                          <span className="text-[10px] font-bold text-rose-800 uppercase tracking-widest mb-1">Non-Veg</span>
+                          <span className="text-xl font-black text-rose-600">₹{nonvegPrice.toLocaleString()}</span>
                         </div>
                       </div>
+
                       <div className="mt-auto flex gap-3">
                         <button
                           onClick={() => handleAddMonthlyPlan(meal, "veg")}
-                          className="flex-1 bg-green-500 text-white py-3 px-4 rounded-full font-bold hover:bg-emerald-600 transition text-sm uppercase tracking-wide shadow-md"
+                          className="flex-1 py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/15 hover:shadow-emerald-600/25 active:scale-[0.96] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                           Add Veg
                         </button>
                         <button
                           onClick={() => handleAddMonthlyPlan(meal, "nonveg")}
-                          className="flex-1 bg-red-500 text-white py-3 px-4 rounded-full font-bold hover:bg-red-600 transition text-sm uppercase tracking-wide shadow-md"
+                          className="flex-1 py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-red-600/15 hover:shadow-red-600/25 active:scale-[0.96] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                         >
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                           Add Non-Veg
                         </button>
                       </div>

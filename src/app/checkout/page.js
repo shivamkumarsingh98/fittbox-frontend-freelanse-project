@@ -353,55 +353,60 @@ export default function Checkout() {
 
   return (
     <>
-      {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          {/* modal container - clicking backdrop does nothing */}
-          <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-xl font-bold mb-4">
-              Upload Latest Blood Report
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Please upload your latest blood report. You can skip and upload
-              later, but uploading now helps us personalize your meals.
-            </p>
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
+          showUploadModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={handleSkipUpload}
+      >
+        {/* modal container - clicking backdrop does nothing */}
+        <div
+          className={`bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 p-8 transition-all duration-300 ease-out transform origin-bottom ${
+            showUploadModal ? "scale-100 opacity-100 translate-y-0" : "scale-50 opacity-0 translate-y-20"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+            🩸 Upload Latest Blood Report
+          </h3>
+          <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+            Please upload your latest blood report. You can skip and upload
+            later, but uploading now helps us personalize your meals.
+          </p>
 
-            <div className="mb-4">
-              <input
-                type="file"
-                accept="application/pdf,image/*"
-                onChange={handleReportChange}
-                className="w-full"
-              />
-              {reportFile && (
-                <p className="mt-2 text-sm text-gray-700">
-                  Selected: {reportFile.name}
-                </p>
-              )}
-            </div>
+          <div className="mb-6">
+            <input
+              type="file"
+              accept="application/pdf,image/*"
+              onChange={handleReportChange}
+              className="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer transition"
+            />
+            {reportFile && (
+              <p className="mt-3 text-xs font-semibold text-neutral-600 bg-neutral-50 px-3 py-1.5 rounded-lg border border-neutral-100 inline-block">
+                Selected: {reportFile.name}
+              </p>
+            )}
+          </div>
 
-            <div className="flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={handleSkipUpload}
-                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700"
-              >
-                Skip
-              </button>
-              <button
-                type="button"
-                onClick={handleUploadReport}
-                disabled={uploading}
-                className="px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-60"
-              >
-                {uploading ? "Uploading..." : "Upload & Continue"}
-              </button>
-            </div>
+          <div className="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={handleSkipUpload}
+              className="px-5 py-2.5 rounded-xl border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold transition"
+            >
+              Skip
+            </button>
+            <button
+              type="button"
+              onClick={handleUploadReport}
+              disabled={uploading}
+              className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:bg-neutral-200 disabled:cursor-not-allowed text-white text-sm font-semibold transition shadow-sm"
+            >
+              {uploading ? "Uploading..." : "Upload & Continue"}
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -514,6 +519,26 @@ export default function Checkout() {
                       />
                     </div>
                   </div>
+                </div>
+
+                {/* Upload Blood Report Reopen Promo Card */}
+                <div className="bg-red-50/50 border border-red-100 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md transition duration-200">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold border border-red-200">🩸</div>
+                    <div>
+                      <p className="text-base font-bold text-gray-800">Personalize Your Diet Plan</p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {formData.bloodReport ? "✅ Blood report uploaded successfully!" : "Upload your latest blood report to help us customize your meals."}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowUploadModal(true)}
+                    className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition shadow-sm whitespace-nowrap self-start sm:self-auto"
+                  >
+                    {formData.bloodReport ? "Update Report" : "Upload Report"}
+                  </button>
                 </div>
 
                 {/* Pay Button */}

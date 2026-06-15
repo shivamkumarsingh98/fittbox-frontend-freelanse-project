@@ -8,19 +8,15 @@ export default function SubscribersButton({ active, setActive, theme, setShowMob
         setActive("subscribers");
         setShowMobile(false);
       }}
-      className={`w-full text-xl  font-extrabold text-left px-6 py-3 transition-colors ${
+      className={`w-full text-base font-bold text-left py-3.5 transition-all duration-200 flex items-center ${
         active === "subscribers"
-          ? theme === "dark"
-            ? "bg-neutral-800 text-red-500"
-            : "bg-red-500 text-white"
-          : theme === "dark"
-          ? "hover:bg-neutral-800"
-          : "hover:bg-neutral-50"
+          ? "border-l-4 border-red-600 bg-red-50/70 text-red-600 px-5"
+          : "text-slate-700 hover:bg-slate-50 hover:text-slate-950 px-6 border-l-4 border-transparent"
       }`}
     >
       <span className="inline-flex items-center gap-3">
         <span className="text-lg">
-          <FaRegUser />
+          <FaRegUser className={active === "subscribers" ? "text-red-600" : "text-slate-400"} />
         </span>
         <span>Subscribers</span>
       </span>

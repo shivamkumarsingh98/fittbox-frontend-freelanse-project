@@ -43,7 +43,7 @@ const HeroSection = () => {
       } catch (err) {
         // keep default image if API fails
         // eslint-disable-next-line no-console
-        console.error("getAboutSection (hero) error:", err);
+        // console.error("getAboutSection (hero) error:", err);
       }
     }
 

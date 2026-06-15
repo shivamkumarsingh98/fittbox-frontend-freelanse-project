@@ -42,7 +42,7 @@ export default function Footer() {
       } catch (err) {
         // keep fallback UI if fetch fails
         // eslint-disable-next-line no-console
-        console.error("getContact error:", err);
+        // console.error("getContact error:", err);
       }
     }
 

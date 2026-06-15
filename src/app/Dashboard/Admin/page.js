@@ -100,32 +100,18 @@ export default function Page() {
     router.push("/Admin/auth");
   };
 
+
   return (
-    <div
-      className={
-        theme === "dark"
-          ? "h-screen flex bg-neutral-900 text-white overflow-hidden"
-          : "h-screen flex bg-neutral-50 text-neutral-900 overflow-hidden"
-      }
-    >
+    <div className="h-screen flex bg-slate-50 text-slate-800 overflow-hidden font-sans">
       {/* Sidebar */}
-      <aside
-        className={
-          theme === "dark"
-            ? "hidden md:flex w-64 border-r border-neutral-800 bg-neutral-950 h-screen sticky top-0 flex-col"
-            : "hidden md:flex w-64 border-r border-neutral-200 bg-white h-screen sticky top-0 flex-col"
-        }
-      >
-        <div className="px-4 py-4 flex items-center justify-between border-b border-neutral-200/60 dark:border-neutral-800/60">
-          <div className="font-semibold text-lg">Admin</div>
-          {/* <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="text-xs px-3 py-1 rounded border"
-          >
-            {theme === "dark" ? "Light" : "Dark"}
-          </button> */}
+      <aside className="hidden md:flex w-64 border-r border-slate-200/80 bg-white h-screen sticky top-0 flex-col">
+        <div className="px-6 py-5 flex items-center justify-between border-b border-slate-100">
+          <div className="font-extrabold text-xl tracking-tight text-slate-900 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+            <span>FittBox Admin</span>
+          </div>
         </div>
-        <div className="py-4 space-y-1 flex-1 overflow-hidden">
+        <div className="py-6 space-y-1 flex-1 overflow-y-auto">
           <HomeButton
             active={active}
             setActive={setActive}
@@ -164,10 +150,10 @@ export default function Page() {
             setShowMobile={() => {}}
           />
         </div>
-        <div className="border-t border-neutral-200/60 dark:border-neutral-800/60 p-4">
+        <div className="border-t border-slate-100 p-5 bg-white">
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-2 rounded-md text-sm font-semibold bg-red-600 text-white hover:bg-red-700"
+            className="w-full px-4 py-2.5 rounded-xl text-sm font-bold bg-red-600 hover:bg-red-700 text-white shadow-md hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer text-center"
           >
             Logout
           </button>
@@ -175,12 +161,12 @@ export default function Page() {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 h-screen overflow-y-auto p-4 md:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <main className="flex-1 h-screen overflow-y-auto p-6 md:p-8 bg-slate-50">
+        <div className="max-w-7xl mx-auto space-y-8">
           {/* Simple header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold">
+              <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                 {active === "overview"
                   ? "Overview"
                   : active === "subscribers"
@@ -194,44 +180,39 @@ export default function Page() {
                   : "UI Update"}
               </h1>
               {loadingAnalytics && active !== "message" && (
-                <p className="text-xs text-neutral-500 mt-1">
-                  Loading analytics...
+                <p className="text-xs text-slate-400 mt-1.5 animate-pulse">
+                  Loading analytics data...
                 </p>
               )}
             </div>
-
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="md:hidden px-3 py-1 rounded border text-sm"
-            >
-              {theme === "dark" ? "Light" : "Dark"}
-            </button>
           </div>
 
           {/* All users quick control */}
           <AllUsersControl theme={theme} />
 
           {/* Tabs */}
-          {active === "overview" && (
-            <OverviewTab theme={theme} analyticsData={analyticsData} />
-          )}
-          {active === "subscribers" && (
-            <SubscribersTab theme={theme} analyticsData={analyticsData} />
-          )}
-          {active === "payments" && (
-            <PaymentsTab theme={theme} analyticsData={analyticsData} />
-          )}
-          {active === "mealplans" && <MealPlansTab theme={theme} />}
-          {active === "message" && (
-            <MessagesTab
-              theme={theme}
-              messages={messages}
-              loading={loadingMessages}
-              error={messagesError}
-              onDeleteMessage={handleDeleteMessage}
-            />
-          )}
-          {active === "future" && <FutureTab theme={theme} />}
+          <div className="space-y-6">
+            {active === "overview" && (
+              <OverviewTab theme={theme} analyticsData={analyticsData} />
+            )}
+            {active === "subscribers" && (
+              <SubscribersTab theme={theme} analyticsData={analyticsData} />
+            )}
+            {active === "payments" && (
+              <PaymentsTab theme={theme} analyticsData={analyticsData} />
+            )}
+            {active === "mealplans" && <MealPlansTab theme={theme} />}
+            {active === "message" && (
+              <MessagesTab
+                theme={theme}
+                messages={messages}
+                loading={loadingMessages}
+                error={messagesError}
+                onDeleteMessage={handleDeleteMessage}
+              />
+            )}
+            {active === "future" && <FutureTab theme={theme} />}
+          </div>
         </div>
       </main>
     </div>

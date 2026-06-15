@@ -131,14 +131,11 @@ export default function FutureTab({ theme }) {
   };
 
   const saveAbout = async () => {
-    // Check word count BEFORE any async operations
     const trimmedText = aboutText.trim();
     const words = trimmedText.split(/\s+/).filter(Boolean);
     const wordCount = words.length;
-    console.log("[FutureTab] About word count:", wordCount, "text:", trimmedText);
     
     if (wordCount > 150) {
-      console.log("[FutureTab] Word count exceeded! Blocking save. Count:", wordCount);
       toast.error(`About section must be 150 words or less. Current: ${wordCount} words`);
       return;
     }
@@ -302,63 +299,61 @@ export default function FutureTab({ theme }) {
   };
 
   return (
-    <div className={` ${theme === "dark" ? "bg-neutral-800 border-neutral-700 text-white" : "bg-white border"} rounded-xl p-4 space-y-4`}>
-      <div className="flex items-center justify-between"><h3 className="text-lg font-semibold">Update UI</h3></div>
+    <div className="bg-white border border-neutral-200/80 rounded-2xl p-6 space-y-6 shadow-sm">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-bold text-neutral-800">Update Landing UI Content</h3>
+      </div>
 
-      <div className={`p-4 rounded-lg border ${theme === "dark" ? "bg-neutral-900 border-neutral-800" : "bg-white"}`}>
-        <div className="flex items-center justify-between mb-3">
+      {/* Hero Section */}
+      <div className="p-5 rounded-2xl border border-neutral-200/80 bg-white shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
-            <h4 className="font-semibold">Hero Section Image</h4>
-            <div className={`text-sm ${theme === "dark" ? "text-neutral-400" : "text-neutral-500"}`}>Upload or manage the landing hero image (max 2MB)</div>
+            <h4 className="font-bold text-neutral-800">Hero Section Image</h4>
+            <div className="text-xs text-neutral-500 mt-0.5">Upload or manage the landing hero image (max 2MB)</div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <input id="hero-file" type="file" accept="image/*" onChange={handleHeroFileChange} className="hidden" />
-            <label htmlFor="hero-file" className="px-3 py-1 rounded border cursor-pointer text-sm">Choose</label>
-            <button onClick={uploadHero} disabled={heroLoading || !heroFile} className="px-3 py-1 rounded bg-emerald-600 text-white text-sm">{heroLoading ? "Uploading..." : "Upload"}</button>
-            {heroUrl && (<button onClick={removeHero} disabled={heroLoading} className="px-3 py-1 rounded bg-red-600 text-white text-sm">Delete</button>)}
+            <label htmlFor="hero-file" className="px-3.5 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50 cursor-pointer text-xs font-semibold text-neutral-700 transition">Choose File</label>
+            <button onClick={uploadHero} disabled={heroLoading || !heroFile} className="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 disabled:bg-neutral-200 disabled:cursor-not-allowed text-white text-xs font-semibold transition shadow-sm">{heroLoading ? "Uploading..." : "Upload"}</button>
+            {heroUrl && (<button onClick={removeHero} disabled={heroLoading} className="px-3.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-black text-white text-xs font-medium transition shadow-sm">Delete</button>)}
           </div>
         </div>
 
-        <div className="flex items-start gap-4">
-          <div className="w-48 h-28 bg-neutral-100 rounded overflow-hidden border">
-            {heroFile ? (<img src={URL.createObjectURL(heroFile)} alt="preview" className="w-full h-full object-cover" />) : heroUrl ? (<img src={heroUrl} alt="hero" className="w-full h-full object-cover" />) : (<div className="w-full h-full flex items-center justify-center text-sm text-neutral-400">No image</div>)}
+        <div className="flex flex-col sm:flex-row items-start gap-4">
+          <div className="w-full sm:w-48 h-32 bg-neutral-50 rounded-xl overflow-hidden border border-neutral-200/80 flex-shrink-0 flex items-center justify-center">
+            {heroFile ? (<img src={URL.createObjectURL(heroFile)} alt="preview" className="w-full h-full object-cover" />) : heroUrl ? (<img src={heroUrl} alt="hero" className="w-full h-full object-cover" />) : (<div className="text-xs text-neutral-400">No image uploaded</div>)}
           </div>
           <div className="flex-1">
-            <div className="text-sm text-neutral-500 mb-1">Current: {heroUrl ? "Stored" : "None"}</div>
+            <div className="text-xs font-medium text-neutral-500">Status: <span className="font-bold text-neutral-700">{heroUrl ? "Live on website" : "Not configured"}</span></div>
             {heroFile && (
-              <div className={`text-xs ${heroFile.size > 2 * 1024 * 1024 ? "text-red-600" : theme === "dark" ? "text-neutral-400" : "text-neutral-600"}`}>
-                File size: {(heroFile.size / (1024 * 1024)).toFixed(2)}MB / 2MB max
-                {heroFile.size > 2 * 1024 * 1024 && <span className="ml-2 font-semibold">(Exceeds limit!)</span>}
+              <div className={`text-xs mt-1.5 ${heroFile.size > 2 * 1024 * 1024 ? "text-red-600 font-bold" : "text-neutral-600"}`}>
+                File size: {(heroFile.size / (1024 * 1024)).toFixed(2)}MB / 2MB limit
+                {heroFile.size > 2 * 1024 * 1024 && <span className="ml-1">(Exceeded!)</span>}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <div className={`p-4 rounded-lg border ${theme === "dark" ? "bg-neutral-900 border-neutral-800" : "bg-white"}`}>
-        <div className="flex items-center justify-between mb-3">
+      {/* About Section */}
+      <div className="p-5 rounded-2xl border border-neutral-200/80 bg-white shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
-            <h4 className="font-semibold">About Section Text</h4>
-            <div
-              className={`text-sm ${
-                theme === "dark" ? "text-neutral-400" : "text-neutral-500"
-              }`}
-            >
-              Create or update the about text shown on landing (max 150 words)
-            </div>
+            <h4 className="font-bold text-neutral-800">About Section Text</h4>
+            <div className="text-xs text-neutral-500 mt-0.5 font-medium">Create or update the about text shown on landing (max 150 words)</div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={saveAbout}
               disabled={aboutLoading}
-              className="px-3 py-1 rounded bg-emerald-600 text-white text-sm"
+              className="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-sm transition"
             >
-              {aboutLoading ? "Saving..." : "Save"}
+              {aboutLoading ? "Saving..." : "Save Text"}
             </button>
             <button
               onClick={removeAbout}
               disabled={aboutLoading}
-              className="px-3 py-1 rounded bg-red-600 text-white text-sm"
+              className="px-4 py-1.5 rounded-lg bg-neutral-800 hover:bg-black text-white text-xs font-medium transition shadow-sm"
             >
               Delete
             </button>
@@ -366,34 +361,27 @@ export default function FutureTab({ theme }) {
         </div>
 
         <textarea
-          rows={6}
+          rows={5}
           value={aboutText}
-          onChange={(e) => {
-            const next = e.target.value;
-            setAboutText(next);
-          }}
-          className={`w-full rounded border p-3 ${
-            theme === "dark"
-              ? "bg-neutral-900 border-neutral-700 text-white"
-              : "bg-white"
-          }`}
+          onChange={(e) => setAboutText(e.target.value)}
+          className="w-full rounded-xl border border-neutral-200 p-3 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-neutral-800 text-sm bg-white"
           placeholder="Write about section text here..."
         />
-        <div
-          className={`mt-1 text-xs ${
-            theme === "dark" ? "text-neutral-400" : "text-neutral-500"
-          }`}
-        >
+        <div className="mt-1.5 text-[11px] font-semibold text-neutral-500">
           {aboutText.trim()
-            ? `${aboutText.trim().split(/\s+/).filter(Boolean).length}/200 words`
-            : "0/200 words"}
+            ? `${aboutText.trim().split(/\s+/).filter(Boolean).length} / 150 words`
+            : "0 / 150 words"}
         </div>
       </div>
 
-      <div className={`p-4 rounded-lg border ${theme === "dark" ? "bg-neutral-900 border-neutral-800" : "bg-white"}`}>
-        <div className="flex items-center justify-between mb-3"><div><h4 className="font-semibold">Nutrition Items</h4><div className={`text-sm ${theme === "dark" ? "text-neutral-400" : "text-neutral-500"}`}>Create / update / delete nutrition entries</div></div></div>
+      {/* Nutrition Items */}
+      <div className="p-5 rounded-2xl border border-neutral-200/80 bg-white shadow-xs">
+        <div className="mb-4">
+          <h4 className="font-bold text-neutral-800">Nutrition Items</h4>
+          <div className="text-xs text-neutral-500 mt-0.5">Create / update / delete nutrition entries</div>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <input
             value={nutritionForm.providerName}
             onChange={(e) =>
@@ -402,8 +390,8 @@ export default function FutureTab({ theme }) {
                 providerName: e.target.value,
               }))
             }
-            placeholder="Name"
-            className="px-3 py-2 rounded border"
+            placeholder="Provider Name"
+            className="px-3.5 py-2 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white text-neutral-800"
           />
           <input
             value={nutritionForm.providerContact}
@@ -413,8 +401,8 @@ export default function FutureTab({ theme }) {
                 providerContact: e.target.value,
               }))
             }
-            placeholder="Number"
-            className="px-3 py-2 rounded border"
+            placeholder="Contact Number"
+            className="px-3.5 py-2 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white text-neutral-800"
           />
           <input
             value={nutritionForm.nutritionPrice}
@@ -424,28 +412,28 @@ export default function FutureTab({ theme }) {
                 nutritionPrice: e.target.value,
               }))
             }
-            placeholder="Price"
+            placeholder="Price (₹)"
             type="number"
-            className="px-3 py-2 rounded border"
+            className="px-3.5 py-2 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white text-neutral-800"
           />
         </div>
-        <div className="flex gap-2 mb-3">
+        <div className="flex gap-2 mb-4">
           <button
             onClick={saveNutrition}
             disabled={nutritionLoading}
-            className="px-3 py-1 rounded bg-emerald-600 text-white"
+            className="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-sm transition"
           >
             {nutritionLoading
               ? "Saving..."
               : editingNutritionId
-              ? "Update"
-              : "Create"}
+              ? "Update Item"
+              : "Create Item"}
           </button>
           {editingNutritionId && (
             <button
               onClick={() => removeNutrition(editingNutritionId)}
               disabled={nutritionLoading}
-              className="px-3 py-1 rounded bg-red-600 text-white"
+              className="px-4 py-1.5 rounded-lg bg-neutral-800 hover:bg-black text-white text-xs font-medium transition"
             >
               Delete
             </button>
@@ -459,15 +447,15 @@ export default function FutureTab({ theme }) {
               });
               setEditingNutritionId(null);
             }}
-            className="px-3 py-1 rounded border"
+            className="px-4 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold transition"
           >
-            Clear
+            Clear Form
           </button>
         </div>
 
-        <div className="space-y-2 max-h-40 overflow-auto">
+        <div className="space-y-2.5 max-h-48 overflow-auto pr-1">
           {nutritionList.length === 0 ? (
-            <div className="text-sm text-neutral-500">No nutrition items</div>
+            <div className="text-xs text-neutral-500 text-center py-4">No nutrition items available</div>
           ) : (
             nutritionList.map((n) => {
               const name = n.providerName || n.name || "-";
@@ -481,23 +469,23 @@ export default function FutureTab({ theme }) {
               return (
                 <div
                   key={n._id || n.id || name}
-                  className="p-2 rounded border flex items-center justify-between"
+                  className="p-3.5 rounded-xl border border-neutral-200/80 bg-white flex items-center justify-between shadow-xs hover:border-neutral-300 transition duration-150"
                 >
                   <div
                     role="button"
                     onClick={() => editNutrition(n)}
-                    className="cursor-pointer"
-                    title="Click to load into form for editing"
+                    className="cursor-pointer min-w-0 flex-1"
+                    title="Click to edit item details"
                   >
-                    <div className="font-medium">{name}</div>
-                    <div className="text-xs text-neutral-500">
-                      Number: {number} • Price: ₹{price}
+                    <div className="font-bold text-neutral-800 text-sm truncate">{name}</div>
+                    <div className="text-xs text-neutral-500 mt-0.5">
+                      Phone: {number} • Price: ₹{price}
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => removeNutrition(n._id || n.id)}
-                      className="px-2 py-1 rounded bg-red-600 text-white text-sm"
+                      className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-semibold transition"
                     >
                       Delete
                     </button>
@@ -509,12 +497,23 @@ export default function FutureTab({ theme }) {
         </div>
       </div>
 
-      <div className={`p-4 rounded-lg border ${theme === "dark" ? "bg-neutral-900 border-neutral-800" : "bg-white"}`}>
-        <div className="flex items-center justify-between mb-3"><div><h4 className="font-semibold">Contact Info</h4><div className={`text-sm ${theme === "dark" ? "text-neutral-400" : "text-neutral-500"}`}>Address, email and phone for landing contact</div></div></div>
+      {/* Contact Info */}
+      <div className="p-5 rounded-2xl border border-neutral-200/80 bg-white shadow-xs">
+        <div className="mb-4">
+          <h4 className="font-bold text-neutral-800">Contact Info</h4>
+          <div className="text-xs text-neutral-500 mt-0.5">Address, email and phone for landing contact section</div>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3"><input value={contact.address} onChange={(e) => setContact((s) => ({ ...s, address: e.target.value }))} placeholder="Address" className="px-3 py-2 rounded border" /><input value={contact.email} onChange={(e) => setContact((s) => ({ ...s, email: e.target.value }))} placeholder="Email" className="px-3 py-2 rounded border" /><input value={contact.phone} onChange={(e) => setContact((s) => ({ ...s, phone: e.target.value }))} placeholder="Phone" className="px-3 py-2 rounded border" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+          <input value={contact.address} onChange={(e) => setContact((s) => ({ ...s, address: e.target.value }))} placeholder="Physical Address" className="px-3.5 py-2 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white text-neutral-800" />
+          <input value={contact.email} onChange={(e) => setContact((s) => ({ ...s, email: e.target.value }))} placeholder="Email Address" className="px-3.5 py-2 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white text-neutral-800" />
+          <input value={contact.phone} onChange={(e) => setContact((s) => ({ ...s, phone: e.target.value }))} placeholder="Phone Number" className="px-3.5 py-2 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white text-neutral-800" />
+        </div>
 
-        <div className="flex gap-2"><button onClick={saveContact} disabled={contactLoading} className="px-3 py-1 rounded bg-emerald-600 text-white">{contactLoading ? "Saving..." : "Save"}</button><button onClick={removeContact} disabled={contactLoading} className="px-3 py-1 rounded bg-red-600 text-white">Delete</button></div>
+        <div className="flex gap-2">
+          <button onClick={saveContact} disabled={contactLoading} className="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-sm transition">{contactLoading ? "Saving..." : "Save Contact Info"}</button>
+          <button onClick={removeContact} disabled={contactLoading} className="px-4 py-1.5 rounded-lg bg-neutral-800 hover:bg-black text-white text-xs font-medium transition shadow-sm">Delete Info</button>
+        </div>
       </div>
     </div>
   );

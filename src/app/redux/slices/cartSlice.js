@@ -12,40 +12,23 @@ function removeDuplicateItems(items) {
   return Object.values(map);
 }
 
-// const getInitialState = () => {
-//   if (typeof window !== "undefined") {
-//     const savedCart = localStorage.getItem("cart");
-//     if (savedCart) {
-//       try {
-//         const parsed = JSON.parse(savedCart);
+const computeItemTotalPrice = (item) => {
+  if (item.planType === "MealPlan") {
+    // Monthly meal plans are already stored as the full plan price
+    return item.price;
+  }
 
-//         const cleanedItems = removeDuplicateItems(parsed.items || []);
-//         // Recalculate totals to ensure consistency
-//         const totalQuantity = parsed.items.reduce(
-//           (sum, item) => sum + item.quantity,
-//           0
-//         );
-//         const totalAmount = parsed.items.reduce(
-//           (total, item) =>
-//             total + item.price * item.quantity * (item.days ?? 1),
-//           0
-//         );
-//         return {
-//           items: parsed.items || [],
-//           totalQuantity,
-//           totalAmount,
-//         };
-//       } catch (error) {
-//         console.error("Error parsing cart from localStorage:", error);
-//       }
-//     }
-//   }
-//   return {
-//     items: [],
-//     totalQuantity: 0,
-//     totalAmount: 0,
-//   };
-// };
+  if (item.planType === "TrialMeal") {
+    const quantity = item.quantity ?? 1;
+    const days = item.days ?? 1;
+    return item.price * quantity * days;
+  }
+
+  // Fallback for any other items
+  const quantity = item.quantity ?? 1;
+  const days = item.days ?? 1;
+  return item.price * quantity * days;
+};
 
 const getInitialState = () => {
   if (typeof window !== "undefined") {
@@ -64,7 +47,7 @@ const getInitialState = () => {
         );
 
         const totalAmount = cleanedItems.reduce(
-          (total, item) => total + item.totalPrice,
+          (total, item) => total + computeItemTotalPrice(item),
           0
         );
 
@@ -122,13 +105,10 @@ export const cartSlice = createSlice({
         if (meal.planType === "TrialMeal") {
           return;
         }
-        // if (isTrialMeal) {
-        //   existingItem.quantity++;
-        // }
-        existingItem.totalPrice =
-          existingItem.price * existingItem.quantity * existingItem.days;
+
+        existingItem.totalPrice = computeItemTotalPrice(existingItem);
       } else {
-        state.items.push({
+        const cartItem = {
           id,
           name: meal.name,
           category: meal.category,
@@ -137,9 +117,10 @@ export const cartSlice = createSlice({
           price: meal.price,
           quantity,
           days,
-          // totalPrice: isTrialMeal ? meal.price * quantity * days : meal.price,
-          totalPrice: meal.price,
-        });
+        };
+
+        cartItem.totalPrice = computeItemTotalPrice(cartItem);
+        state.items.push(cartItem);
       }
 
       state.totalQuantity = state.items.reduce(
@@ -147,7 +128,7 @@ export const cartSlice = createSlice({
         0
       );
       state.totalAmount = state.items.reduce(
-        (sum, item) => sum + item.totalPrice,
+        (sum, item) => sum + computeItemTotalPrice(item),
         0
       );
 
@@ -158,20 +139,25 @@ export const cartSlice = createSlice({
       const id = action.payload;
       const existingItem = state.items.find((item) => item.id === id);
 
-      if (existingItem.quantity === 1) {
-        state.items = state.items.filter((item) => item.id !== id);
-      } else {
-        existingItem.quantity--;
-        existingItem.totalPrice =
-          existingItem.price * existingItem.quantity * (existingItem.days ?? 1);
-      }
+      if (existingItem) {
+        if (existingItem.quantity === 1) {
+          state.items = state.items.filter((item) => item.id !== id);
+        } else {
+          existingItem.quantity--;
+          existingItem.totalPrice = computeItemTotalPrice(existingItem);
+        }
 
-      state.totalQuantity--;
-      state.totalAmount = state.items.reduce(
-        (total, item) => total + item.price * item.quantity * (item.days ?? 1),
-        0
-      );
-      saveCartToStorage(state);
+        state.totalQuantity = state.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        );
+        state.totalAmount = state.items.reduce(
+          (total, item) => total + computeItemTotalPrice(item),
+          0
+        );
+
+        saveCartToStorage(state);
+      }
     },
     updateCartItem: (state, action) => {
       const { id, days, quantity } = action.payload;
@@ -181,16 +167,19 @@ export const cartSlice = createSlice({
         if (days !== undefined) existingItem.days = days;
         if (quantity !== undefined) existingItem.quantity = quantity;
 
-        existingItem.totalPrice =
-          existingItem.price * existingItem.quantity * existingItem.days;
+        existingItem.totalPrice = computeItemTotalPrice(existingItem);
+
+        state.totalQuantity = state.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        );
+        state.totalAmount = state.items.reduce(
+          (total, item) => total + computeItemTotalPrice(item),
+          0
+        );
+
+        saveCartToStorage(state);
       }
-
-      state.totalAmount = state.items.reduce(
-        (total, item) => total + item.totalPrice,
-        0
-      );
-
-      saveCartToStorage(state);
     },
 
     clearCart: (state) => {

@@ -1827,39 +1827,34 @@ export default function MealPlansTab({ theme }) {
       <div className={` rounded-xl p-4 border`}>
         <h3 className="text-lg font-semibold mb-4">Monthly Meal Plans</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className={` rounded-xl p-5 border shadow-sm`}>
+          <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
             {createdMonthly.breakfastOnly &&
             editingMonthlyKey !== "breakfastOnly" ? (
               // show created summary when present and not editing
-              <div className="rounded border bg-white  p-3">
-                <div className="font-medium">
-                  {createdMonthly.breakfastOnly.name}
+              <div className="flex justify-between items-center gap-3">
+                <div className="flex flex-col">
+                  <p className="font-semibold text-sm md:text-base text-neutral-800">
+                    {createdMonthly.breakfastOnly.name}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Meals: {(createdMonthly.breakfastOnly.mealsIncluded || []).join(", ")}
+                  </p>
+                  <p className="text-xs font-semibold text-neutral-700 mt-2">
+                    Veg: ₹{createdMonthly.breakfastOnly.price?.veg ?? "-"} • Non-Veg: ₹{createdMonthly.breakfastOnly.price?.nonVeg ?? createdMonthly.breakfastOnly.price?.nonveg ?? "-"}
+                  </p>
                 </div>
-                <div className="text-xs text-neutral-500">
-                  Meals:{" "}
-                  {(createdMonthly.breakfastOnly.mealsIncluded || []).join(
-                    ", ",
-                  )}
-                </div>
-                <div className="mt-2 text-sm">
-                  Veg: ₹{createdMonthly.breakfastOnly.price?.veg ?? "-"} •
-                  Non-Veg: ₹
-                  {createdMonthly.breakfastOnly.price?.nonVeg ??
-                    createdMonthly.breakfastOnly.price?.nonveg ??
-                    "-"}
-                </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => startEditMonthly("breakfastOnly")}
-                    className="px-3 py-1 rounded bg-yellow-600 text-white"
+                    className="text-xs md:text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Edit
+                    ✏️ Edit
                   </button>
                   <button
                     onClick={() => handleDeleteMonthly("breakfastOnly")}
-                    className="px-3 py-1 rounded bg-red-600 text-white"
+                    className="text-xs md:text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Delete
+                    🗑 Delete
                   </button>
                 </div>
               </div>
@@ -1945,33 +1940,33 @@ export default function MealPlansTab({ theme }) {
             )}
           </div>
 
-          <div className={` rounded-xl p-5 border shadow-sm`}>
+          <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
             {createdMonthly.twoMealsLorD &&
             editingMonthlyKey !== "twoMealsLorD" ? (
-              <div className="rounded border bg-white  p-3">
-                <div className="font-medium">
-                  {createdMonthly.twoMealsLorD.name}
+              <div className="flex justify-between items-center gap-3">
+                <div className="flex flex-col">
+                  <p className="font-semibold text-sm md:text-base text-neutral-800">
+                    {createdMonthly.twoMealsLorD.name}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Meals: {(createdMonthly.twoMealsLorD.mealsIncluded || []).join(", ")}
+                  </p>
+                  <p className="text-xs font-semibold text-neutral-700 mt-2">
+                    Veg: ₹{createdMonthly.twoMealsLorD.price?.veg ?? "-"} • Non-Veg: ₹{createdMonthly.twoMealsLorD.price?.nonVeg ?? createdMonthly.twoMealsLorD.price?.nonveg ?? "-"}
+                  </p>
                 </div>
-                <div className="text-xs text-neutral-500">
-                  Meals:{" "}
-                  {(createdMonthly.twoMealsLorD.mealsIncluded || []).join(", ")}
-                </div>
-                <div className="mt-2 text-sm">
-                  Veg: ₹{createdMonthly.twoMealsLorD.price?.veg ?? "-"} •
-                  Non-Veg: ₹{createdMonthly.twoMealsLorD.price?.nonVeg ?? "-"}
-                </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => startEditMonthly("twoMealsLorD")}
-                    className="px-3 py-1 rounded bg-yellow-600 text-white"
+                    className="text-xs md:text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Edit
+                    ✏️ Edit
                   </button>
                   <button
                     onClick={() => handleDeleteMonthly("twoMealsLorD")}
-                    className="px-3 py-1 rounded bg-red-600 text-white"
+                    className="text-xs md:text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Delete
+                    🗑 Delete
                   </button>
                 </div>
               </div>
@@ -2056,36 +2051,33 @@ export default function MealPlansTab({ theme }) {
             )}
           </div>
 
-          <div className={` rounded-xl p-5 border shadow-sm`}>
+          <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
             {createdMonthly.twoMealsBLD &&
             editingMonthlyKey !== "twoMealsBLD" ? (
-              <div className="rounded border bg-white p-3">
-                <div className="font-medium">
-                  {createdMonthly.twoMealsBLD.name}
+              <div className="flex justify-between items-center gap-3">
+                <div className="flex flex-col">
+                  <p className="font-semibold text-sm md:text-base text-neutral-800">
+                    {createdMonthly.twoMealsBLD.name}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Meals: {(createdMonthly.twoMealsBLD.mealsIncluded || []).join(", ")}
+                  </p>
+                  <p className="text-xs font-semibold text-neutral-700 mt-2">
+                    Veg: ₹{createdMonthly.twoMealsBLD.price?.veg ?? "-"} • Non-Veg: ₹{createdMonthly.twoMealsBLD.price?.nonVeg ?? createdMonthly.twoMealsBLD.price?.nonveg ?? "-"}
+                  </p>
                 </div>
-                <div className="text-xs text-neutral-500">
-                  Meals:{" "}
-                  {(createdMonthly.twoMealsBLD.mealsIncluded || []).join(", ")}
-                </div>
-                <div className="mt-2 text-sm">
-                  Veg: ₹{createdMonthly.twoMealsBLD.price?.veg ?? "-"} •
-                  Non-Veg: ₹
-                  {createdMonthly.twoMealsBLD.price?.nonVeg ??
-                    createdMonthly.twoMealsBLD.price?.nonveg ??
-                    "-"}
-                </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => startEditMonthly("twoMealsBLD")}
-                    className="px-3 py-1 rounded bg-yellow-600 text-white"
+                    className="text-xs md:text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Edit
+                    ✏️ Edit
                   </button>
                   <button
                     onClick={() => handleDeleteMonthly("twoMealsBLD")}
-                    className="px-3 py-1 rounded bg-red-600 text-white"
+                    className="text-xs md:text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Delete
+                    🗑 Delete
                   </button>
                 </div>
               </div>
@@ -2170,38 +2162,33 @@ export default function MealPlansTab({ theme }) {
             )}
           </div>
 
-          <div className={` rounded-xl p-5 border shadow-sm`}>
+          <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
             {createdMonthly.twoMealsLandD &&
             editingMonthlyKey !== "twoMealsLandD" ? (
-              <div className="rounded border bg-white  p-3">
-                <div className="font-medium">
-                  {createdMonthly.twoMealsLandD.name}
+              <div className="flex justify-between items-center gap-3">
+                <div className="flex flex-col">
+                  <p className="font-semibold text-sm md:text-base text-neutral-800">
+                    {createdMonthly.twoMealsLandD.name}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Meals: {(createdMonthly.twoMealsLandD.mealsIncluded || []).join(", ")}
+                  </p>
+                  <p className="text-xs font-semibold text-neutral-700 mt-2">
+                    Veg: ₹{createdMonthly.twoMealsLandD.price?.veg ?? "-"} • Non-Veg: ₹{createdMonthly.twoMealsLandD.price?.nonVeg ?? createdMonthly.twoMealsLandD.price?.nonveg ?? "-"}
+                  </p>
                 </div>
-                <div className="text-xs text-neutral-500">
-                  Meals:{" "}
-                  {(createdMonthly.twoMealsLandD.mealsIncluded || []).join(
-                    ", ",
-                  )}
-                </div>
-                <div className="mt-2 text-sm">
-                  Veg: ₹{createdMonthly.twoMealsLandD.price?.veg ?? "-"} •
-                  Non-Veg: ₹
-                  {createdMonthly.twoMealsLandD.price?.nonVeg ??
-                    createdMonthly.twoMealsLandD.price?.nonveg ??
-                    "-"}
-                </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => startEditMonthly("twoMealsLandD")}
-                    className="px-3 py-1 rounded bg-yellow-600 text-white"
+                    className="text-xs md:text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Edit
+                    ✏️ Edit
                   </button>
                   <button
                     onClick={() => handleDeleteMonthly("twoMealsLandD")}
-                    className="px-3 py-1 rounded bg-red-600 text-white"
+                    className="text-xs md:text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Delete
+                    🗑 Delete
                   </button>
                 </div>
               </div>
@@ -2286,35 +2273,32 @@ export default function MealPlansTab({ theme }) {
             )}
           </div>
 
-          <div className={` rounded-xl p-5 border shadow-sm`}>
+          <div className="bg-white border border-neutral-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
             {createdMonthly.threeMeals && editingMonthlyKey !== "threeMeals" ? (
-              <div className="rounded border bg-white  p-3">
-                <div className="font-medium">
-                  {createdMonthly.threeMeals.name}
+              <div className="flex justify-between items-center gap-3">
+                <div className="flex flex-col">
+                  <p className="font-semibold text-sm md:text-base text-neutral-800">
+                    {createdMonthly.threeMeals.name}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Meals: {(createdMonthly.threeMeals.mealsIncluded || []).join(", ")}
+                  </p>
+                  <p className="text-xs font-semibold text-neutral-700 mt-2">
+                    Veg: ₹{createdMonthly.threeMeals.price?.veg ?? "-"} • Non-Veg: ₹{createdMonthly.threeMeals.price?.nonVeg ?? createdMonthly.threeMeals.price?.nonveg ?? "-"}
+                  </p>
                 </div>
-                <div className="text-xs text-neutral-500">
-                  Meals:{" "}
-                  {(createdMonthly.threeMeals.mealsIncluded || []).join(", ")}
-                </div>
-                <div className="mt-2 text-sm">
-                  Veg: ₹{createdMonthly.threeMeals.price?.veg ?? "-"} • Non-Veg:
-                  ₹
-                  {createdMonthly.threeMeals.price?.nonVeg ??
-                    createdMonthly.threeMeals.price?.nonveg ??
-                    "-"}
-                </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => startEditMonthly("threeMeals")}
-                    className="px-3 py-1 rounded bg-yellow-600 text-white"
+                    className="text-xs md:text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Edit
+                    ✏️ Edit
                   </button>
                   <button
                     onClick={() => handleDeleteMonthly("threeMeals")}
-                    className="px-3 py-1 rounded bg-red-600 text-white"
+                    className="text-xs md:text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 transition flex items-center gap-1 font-medium shadow-sm"
                   >
-                    Delete
+                    🗑 Delete
                   </button>
                 </div>
               </div>

@@ -119,7 +119,7 @@ const Page = () => {
           <h1 className="text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400">
             Get in Touch
           </h1>
-          <p className="text-lg text-gray-700 max-w-lg leading-relaxed">
+          <p className="text-lg text-gray-800 max-w-lg leading-relaxed">
             Connect with our{" "}
             <span className="text-red-600 font-semibold">
               nutrition experts
@@ -175,7 +175,7 @@ const Page = () => {
         <div className="grid md:grid-cols-3 gap-8">
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="p-6 bg-white rounded-2xl shadow-md text-center"
+            className="p-6 bg-white rounded-2xl shadow-md text-center text-gray-900"
           >
             <svg
               className="h-12 w-12 mx-auto mb-4 text-blue-600"
@@ -195,7 +195,7 @@ const Page = () => {
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="p-6 bg-white rounded-2xl shadow-md text-center"
+            className="p-6 bg-white rounded-2xl shadow-md text-center text-gray-900"
           >
             <svg
               className="h-12 w-12 mx-auto mb-4 text-green-600"
@@ -215,7 +215,7 @@ const Page = () => {
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="p-6 bg-white rounded-2xl shadow-md text-center"
+            className="p-6 bg-white rounded-2xl shadow-md text-center text-gray-900"
           >
             <svg
               className="h-12 w-12 mx-auto mb-4 text-purple-600"
@@ -280,7 +280,7 @@ const Page = () => {
         className="grid lg:grid-cols-3 gap-12 mb-16"
       >
         <div className="lg:col-span-2">
-          <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-8">
+          <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-8 text-gray-900">
             <h2 className="text-3xl font-bold mb-6 text-gray-800">
               Send Us a Message
             </h2>
@@ -316,7 +316,7 @@ const Page = () => {
                   value={form.name}
                   onChange={handleChange}
                   placeholder="Full Name"
-                  className={`p-4 rounded-xl border w-full ${
+                  className={`p-4 rounded-xl border w-full text-gray-900 placeholder-gray-400 bg-white ${
                     errors.name ? "border-red-500" : "border-gray-300"
                   } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition`}
                 />
@@ -330,7 +330,7 @@ const Page = () => {
                   value={form.email}
                   onChange={handleChange}
                   placeholder="Email Address"
-                  className={`p-4 rounded-xl border w-full ${
+                  className={`p-4 rounded-xl border w-full text-gray-900 placeholder-gray-400 bg-white ${
                     errors.email ? "border-red-500" : "border-gray-300"
                   } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition`}
                 />
@@ -344,7 +344,7 @@ const Page = () => {
                   value={form.phone}
                   onChange={handleChange}
                   placeholder="Phone Number"
-                  className={`p-4 rounded-xl border w-full ${
+                  className={`p-4 rounded-xl border w-full text-gray-900 placeholder-gray-400 bg-white ${
                     errors.phone ? "border-red-500" : "border-gray-300"
                   } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition`}
                 />
@@ -357,7 +357,7 @@ const Page = () => {
                   name="inquiry"
                   value={form.inquiry}
                   onChange={handleChange}
-                  className="p-4 rounded-xl border w-full border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                  className="p-4 rounded-xl border w-full border-gray-300 text-gray-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
                 >
                   <option value="general">General Inquiry</option>
                   <option value="nutrition">Nutrition Consultation</option>
@@ -372,7 +372,7 @@ const Page = () => {
                   onChange={handleChange}
                   placeholder="Your Message"
                   rows="5"
-                  className={`p-4 rounded-xl border w-full ${
+                  className={`p-4 rounded-xl border w-full text-gray-900 placeholder-gray-400 bg-white ${
                     errors.message ? "border-red-500" : "border-gray-300"
                   } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition`}
                 />

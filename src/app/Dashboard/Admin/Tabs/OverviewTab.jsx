@@ -128,32 +128,42 @@ export default function OverviewTab({ theme, analyticsData }) {
   const revenueSeries = { week: [weekRevenue], days15: [fifteenDaysRevenue], month: [monthRevenue] };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className={`rounded-xl p-4 text-center shadow transition-all duration-300 hover:-translate-y-1 ${theme === "dark" ? "bg-neutral-800" : "bg-white"}`}>
-          <div className="text-xl text-neutral-500">Total Users</div>
-          <div className="text-2xl font-bold mt-1">{totalUsers}</div>
+    <div className="space-y-8 text-slate-800">
+      {/* Analytics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="rounded-3xl p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 bg-white border border-slate-100 flex flex-col justify-center min-h-[120px]">
+          <div className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Total Users</div>
+          <div className="text-3xl font-black mt-2 text-slate-900">{totalUsers}</div>
         </div>
-        <div className={`rounded-xl p-4 text-center shadow transition-all duration-300 hover:-translate-y-1 ${theme === "dark" ? "bg-neutral-800 border border-neutral-700" : "bg-white"}`}>
-          <div className="text-xl text-neutral-500">New Subscribers</div>
-          <div className="text-2xl font-bold mt-1 text-emerald-600">{newSubscribers.length}</div>
+        <div className="rounded-3xl p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 bg-white border border-slate-100 flex flex-col justify-center min-h-[120px]">
+          <div className="text-xs font-extrabold uppercase tracking-wider text-slate-400">New Subscribers</div>
+          <div className="text-3xl font-black mt-2 text-red-600">{newSubscribers.length}</div>
         </div>
-        <div className={`rounded-xl p-4 text-center shadow transition-all duration-300 hover:-translate-y-1 ${theme === "dark" ? "bg-neutral-800 border border-neutral-700" : "bg-white"}`}>
-          <div className="text-xl text-neutral-500">Total Subscriber</div>
-          <div className="text-2xl font-bold mt-1 text-amber-600">{activeSubs}</div>
+        <div className="rounded-3xl p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 bg-white border border-slate-100 flex flex-col justify-center min-h-[120px]">
+          <div className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Total Subscribers</div>
+          <div className="text-3xl font-black mt-2 text-amber-600">{activeSubs}</div>
         </div>
-        <div className={`rounded-xl p-4 text-center shadow transition-all duration-300 hover:-translate-y-1 ${theme === "dark" ? "bg-neutral-800 border border-neutral-700" : "bg-white"}`}>
-          <div className="text-xl text-neutral-500">All Time Revenue</div>
-          <div className="text-3xl text-blue-500 font-bold mt-1">₹{totalRevenue.toLocaleString()}</div>
+        <div className="rounded-3xl p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 bg-white border border-slate-100 flex flex-col justify-center min-h-[120px]">
+          <div className="text-xs font-extrabold uppercase tracking-wider text-slate-400">All Time Revenue</div>
+          <div className="text-3xl font-black mt-2 text-slate-900">₹{totalRevenue.toLocaleString()}</div>
         </div>
       </div>
 
-      <div className={`shadow transition-all duration-300 hover:-translate-y-1 ${theme === "dark" ? "bg-neutral-800 border-neutral-700" : "bg-white"} rounded-xl p-4`}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold">Revenue</h3>
-          <div className="flex gap-2">
+      {/* Chart container */}
+      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-slate-950">Revenue Analytics</h3>
+          <div className="flex gap-2 bg-slate-100 p-1.5 rounded-2xl">
             {[{ k: "week", l: "Week" }, { k: "days15", l: "15 Days" }, { k: "month", l: "Month" }].map((o) => (
-              <button key={o.k} onClick={() => setRange(o.k)} className={`px-3 py-1 rounded text-sm ${range === o.k ? "bg-red-600 text-white" : "bg-blue-500"}`}>
+              <button
+                key={o.k}
+                onClick={() => setRange(o.k)}
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                  range === o.k
+                    ? "bg-red-600 text-white shadow"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                }`}
+              >
                 {o.l}
               </button>
             ))}
@@ -162,13 +172,14 @@ export default function OverviewTab({ theme, analyticsData }) {
         <RevenueChart data={revenueSeries[range]} title={`Revenue (${range})`} type={range === "month" ? "line" : "bar"} theme={theme} />
       </div>
 
-      <div className={`shadow transition-all duration-300 ${theme === "dark" ? "bg-neutral-800 border-neutral-700" : "bg-white"} rounded-xl p-4`}>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Active Subscribers</h3>
-          <span className="text-sm text-neutral-500">Latest</span>
+      {/* Active Subscribers Panel */}
+      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-slate-950">Active Subscribers</h3>
+          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Latest</span>
         </div>
 
-        <div className="divide-y">
+        <div className="divide-y divide-slate-100">
           {newSubscribers.length > 0 ? (
             newSubscribers.map((s, idx) => {
               const subs = Array.isArray(s.activeSubscriptions) ? s.activeSubscriptions : [];
@@ -178,102 +189,110 @@ export default function OverviewTab({ theme, analyticsData }) {
               const uid = s._id || `u-${idx}`;
 
               return (
-                <div key={uid} className="py-3 flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-700 font-bold text-lg">{s.userName?.split(" ")[0]?.[0] || "U"}</div>
+                <div key={uid} className="py-4 flex flex-col md:flex-row md:items-center gap-4 justify-between">
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center bg-red-50 text-red-600 font-bold text-lg shadow-inner">
+                      {s.userName?.split(" ")[0]?.[0] || "U"}
+                    </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="min-w-0">
-                        <div className="font-medium truncate text-sm">{s.userName}</div>
-                        <div className="text-xs text-neutral-500 truncate">{planName} • {s.userPhone}</div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <div className="font-bold text-slate-900 text-base">{s.userName}</div>
+                      <div className="text-xs text-slate-500 mt-0.5">{planName} • {s.userPhone}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between md:justify-end gap-4 mt-2 md:mt-0">
+                    <div className="text-base font-extrabold text-red-600">₹{Number(amount).toLocaleString()}</div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setOpenUserId(openUserId === uid ? null : uid)}
+                        className={`p-2 rounded-xl border transition cursor-pointer ${
+                          openUserId === uid ? "border-red-200 bg-red-50 text-red-600" : "border-slate-200 hover:bg-slate-50 text-slate-400"
+                        }`}
+                        aria-expanded={openUserId === uid}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  {openUserId === uid && (
+                    <div className="w-full mt-3 p-5 rounded-2xl border border-slate-100 bg-slate-50/50 shadow-inner md:col-span-full">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-sm font-bold text-slate-800">Meals Details ({subs.length})</div>
+                        <div className="text-xs font-extrabold text-slate-500">Total: ₹{subs.reduce((sAcc, it) => sAcc + (Number(it.totalAmount) || 0), 0).toLocaleString()}</div>
                       </div>
 
-                      <div className="flex items-center gap-2 ml-4">
-                        <div className="text-sm font-semibold text-emerald-600">₹{Number(amount).toLocaleString()}</div>
-                        <button onClick={() => setOpenUserId(openUserId === uid ? null : uid)} className="p-1 rounded-md hover:bg-neutral-100" aria-expanded={openUserId === uid}>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-neutral-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                          </svg>
+                      <div className="space-y-3">
+                        {subs.length > 0 ? (
+                          subs.map((sub, k) => {
+                            const title = sub.plan?.name || sub.mealName || sub.planType || "Plan";
+                            const start = sub.startDate ? new Date(sub.startDate) : null;
+                            const end = sub.endDate ? new Date(sub.endDate) : null;
+                            const daysLeft = sub.remainingDays ?? (end ? Math.max(0, Math.ceil((end - Date.now()) / (1000 * 60 * 60 * 24))) : null);
+                            return (
+                              <div key={sub._id || k} className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-100 shadow-sm">
+                                <div className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 text-red-600 font-bold">{String(title).split(" ").map((w) => w[0]).slice(0, 2).join("")}</div>
+
+                                <div className="flex-1 min-w-0 text-left">
+                                  <div className="flex items-center gap-2">
+                                    <div className="font-bold text-slate-900 truncate text-sm">{title}</div>
+                                    {sub.plan?.type && <div className="text-[10px] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{sub.plan.type}</div>}
+                                  </div>
+                                  <div className="text-[11px] text-slate-400 mt-1 truncate">{start ? start.toLocaleDateString() : "-"} {start && end ? "•" : ""} {end ? end.toLocaleDateString() : ""}</div>
+                                </div>
+
+                                <div className="flex flex-col items-end gap-1">
+                                  <div className="text-sm font-black text-red-600">₹{Number(sub.totalAmount || 0).toLocaleString()}</div>
+                                  <div className="text-xs text-slate-500 font-medium">{daysLeft != null ? `${daysLeft} days left` : "-"}</div>
+                                </div>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="text-sm text-slate-500 text-center py-4 bg-white rounded-xl border border-dashed border-slate-200">No meals found.</div>
+                        )}
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap items-center gap-2.5">
+                        <button onClick={() => togglePauseLocal(uid)} className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl border border-slate-250 hover:bg-slate-100 text-slate-700 shadow-sm transition cursor-pointer">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 19V5" /><path d="M18 19V5" /></svg>
+                          <span>{pausedIdsLocal.has(uid) ? "Restart" : "Pause"}</span>
+                        </button>
+
+                        <button onClick={() => alert("Renew request sent (demo)")} className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl bg-amber-600 text-white hover:bg-amber-700 shadow-sm transition cursor-pointer">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10v6a2 2 0 0 1-2 2H7" /><path d="M3 6v6a2 2 0 0 0 2 2h12" /><path d="M7 10l5-5 5 5" /></svg>
+                          <span>Renew</span>
+                        </button>
+
+                        <button onClick={() => setMessageTo(s)} className="ml-auto inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-red-500/10 transition cursor-pointer">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                          <span>Message</span>
                         </button>
                       </div>
                     </div>
-
-                    {openUserId === uid && (
-                      <div className={`mt-3 p-4 rounded-xl border shadow-sm ${theme === "dark" ? "border-neutral-700 bg-neutral-900" : "border-neutral-100 bg-neutral-50"}`}>
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="text-sm font-semibold">Meals ({subs.length})</div>
-                          <div className="text-xs text-neutral-500">Total: ₹{subs.reduce((sAcc, it) => sAcc + (Number(it.totalAmount) || 0), 0).toLocaleString()}</div>
-                        </div>
-
-                        <div className="space-y-3">
-                          {subs.length > 0 ? (
-                            subs.map((sub, k) => {
-                              const title = sub.plan?.name || sub.mealName || sub.planType || "Plan";
-                              const start = sub.startDate ? new Date(sub.startDate) : null;
-                              const end = sub.endDate ? new Date(sub.endDate) : null;
-                              const daysLeft = sub.remainingDays ?? (end ? Math.max(0, Math.ceil((end - Date.now()) / (1000 * 60 * 60 * 24))) : null);
-                              return (
-                                <div key={sub._id || k} className={`flex items-center gap-3 p-3 rounded-lg ${theme === "dark" ? "bg-neutral-800" : "bg-white"} border ${theme === "dark" ? "border-neutral-800" : "border-neutral-200"}`}>
-                                  <div className="w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700 font-bold">{String(title).split(" ").map((w) => w[0]).slice(0, 2).join("")}</div>
-
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2">
-                                      <div className="font-medium truncate">{title}</div>
-                                      {sub.plan?.type && <div className="text-xs px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700">{sub.plan.type}</div>}
-                                    </div>
-                                    <div className="text-xs text-neutral-400 truncate">{start ? start.toLocaleDateString() : "-"} {start && end ? "•" : ""} {end ? end.toLocaleDateString() : ""}</div>
-                                  </div>
-
-                                  <div className="flex flex-col items-end gap-2">
-                                    <div className="text-sm font-semibold text-amber-600">₹{Number(sub.totalAmount || 0).toLocaleString()}</div>
-                                    <div className="text-xs text-neutral-400">{daysLeft != null ? `${daysLeft} days` : "-"}</div>
-                                  </div>
-                                </div>
-                              );
-                            })
-                          ) : (
-                            <div className="text-sm text-neutral-500">No meals</div>
-                          )}
-                        </div>
-
-                        <div className="mt-3 flex items-center gap-2">
-                          <button onClick={() => togglePauseLocal(uid)} className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-md border hover:shadow-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 19V5" /><path d="M18 19V5" /></svg>
-                            <span>{pausedIdsLocal.has(uid) ? "Restart" : "Pause"}</span>
-                          </button>
-
-                          <button onClick={() => alert("Renew request sent (demo)")} className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-md bg-amber-600 text-white hover:bg-amber-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10v6a2 2 0 0 1-2 2H7" /><path d="M3 6v6a2 2 0 0 0 2 2h12" /><path d="M7 10l5-5 5 5" /></svg>
-                            <span>Renew</span>
-                          </button>
-
-                          <button onClick={() => setMessageTo(s)} className="ml-auto inline-flex items-center gap-2 px-3 py-1 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
-                            <span>Message</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               );
             })
           ) : (
-            <div className="py-3 text-sm text-neutral-500">No active subscriptions</div>
+            <div className="py-8 text-sm text-slate-500 text-center">No active subscriptions.</div>
           )}
         </div>
 
         {messageTo && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className={`w-full max-w-md rounded-2xl p-6 ${theme === "dark" ? "bg-neutral-800 text-white border border-neutral-700" : "bg-white"} shadow-2xl`}>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold">Message {messageTo.userName}</h3>
-                <button className="text-neutral-400" onClick={() => setMessageTo(null)}>✕</button>
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-3xl p-6 bg-white shadow-2xl border border-slate-100">
+              <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                <h3 className="text-lg font-bold text-slate-900">Message {messageTo.userName}</h3>
+                <button className="text-slate-400 hover:text-slate-650 font-bold" onClick={() => setMessageTo(null)}>✕</button>
               </div>
-              <textarea value={messageText} onChange={(e) => setMessageText(e.target.value)} rows={5} className={`w-full p-3 rounded border ${theme === "dark" ? "bg-neutral-900 border-neutral-700" : "bg-white border-neutral-200"}`} placeholder="Type your message..." />
-              <div className="flex gap-2 justify-end mt-3">
-                <button onClick={() => setMessageTo(null)} className={`px-3 py-1 rounded ${theme === "dark" ? "bg-neutral-700 hover:bg-neutral-600 text-white" : "bg-neutral-100 hover:bg-neutral-200"}`}>Cancel</button>
-                <button onClick={() => { sendMessage(); }} className="px-3 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700">Send</button>
+              <textarea value={messageText} onChange={(e) => setMessageText(e.target.value)} rows={5} className="w-full p-4 rounded-2xl border border-slate-200 bg-white text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition resize-none" placeholder="Type your message..." />
+              <div className="flex gap-2 justify-end mt-4">
+                <button onClick={() => setMessageTo(null)} className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition-all duration-200 cursor-pointer">Cancel</button>
+                <button onClick={() => { sendMessage(); }} className="px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 font-bold text-sm shadow-md hover:shadow-lg transition cursor-pointer">Send</button>
               </div>
             </div>
           </div>

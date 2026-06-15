@@ -348,19 +348,19 @@ const Page = () => {
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           <div className="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition">
-            <h3 className="text-xl font-semibold mb-3">Boost Energy</h3>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800">Boost Energy</h3>
             <p className="text-gray-600">
               Balanced macros keep you energized throughout the day.
             </p>
           </div>
           <div className="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition">
-            <h3 className="text-xl font-semibold mb-3">Weight Management</h3>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800">Weight Management</h3>
             <p className="text-gray-600">
               Achieve goals with precise calorie tracking.
             </p>
           </div>
           <div className="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition">
-            <h3 className="text-xl font-semibold mb-3">Health Benefits</h3>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800">Health Benefits</h3>
             <p className="text-gray-600">
               Reduce risks of diseases with nutrient-rich diets.
             </p>
@@ -404,7 +404,7 @@ const Page = () => {
                 onChange={handleChange}
                 type="number"
                 placeholder="Age"
-                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-gray-800 placeholder-gray-500"
               />
               <input
                 name="weight"
@@ -412,7 +412,7 @@ const Page = () => {
                 onChange={handleChange}
                 type="number"
                 placeholder="Weight (kg)"
-                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-gray-800 placeholder-gray-500"
               />
               <input
                 name="height"
@@ -420,48 +420,48 @@ const Page = () => {
                 onChange={handleChange}
                 type="number"
                 placeholder="Height (cm)"
-                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-gray-800 placeholder-gray-500"
               />
               <select
                 name="gender"
                 value={form.gender}
                 onChange={handleChange}
-                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-gray-800"
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
+                <option value="male" className="text-gray-800 bg-white">Male</option>
+                <option value="female" className="text-gray-800 bg-white">Female</option>
               </select>
               <select
                 name="activity"
                 value={form.activity}
                 onChange={handleChange}
-                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-gray-800"
               >
-                <option value="sedentary">Sedentary</option>
-                <option value="light">Light</option>
-                <option value="moderate">Moderate</option>
-                <option value="active">Active</option>
-                <option value="very_active">Very Active</option>
+                <option value="sedentary" className="text-gray-800 bg-white">Sedentary</option>
+                <option value="light" className="text-gray-800 bg-white">Light</option>
+                <option value="moderate" className="text-gray-800 bg-white">Moderate</option>
+                <option value="active" className="text-gray-800 bg-white">Active</option>
+                <option value="very_active" className="text-gray-800 bg-white">Very Active</option>
               </select>
               <select
                 name="goal"
                 value={form.goal}
                 onChange={handleChange}
-                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-gray-800"
               >
-                <option value="weight_loss">Weight Loss</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="weight_gain">Weight Gain</option>
+                <option value="weight_loss" className="text-gray-800 bg-white">Weight Loss</option>
+                <option value="maintenance" className="text-gray-800 bg-white">Maintenance</option>
+                <option value="weight_gain" className="text-gray-800 bg-white">Weight Gain</option>
               </select>
               <select
                 name="dietary"
                 value={form.dietary}
                 onChange={handleChange}
-                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition md:col-span-3"
+                className="p-4 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-gray-800 md:col-span-3"
               >
-                <option value="omnivore">Omnivore</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="vegan">Vegan</option>
+                <option value="omnivore" className="text-gray-800 bg-white">Omnivore</option>
+                <option value="vegetarian" className="text-gray-800 bg-white">Vegetarian</option>
+                <option value="vegan" className="text-gray-800 bg-white">Vegan</option>
               </select>
               <div className="md:col-span-3 flex flex-wrap items-center gap-4 mt-4">
                 <button

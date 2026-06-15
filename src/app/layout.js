@@ -26,6 +26,9 @@ const metadata = {
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const isDashboard = pathname?.toLowerCase().startsWith("/dashboard");
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const hideHeaderFooter = isDashboard || isAuthPage;
+
   return (
     <html lang="en">
       <body
@@ -33,9 +36,9 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <ModalProvider>
-            {!isDashboard && <Navebar />}
+            {!hideHeaderFooter && <Navebar />}
             {children}
-            {!isDashboard && <Footer />}
+            {!hideHeaderFooter && <Footer />}
           </ModalProvider>
         </Providers>
       </body>

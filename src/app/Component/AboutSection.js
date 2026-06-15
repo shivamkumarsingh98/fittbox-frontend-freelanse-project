@@ -57,7 +57,7 @@ const AboutSection = () => {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+          <h2 className="text-4xl sm:text-5xl font-extrabold mb-4">
             Why Choose <span className="text-red-500">FittBox</span>?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

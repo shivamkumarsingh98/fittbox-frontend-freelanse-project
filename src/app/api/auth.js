@@ -11,9 +11,9 @@ export const registerUser = async (userData) => {
     const message =
       fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length
         ? fieldErrors
-            .map((e) => e?.msg || "")
-            .filter(Boolean)
-            .join("\n")
+          .map((e) => e?.msg || "")
+          .filter(Boolean)
+          .join("\n")
         : error?.response?.data?.message || error?.message;
     throw new Error(message);
   }
@@ -28,9 +28,9 @@ export const loginUser = async (credentials) => {
     const message =
       fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length
         ? fieldErrors
-            .map((e) => e?.msg || "")
-            .filter(Boolean)
-            .join("\n")
+          .map((e) => e?.msg || "")
+          .filter(Boolean)
+          .join("\n")
         : error?.response?.data?.message || error?.message;
     throw new Error(message);
   }
@@ -50,9 +50,9 @@ export const fetchUserProfile = async (token) => {
     const message =
       fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length
         ? fieldErrors
-            .map((e) => e?.msg || "")
-            .filter(Boolean)
-            .join("\n")
+          .map((e) => e?.msg || "")
+          .filter(Boolean)
+          .join("\n")
         : error?.response?.data?.message || error?.message;
     throw new Error(message);
   }
@@ -72,9 +72,9 @@ export const updateUserProfile = async (token, payload) => {
     const message =
       fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length
         ? fieldErrors
-            .map((e) => e?.msg || "")
-            .filter(Boolean)
-            .join("\n")
+          .map((e) => e?.msg || "")
+          .filter(Boolean)
+          .join("\n")
         : error?.response?.data?.message || error?.message;
     throw new Error(message);
   }
@@ -95,9 +95,9 @@ export const changeUserPassword = async (token, payload) => {
     const message =
       fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length
         ? fieldErrors
-            .map((e) => e?.msg || "")
-            .filter(Boolean)
-            .join("\n")
+          .map((e) => e?.msg || "")
+          .filter(Boolean)
+          .join("\n")
         : error?.response?.data?.message || error?.message;
     throw new Error(message);
   }
