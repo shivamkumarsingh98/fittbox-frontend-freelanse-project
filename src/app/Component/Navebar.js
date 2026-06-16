@@ -251,7 +251,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-xl overflow-hidden animate-fade-in">
+        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-xl overflow-hidden animate-fade-in z-50">
           <ul className="flex flex-col py-4 px-6 gap-2">
             {[
               { name: "Home", path: "/" },
@@ -318,7 +318,7 @@ export default function Navbar() {
                 </li>
               </>
             )}
-            
+
             <li className="mt-4">
               <Link
                 href="/Menu"
@@ -331,11 +331,11 @@ export default function Navbar() {
           </ul>
         </div>
       )}
-      
+
       {/* Backdrop for mobile menu */}
       {mobileOpen && (
-        <div 
-          className="fixed inset-0 top-[72px] bg-black/20 z-40 md:hidden backdrop-blur-sm"
+        <div
+          className="fixed inset-0 top-[72px] bg-black/20 z-30 md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
