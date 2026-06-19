@@ -52,28 +52,56 @@ export default function Login() {
             Welcome Back!
           </h2>
           <p className="text-emerald-50 text-base font-medium max-w-md mx-auto drop-shadow-sm">
-            Ready to continue your healthy eating journey? Access your tailored diet plans and track your progress.
+            Ready to continue your healthy eating journey? Access your tailored
+            diet plans and track your progress.
           </p>
         </div>
       </div>
 
       {/* Right side - Form */}
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 lg:p-10 relative overflow-y-auto">
-        <Link href="/" className="absolute top-4 left-4 md:top-6 md:left-6 flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-emerald-600 transition bg-gray-50 hover:bg-emerald-50 px-3 py-1.5 rounded-full shadow-sm">
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        <Link
+          href="/"
+          className="absolute top-4 left-4 md:top-6 md:left-6 flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-emerald-600 transition bg-gray-50 hover:bg-emerald-50 px-3 py-1.5 rounded-full shadow-sm"
+        >
+          <svg
+            className="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            ></path>
+          </svg>
           Home
         </Link>
         <div className="w-full max-w-sm space-y-6 animate-fade-in mt-6">
           <div className="text-center">
-            <Link href="/" className="inline-block mb-3 hover:opacity-80 transition">
-              <Image src="/logo.png" alt="FittBox Logo" width={80} height={80} className="rounded-xl mx-auto object-cover shadow-sm" />
+            <Link
+              href="/"
+              className="inline-block mb-3 hover:opacity-80 transition"
+            >
+              <Image
+                src="/logo.png"
+                alt="FittBox Logo"
+                width={80}
+                height={80}
+                className="rounded-xl mx-auto object-cover shadow-sm"
+              />
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
               Sign in to your account
             </h1>
             <p className="mt-1 text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link href="/register" className="font-semibold text-emerald-600 hover:text-emerald-500 transition underline-offset-4 hover:underline">
+              <Link
+                href="/register"
+                className="font-semibold text-emerald-600 hover:text-emerald-500 transition underline-offset-4 hover:underline"
+              >
                 Create one now
               </Link>
             </p>
@@ -84,7 +112,7 @@ export default function Login() {
               type="button"
               onClick={() => {
                 if (typeof window !== "undefined")
-                  window.location.href = "/api/auth/google";
+                  toast.success("Feature coming soon!");
               }}
               className="flex items-center justify-center p-3 border border-gray-300 rounded-full bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition shadow-sm hover:shadow-md"
               title="Sign in with Google"
@@ -95,7 +123,9 @@ export default function Login() {
 
           <div className="flex items-center gap-4 my-4">
             <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-xs text-gray-400 font-medium uppercase">Or email</span>
+            <span className="text-xs text-gray-400 font-medium uppercase">
+              Or email
+            </span>
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
@@ -110,7 +140,9 @@ export default function Login() {
                   type="email"
                   required
                   value={login.email}
-                  onChange={(e) => setLogin({ ...login, email: e.target.value })}
+                  onChange={(e) =>
+                    setLogin({ ...login, email: e.target.value })
+                  }
                   className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm transition shadow-sm"
                   placeholder="you@example.com"
                 />
@@ -120,7 +152,10 @@ export default function Login() {
                   <label className="block text-sm font-medium text-gray-700">
                     Password
                   </label>
-                  <a href="#" className="text-sm font-medium text-emerald-600 hover:text-emerald-500 hover:underline">
+                  <a
+                    href="#"
+                    className="text-sm font-medium text-emerald-600 hover:text-emerald-500 hover:underline"
+                  >
                     Forgot password?
                   </a>
                 </div>
@@ -129,7 +164,9 @@ export default function Login() {
                   type="password"
                   required
                   value={login.password}
-                  onChange={(e) => setLogin({ ...login, password: e.target.value })}
+                  onChange={(e) =>
+                    setLogin({ ...login, password: e.target.value })
+                  }
                   className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm transition shadow-sm"
                   placeholder="••••••••"
                 />
@@ -145,7 +182,6 @@ export default function Login() {
                 {localLoading ? "Signing in..." : "Sign in"}
               </button>
             </div>
-
           </form>
         </div>
       </div>

@@ -206,7 +206,7 @@ export default function Checkout() {
         console.log("🚀 Calling API: createSubscription...");
         res = await subscriptionApi.createSubscription(
           { selectedItems: payloads },
-          auth.token
+          auth.token,
         );
         console.log("📥 API Response:", res.data);
       } catch (err) {
@@ -355,14 +355,18 @@ export default function Checkout() {
     <>
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
-          showUploadModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          showUploadModal
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={handleSkipUpload}
       >
         {/* modal container - clicking backdrop does nothing */}
         <div
           className={`bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 p-8 transition-all duration-300 ease-out transform origin-bottom ${
-            showUploadModal ? "scale-100 opacity-100 translate-y-0" : "scale-50 opacity-0 translate-y-20"
+            showUploadModal
+              ? "scale-100 opacity-100 translate-y-0"
+              : "scale-50 opacity-0 translate-y-20"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -524,11 +528,17 @@ export default function Checkout() {
                 {/* Upload Blood Report Reopen Promo Card */}
                 <div className="bg-red-50/50 border border-red-100 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md transition duration-200">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold border border-red-200">🩸</div>
+                    <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold border border-red-200">
+                      🩸
+                    </div>
                     <div>
-                      <p className="text-base font-bold text-gray-800">Personalize Your Diet Plan</p>
+                      <p className="text-base font-bold text-gray-800">
+                        Personalize Your Diet Plan
+                      </p>
                       <p className="text-xs text-gray-500 mt-0.5">
-                        {formData.bloodReport ? "✅ Blood report uploaded successfully!" : "Upload your latest blood report to help us customize your meals."}
+                        {formData.bloodReport
+                          ? "✅ Blood report uploaded successfully!"
+                          : "Upload your latest blood report to help us customize your meals."}
                       </p>
                     </div>
                   </div>
@@ -651,7 +661,7 @@ export default function Checkout() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  Free Delivery • 100% Fresh • Cancel Anytime
+                  Free delivery upto 6km remove cancel any time.
                 </div>
               </div>
             </div>

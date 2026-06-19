@@ -77,7 +77,7 @@ const Page = () => {
     } catch (err) {
       console.error("[Contact page] createMessage error:", err);
       setServerError(
-        err?.message || "Failed to send message. Please try again."
+        err?.message || "Failed to send message. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -191,7 +191,7 @@ const Page = () => {
               />
             </svg>
             <h3 className="text-xl font-semibold mb-2">Email Us</h3>
-            <p className="text-gray-600">support@nutritionhub.com</p>
+            <p className="text-gray-600">hello@fittbox.com</p>
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -211,7 +211,7 @@ const Page = () => {
               />
             </svg>
             <h3 className="text-xl font-semibold mb-2">Call Us</h3>
-            <p className="text-gray-600">+91-123-456-7890</p>
+            <p className="text-gray-600">+91 98765 43210</p>
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -237,7 +237,7 @@ const Page = () => {
               />
             </svg>
             <h3 className="text-xl font-semibold mb-2">Visit Us</h3>
-            <p className="text-gray-600">123 Health St, Mumbai, India</p>
+            <p className="text-gray-600">3, 5th Floor, 3rd Cross, Kanakapura Road, Bangalore - 560062</p>
           </motion.div>
         </div>
       </motion.section>
@@ -471,8 +471,12 @@ const Page = () => {
             animate={{ opacity: 0.8 }}
             className="absolute top-4 left-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md"
           >
-            <p className="font-semibold">Nutrition Hub</p>
-            <p className="text-gray-600">123 Health St, Mumbai, India</p>
+            <p className="font-semibold">FittBox</p>
+            <p className="text-gray-600">
+              3, 5th Floor, 3rd Cross, Kanakapura Road,
+              <br />
+              Off KSIT College, Raghuvanhalli, Bangalore - 560062
+            </p>
           </motion.div>
         </div>
       </motion.section>
