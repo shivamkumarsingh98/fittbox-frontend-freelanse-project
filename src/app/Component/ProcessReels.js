@@ -255,7 +255,7 @@ const reelsData = [
     id: 4,
     title: "Sleek Delivery Packaging",
     desc: "Leakproof hot-packing delivered straight to your door.",
-    videoUrl: "/video4.mp4",
+    videoUrl: "/video1.mp4",
     tag: "PREP",
     tagColor: "bg-red-600",
   },
@@ -308,8 +308,8 @@ export default function ProcessReels() {
           Real Customers. Real Results.
         </span>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-black mt-3 leading-tight">
-          Meals Delivered to{" "}
-          <span className="text-orange-600">60,000+</span> Customers
+          Meals Delivered to <span className="text-orange-600">60,000+</span>{" "}
+          Customers
         </h2>
         <p className="text-neutral-500 text-sm md:text-base mt-3">
           Hear it straight from our community...
@@ -342,7 +342,12 @@ export default function ProcessReels() {
             {reelsData.map((reel, index) => {
               const isPlaying = playingId === reel.id;
               // subtle tilt only on large screens
-              const tilts = ["-lg:rotate-[3deg]", "lg:rotate-[2.5deg]", "-lg:rotate-[2deg]", "lg:rotate-[3.5deg]"];
+              const tilts = [
+                "-lg:rotate-[3deg]",
+                "lg:rotate-[2.5deg]",
+                "-lg:rotate-[2deg]",
+                "lg:rotate-[3.5deg]",
+              ];
 
               return (
                 <div
@@ -380,13 +385,38 @@ export default function ProcessReels() {
                     className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm transition active:scale-95"
                   >
                     {isMuted ? (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+                        />
                       </svg>
                     ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                        />
                       </svg>
                     )}
                   </button>
@@ -408,11 +438,16 @@ export default function ProcessReels() {
                   {/* Play icon */}
                   <div
                     className={`absolute inset-0 flex items-center justify-center pointer-events-none z-10 transition-all duration-300 ${
-                      isPlaying ? "opacity-0 scale-150" : "opacity-100 scale-100"
+                      isPlaying
+                        ? "opacity-0 scale-150"
+                        : "opacity-100 scale-100"
                     }`}
                   >
                     <div className="w-12 h-12 rounded-full bg-white/30 border border-white/40 backdrop-blur-sm flex items-center justify-center text-white shadow-lg">
-                      <svg className="w-5 h-5 fill-current translate-x-0.5" viewBox="0 0 24 24">
+                      <svg
+                        className="w-5 h-5 fill-current translate-x-0.5"
+                        viewBox="0 0 24 24"
+                      >
                         <path d="M8 5v14l11-7z" />
                       </svg>
                     </div>
@@ -420,7 +455,9 @@ export default function ProcessReels() {
 
                   {/* Caption */}
                   <div className="absolute inset-x-0 bottom-0 p-4 z-10 text-white">
-                    <h3 className="font-bold text-sm tracking-tight truncate">{reel.title}</h3>
+                    <h3 className="font-bold text-sm tracking-tight truncate">
+                      {reel.title}
+                    </h3>
                     <p className="text-[11px] text-neutral-200 mt-0.5 leading-relaxed line-clamp-2">
                       {reel.desc}
                     </p>
