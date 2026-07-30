@@ -255,7 +255,7 @@ const reelsData = [
     id: 4,
     title: "Sleek Delivery Packaging",
     desc: "Leakproof hot-packing delivered straight to your door.",
-    videoUrl: "/video1.mp4",
+    videoUrl: "/video4.MOV",
     tag: "PREP",
     tagColor: "bg-red-600",
   },
