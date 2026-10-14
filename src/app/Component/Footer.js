@@ -180,7 +180,7 @@ export default function Footer() {
                       </Link>
                     ) : (
                       <Link href="mailto:hello@fittbox.com">
-                        hello@fittbox.com
+                        fittbox@fittbox.in
                       </Link>
                     )}
                   </ContactItem>
@@ -199,7 +199,7 @@ export default function Footer() {
 
                   <ContactItem icon={Mail}>
                     <Link href="mailto:hello@fittbox.com">
-                      hello@fittbox.com
+                      fittbox@fittbox.in
                     </Link>
                   </ContactItem>
                 </>

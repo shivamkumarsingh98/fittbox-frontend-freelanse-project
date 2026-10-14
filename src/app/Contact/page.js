@@ -191,7 +191,7 @@ const Page = () => {
               />
             </svg>
             <h3 className="text-xl font-semibold mb-2">Email Us</h3>
-            <p className="text-gray-600">hello@fittbox.com</p>
+            <p className="text-gray-600">fittbox@fittbox.in</p>
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -211,7 +211,7 @@ const Page = () => {
               />
             </svg>
             <h3 className="text-xl font-semibold mb-2">Call Us</h3>
-            <p className="text-gray-600">+91 98765 43210</p>
+            <p className="text-gray-600">+91 7090769999</p>
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.05 }}
